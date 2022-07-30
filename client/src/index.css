@@ -1,0 +1,56 @@
+@import url('https://fonts.googleapis.com/css2?family=Alex+Brush&family=Festive&family=Kumbh+Sans:wght@100&family=Quicksand:wght@300&family=Roboto:ital,wght@1,100&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Alex+Brush&family=Festive&family=Inter:wght@100&family=Kumbh+Sans:wght@100&family=Quicksand:wght@300&family=Roboto:ital,wght@1,100&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html {
+  background-color: #F8FAFC;
+}
+
+.hamburger {
+  cursor: pointer;
+  width: 24px;
+  height: 24px;
+  transition: all 0.25s;
+  position: relative;
+}
+
+.hamburger-top,
+.hamburger-middle,
+.hamburger-bottom {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 24px;
+  height: 2px;
+  background: black;
+  transform: rotate(0);
+  transition: all 0.5s;
+}
+
+ .hamburger-middle {
+   transform: translateY(7px);
+ }
+
+ .hamburger-bottom {
+   transform: translateY(14px);
+ }
+
+ .open {
+   transform: rotate(90deg);
+   transform: translateY(0px);
+ }
+
+ .open .hamburger-top {
+   transform: rotate(45deg) translateY(6px) translate(6px);
+ }
+
+ .open .hamburger-middle {
+   display: none;
+ }
+
+ .open .hamburger-bottom {
+   transform: rotate(-45deg) translateY(6px) translate(-6px);
+ }
