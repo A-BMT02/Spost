@@ -305,10 +305,10 @@ export default function Newpost() {
               {socials.map((item) => (
                 <div>
                   <input
+                    defaultChecked={
+                      value.select.includes(item.type) ? true : false
+                    }
                     onChange={(e) => {
-                      if (value.select.includes(item.type)) {
-                        e.target.checked = true;
-                      }
                       if (e.target.checked) {
                         value.setSelect((prev) => [
                           ...prev,
@@ -445,7 +445,9 @@ export default function Newpost() {
               >
                 <div className="absolute -top-7 right-0 flex space-x-2 items-center">
                   <img className="w-4 h-4" src={contentIcon(value.target)} />
-                  <p className="text-ogray">1/200</p>
+                  <p className="text-ogray">
+                    {whichContent(value.target)?.length}/200
+                  </p>
                 </div>
                 <textarea
                   value={whichContent(value.target)}
@@ -586,14 +588,30 @@ export default function Newpost() {
                     className="w-4 h-4"
                     src={contentPreviewIcon(value.previewTarget)}
                   />
-                  <p className="text-ogray">1/200</p>
+                  {/* <p className="text-ogray">1/200</p> */}
                 </div>
                 <div className="p-2 w-full rounded-lg border border-dblue  flex flex-col">
                   <div className="flex space-x-4 p-4">
-                    <img src={picture} />
+                    <img
+                      className="rounded-full"
+                      src={
+                        socials.find((item) => item.type === "twitter")?.image
+                      }
+                    />
                     <div className="flex flex-col space-y-1 justify-center">
-                      <p className="font-black">Ahmad Tahir</p>
-                      <p className="font-bold text-ogray">@AhmadBMTahir</p>
+                      <p className="font-black">
+                        {
+                          socials.find((item) => item.type === "twitter")
+                            ?.displayName
+                        }
+                      </p>
+                      <p className="font-bold text-ogray">
+                        @
+                        {
+                          socials.find((item) => item.type === "twitter")
+                            ?.username
+                        }
+                      </p>
                     </div>
                   </div>
                   <div className="p-4">

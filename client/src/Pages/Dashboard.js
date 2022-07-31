@@ -56,9 +56,15 @@ export default function Dashboard() {
       .then((res) => {
         if (res.data.status === "ok") {
           if (res.data.data !== null) {
+            console.log("data is ", res.data.data);
             setSocials((prev) => [
               ...prev,
-              { type: "twitter", username: res.data.data?.username },
+              {
+                type: "twitter",
+                username: res.data.data?.username,
+                displayName: res.data.data?.displayName,
+                image: res.data.data?.image,
+              },
             ]);
           }
 
