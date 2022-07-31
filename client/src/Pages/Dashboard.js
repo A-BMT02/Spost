@@ -41,8 +41,8 @@ export default function Dashboard() {
     }
   };
 
-  console.log();
   useEffect(() => {
+    setSocials([]);
     setLoading(true);
     const con = user.connect?.find((target) => {
       return target.social === "twitter";

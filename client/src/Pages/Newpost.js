@@ -10,6 +10,7 @@ import { useData } from "../Context/DataContext";
 import axios from "axios";
 import { useAuth } from "../Context/AuthContext";
 import { MdOutlineCancel } from "react-icons/md";
+import CircularProgress from "@mui/material/CircularProgress";
 
 export default function Newpost() {
   const value = useData();
@@ -26,6 +27,11 @@ export default function Newpost() {
 
   const [twitterPicture, setTwitterPicture] = useState(value.twitterPicture);
   const [twitterMax, setTwitterMax] = useState(false);
+  const [showError, setShowError] = useState(false);
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const errorRef = useRef(null);
 
   const contentIcon = (target) => {
     switch (target) {
@@ -83,6 +89,7 @@ export default function Newpost() {
   };
 
   const selectImage = async () => {
+    setLoading(true);
     let type;
     let reader = new FileReader();
     reader.readAsDataURL(ref.current.files[0]);
@@ -95,25 +102,27 @@ export default function Newpost() {
         if (extension === "gif") {
           type = "gif";
           setTwitterMax(true);
+          updateContents(type, reader);
+          setLoading(false);
         } else {
           type = "video";
-          setTwitterMax(true);
-        }
-        switch (value.target) {
-          case "twitter":
-            value.setTwitterPicture((prev) => [
-              ...prev,
-              { type, value: reader.result },
-            ]);
-            setTwitterPicture((prev) => [
-              ...prev,
-              { type, value: reader.result },
-            ]);
-            return;
-          case "facebook":
-            return value.setFacebookPicture(state?.image);
-          case "linkedin":
-            return value.setLinkedinPicture(state?.image);
+          let media = new Audio(reader.result);
+          media.onloadedmetadata = function () {
+            if (media.duration > 140) {
+              setError("Video cannot be longer than 2min:20sec");
+              setShowError(true);
+              setLoading(false);
+              setTwitterMax(false);
+              return;
+            } else {
+              setTwitterMax(true);
+              setShowError(false);
+              setLoading(false);
+              setError("");
+              updateContents(type, reader);
+              return;
+            }
+          };
         }
       } else {
         // setImage(reader.result) ;
@@ -125,8 +134,38 @@ export default function Newpost() {
             extension,
           },
         });
+        setLoading(false);
       }
     };
+  };
+
+  useEffect(() => {
+    console.log("loading is ", loading);
+  }, [loading]);
+  useEffect(() => {
+    console.log("twitter picture is ", value.twitterPicture);
+  }, [value.twitterPicture]);
+
+  useEffect(() => {
+    if (error !== "") {
+      setShowError(true);
+    }
+  }, [error]);
+
+  const updateContents = (type, reader) => {
+    switch (value.target) {
+      case "twitter":
+        value.setTwitterPicture((prev) => [
+          ...prev,
+          { type, value: reader.result },
+        ]);
+        setTwitterPicture((prev) => [...prev, { type, value: reader.result }]);
+        return;
+      case "facebook":
+        return value.setFacebookPicture(state?.image);
+      case "linkedin":
+        return value.setLinkedinPicture(state?.image);
+    }
   };
 
   const previewPicture = (previewTarget) => {
@@ -185,15 +224,27 @@ export default function Newpost() {
       });
   };
 
-  const removeImage = (e, Iref) => {
-    const urlRemove = Iref.current.getAttribute("src");
-    if (value.previewTarget === "twitter") {
-      const index = value.twitterPicture.value.indexOf(urlRemove);
-      console.log("index is ", index);
-      if (index > -1) {
-        value.setTwitterPicture((prev) => prev.splice(index, 1));
-      }
+  const removeImage = (e, pic) => {
+    console.log("pic is ", pic);
+    switch (value.previewTarget) {
+      case "twitter":
+        if (pic.type === "gif" || pic.type === "video") {
+          setTwitterMax(false);
+        }
+        value.setTwitterPicture(
+          previewPicture(value.previewTarget).filter(
+            (item) => item.value !== pic.value
+          )
+        );
+        setTwitterPicture(
+          previewPicture(value.previewTarget).filter(
+            (item) => item.value !== pic.value
+          )
+        );
     }
+    previewPicture(value.previewTarget).filter(
+      (item) => item.value !== pic.value
+    );
   };
 
   function getBase64(file) {
@@ -205,12 +256,35 @@ export default function Newpost() {
     });
   }
 
-  useEffect(() => {
-    console.log("select is ", value.select);
-  }, [value.select]);
   return (
     <div className="block mx-5 md:mx-auto">
-      <div className="flex flex-col my-5  mx-5 md:w-10/12 mx-auto max-w-lg md:max-w-6xl">
+      <div
+        className={
+          !loading
+            ? "flex flex-col my-5  mx-5 md:w-10/12 mx-auto max-w-lg md:max-w-6xl"
+            : "hidden"
+        }
+      >
+        <div
+          ref={errorRef}
+          className={
+            showError
+              ? "flex space-x-6 justify-center mx-auto border border-ored px-4 py-3 text-xl rounded-lg bg-[#D61C4E] text-owhite max-w-[300px]"
+              : "hidden"
+          }
+        >
+          <p className="font-inter font-bold">{error}</p>
+          <p
+            onClick={(e) => {
+              errorRef.current.classList.add("hidden");
+              setShowError(false);
+              setError("");
+            }}
+            className="font-inter font-black self-center"
+          >
+            X
+          </p>
+        </div>
         <nav className="my-3.5 flex justify-start ">
           <h2 className="text-5xl md:text-6xl font-a text-dblue">Spost</h2>
         </nav>
@@ -228,19 +302,10 @@ export default function Newpost() {
 
             <div className="flex flex-col space-y-2 font-bold ">
               <p className="font-bold text-xl">Publish to</p>
-              {console.log("socials is ", socials)}
               {socials.map((item) => (
                 <div>
                   <input
                     onChange={(e) => {
-                      {
-                        console.log(
-                          "value select is ",
-                          value.select,
-                          " and item type is ",
-                          item.type
-                        );
-                      }
                       if (value.select.includes(item.type)) {
                         e.target.checked = true;
                       }
@@ -559,7 +624,7 @@ export default function Newpost() {
 
                               <MdOutlineCancel
                                 onClick={(e) => {
-                                  removeImage(e, imageRef.current[index]);
+                                  removeImage(e, pic);
                                 }}
                                 className="absolute -top-3 -right-2 text-ored"
                               />
@@ -592,6 +657,15 @@ export default function Newpost() {
             </div>
           </div>
         </div>
+      </div>
+      <div
+        className={
+          loading
+            ? "w-screen h-screen flex justify-center items-center"
+            : "hidden"
+        }
+      >
+        <CircularProgress />
       </div>
     </div>
   );
