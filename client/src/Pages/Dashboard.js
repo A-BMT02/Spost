@@ -44,9 +44,10 @@ export default function Dashboard() {
   useEffect(() => {
     setSocials([]);
     setLoading(true);
-    const con = user.connect?.find((target) => {
+    const con = user.user.connect?.find((target) => {
       return target.social === "twitter";
     });
+    console.log("con is ", con);
     axios
       .get("http://localhost:5000/api/user/get/twitter", {
         params: {
@@ -54,6 +55,7 @@ export default function Dashboard() {
         },
       })
       .then((res) => {
+        console.log("res is ", res);
         if (res.data.status === "ok") {
           if (res.data.data !== null) {
             console.log("data is ", res.data.data);
@@ -67,9 +69,8 @@ export default function Dashboard() {
               },
             ]);
           }
-
-          setLoading(false);
         }
+        setLoading(false);
       });
   }, []);
 

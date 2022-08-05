@@ -1,4 +1,10 @@
-import React, { useState, useRef, useEffect, createRef } from "react";
+import React, {
+  useState,
+  useRef,
+  useEffect,
+  createRef,
+  useCallback,
+} from "react";
 import twitter from "../images/twitter.png";
 import facebook from "../images/facebook.png";
 import linkedin from "../images/linkedin.png";
@@ -11,12 +17,19 @@ import axios from "axios";
 import { useAuth } from "../Context/AuthContext";
 import { MdOutlineCancel } from "react-icons/md";
 import CircularProgress from "@mui/material/CircularProgress";
+import Dropzone from "../utilities/Dropzone";
+import { GrFormNext } from "react-icons/gr";
+import { GrFormPrevious } from "react-icons/gr";
+import Slider from "../components/slider";
 
 export default function Newpost() {
   const value = useData();
   const { socials, setSocials } = useData();
 
+  const { dispatch } = useData();
+
   const ref = useRef(null);
+  const sliderRef = useRef(null);
   const imageRef = useRef([]);
 
   const { user } = useAuth();
@@ -25,7 +38,6 @@ export default function Newpost() {
 
   const { state } = useLocation();
 
-  const [twitterPicture, setTwitterPicture] = useState(value.twitterPicture);
   const [twitterMax, setTwitterMax] = useState(false);
   const [showError, setShowError] = useState(false);
   const [error, setError] = useState("");
@@ -47,7 +59,7 @@ export default function Newpost() {
   const whichContent = (target) => {
     switch (target) {
       case "twitter":
-        return value.twitterContent;
+        return value.state.value[value.twitterCounter];
       case "facebook":
         return value.facebookContent;
       case "linkedin":
@@ -58,7 +70,11 @@ export default function Newpost() {
   const changeContent = (text) => {
     switch (value.target) {
       case "twitter":
-        return value.setTwitterContent(text);
+        return dispatch({
+          type: "addContent",
+          item: text,
+          index: value.twitterCounter,
+        });
       case "facebook":
         return value.setFacebookContent(text);
       case "linkedin":
@@ -69,7 +85,7 @@ export default function Newpost() {
   const previewedContent = (previewTarget) => {
     switch (previewTarget) {
       case "twitter":
-        return value.twitterContent;
+        return value.state.value[value.twitterCounter];
       case "facebook":
         return value.facebookContent;
       case "linkedin":
@@ -88,16 +104,15 @@ export default function Newpost() {
     }
   };
 
-  const selectImage = async () => {
+  const selectImage = async (uploadedFile, target) => {
+    console.log("target is ", target);
+
     setLoading(true);
     let type;
     let reader = new FileReader();
-    reader.readAsDataURL(ref.current.files[0]);
+    reader.readAsDataURL(uploadedFile);
     reader.onload = function (e) {
-      const extension = ref.current.files[0].name
-        .split(".")
-        .pop()
-        .toLowerCase();
+      const extension = uploadedFile.name.split(".").pop().toLowerCase();
       if (extension !== "jpg") {
         if (extension === "gif") {
           type = "gif";
@@ -117,9 +132,9 @@ export default function Newpost() {
             } else {
               setTwitterMax(true);
               setShowError(false);
-              setLoading(false);
               setError("");
-              updateContents(type, reader);
+              updateContents(type, reader, target);
+              setLoading(false);
               return;
             }
           };
@@ -152,14 +167,13 @@ export default function Newpost() {
     }
   }, [error]);
 
-  const updateContents = (type, reader) => {
-    switch (value.target) {
+  const updateContents = async (type, reader, target) => {
+    switch (target) {
       case "twitter":
         value.setTwitterPicture((prev) => [
           ...prev,
           { type, value: reader.result },
         ]);
-        setTwitterPicture((prev) => [...prev, { type, value: reader.result }]);
         return;
       case "facebook":
         return value.setFacebookPicture(state?.image);
@@ -171,7 +185,7 @@ export default function Newpost() {
   const previewPicture = (previewTarget) => {
     switch (previewTarget) {
       case "twitter":
-        return twitterPicture;
+        return value.twitterPicture;
       case "facebook":
         return value.facebookPicture;
       case "linkedin":
@@ -185,8 +199,8 @@ export default function Newpost() {
   }, [value.previewTarget]);
 
   useEffect(() => {
-    console.log("new twitter pictures are ", twitterPicture);
-  }, [twitterPicture]);
+    console.log("new target is ", value.target);
+  }, [value.target]);
 
   const publish = async () => {
     const image = value.twitterPicture.value;
@@ -212,16 +226,17 @@ export default function Newpost() {
 
     console.log("bases  are", bases);
 
-    const data = value.twitterContent;
-    axios
-      .post("http://localhost:5000/api/user/post/twitter", {
-        data,
-        id: user._id,
-        image: bases,
-      })
-      .then((res) => {
-        console.log(res);
-      });
+    const data = value.state.value[twitterCounter];
+    console.log("data sent to server is ", data);
+    // axios
+    //   .post("http://localhost:5000/api/user/post/twitter", {
+    //     data,
+    //     id: user._id,
+    //     image: bases,
+    //   })
+    //   .then((res) => {
+    //     console.log(res);
+    //   });
   };
 
   const removeImage = (e, pic) => {
@@ -232,11 +247,6 @@ export default function Newpost() {
           setTwitterMax(false);
         }
         value.setTwitterPicture(
-          previewPicture(value.previewTarget).filter(
-            (item) => item.value !== pic.value
-          )
-        );
-        setTwitterPicture(
           previewPicture(value.previewTarget).filter(
             (item) => item.value !== pic.value
           )
@@ -255,6 +265,15 @@ export default function Newpost() {
       reader.onerror = (error) => reject(error);
     });
   }
+
+  const slider = (e) => {
+    // e.stopPropagation();
+    // const target =
+    //   e.target.parentElement.parentElement.previousSibling.parentElement;
+    // console.log("target is ", target);
+    // target.classList.add("translate-x-1/4");
+    sliderRef.current.classList.add("-translate-x-full");
+  };
 
   return (
     <div className="block mx-5 md:mx-auto">
@@ -305,9 +324,10 @@ export default function Newpost() {
               {socials.map((item) => (
                 <div>
                   <input
-                    defaultChecked={
-                      value.select.includes(item.type) ? true : false
-                    }
+                    // defaultChecked={
+                    //   value.select.includes(item.type) ? true : false
+                    // }
+                    checked={value.select.includes(item.type) ? true : false}
                     onChange={(e) => {
                       if (e.target.checked) {
                         value.setSelect((prev) => [
@@ -446,15 +466,23 @@ export default function Newpost() {
                 <div className="absolute -top-7 right-0 flex space-x-2 items-center">
                   <img className="w-4 h-4" src={contentIcon(value.target)} />
                   <p className="text-ogray">
-                    {whichContent(value.target)?.length}/200
+                    {whichContent(value.target)?.length}/280
                   </p>
                 </div>
-                <textarea
-                  value={whichContent(value.target)}
-                  onChange={(e) => changeContent(e.target.value)}
-                  className="p-2 w-full rounded-lg border border-dblue min-h-[200px] font-bold"
-                  placeholder="Enter your text here"
-                />
+                {/* <Slider /> */}
+                <div>
+                  <textarea
+                    maxLength={280}
+                    value={whichContent(value.target)}
+                    onChange={(e) => changeContent(e.target.value)}
+                    className="font-bold min-w-full p-2 rounded-lg border border-dblue min-h-[200px]"
+                    placeholder="Enter your text here"
+                  />
+                  <div className="absolute bottom-4 right-1 flex">
+                    <GrFormPrevious />
+                    <GrFormNext />
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -473,31 +501,15 @@ export default function Newpost() {
               >
                 <h2 className="font-black text-xl">Media</h2>
               </div>
-
-              <div
+              <Dropzone
+                selectImage={selectImage}
                 className={
                   twitterMax ||
                   previewPicture(value.previewTarget)?.length === 4
                     ? "hidden"
                     : "border w-xl md:w-[500px] border-dashed border-dblue p-2 rounded-lg flex flex-col space-y-3 items-center justify-center min-h-[200px] "
                 }
-              >
-                <input
-                  onChange={(e) => selectImage()}
-                  className="hidden"
-                  ref={ref}
-                  type="file"
-                  accept=".jpg,.png,.gif,video/mp4,.mov"
-                />
-                <img onClick={(e) => ref.current.click()} src={upload} />
-                <p className="font-black">Drag files here</p>
-                <p
-                  onClick={(e) => ref.current.click()}
-                  className="text-dblue font-black"
-                >
-                  Or select file to Upload
-                </p>
-              </div>
+              />
             </div>
 
             <div
@@ -621,7 +633,6 @@ export default function Newpost() {
                   </div>
                   <div className="px-4 mb-4">
                     <div className="flex flex-wrap w-full max-w-full">
-                      {console.log(previewPicture(value.previewTarget))}
                       {previewPicture(value.previewTarget) &&
                         previewPicture(value.previewTarget).map(
                           (pic, index) => (
@@ -650,17 +661,6 @@ export default function Newpost() {
                           )
                         )}
                     </div>
-
-                    {/* <div>
-                      <img
-                        className="rounded-lg w-1/2 "
-                        src={
-                          state === null
-                            ? ""
-                            : previewPicture(value.previewTarget)
-                        }
-                      />
-                    </div> */}
                   </div>
                 </div>
                 <div className="mt-10 w-full flex justify-center">

@@ -67,7 +67,7 @@ export const UserProvider = (props) => {
         if (typeof res.data.data == "undefined") {
           setUser({});
         } else if (res.data.data) {
-          setUser(res.data.data.user);
+          setUser(res.data.data);
         } else {
           setUser({});
         }

@@ -1,5 +1,12 @@
-import React, { useContext, useState, createContext, useEffect } from "react";
+import React, {
+  useContext,
+  useState,
+  createContext,
+  useEffect,
+  useReducer,
+} from "react";
 import axios from "axios";
+import { reducer } from "../utilities/Reducers";
 
 export const dataContext = createContext();
 
@@ -8,7 +15,8 @@ export const useData = () => {
 };
 
 export const DataContextProvider = (props) => {
-  const [twitterContent, setTwitterContent] = useState("");
+  const [twitterCounter, setTwitterCounter] = useState(0);
+  const [twitterContent, setTwitterContent] = useState([]);
   const [facebookContent, setFacebookContent] = useState("");
   const [linkedinContent, setLinkedinContent] = useState("");
   const [twitterPicture, setTwitterPicture] = useState([]);
@@ -21,7 +29,13 @@ export const DataContextProvider = (props) => {
   const [socials, setSocials] = useState([]);
   const [select, setSelect] = useState([]);
 
+  const [state, dispatch] = useReducer(reducer, { value: [] });
+
   const value = {
+    state,
+    dispatch,
+    twitterCounter,
+    setTwitterCounter,
     select,
     setSelect,
     preview,

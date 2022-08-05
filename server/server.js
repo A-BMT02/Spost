@@ -8,10 +8,10 @@ const passport = require("passport");
 const session = require("express-session");
 const mongoStore = require("connect-mongo");
 const cookieParser = require("cookie-parser");
-const getsRoute = require('./Routes/gets') ;
-const postRoute = require('./Routes/posts') ;
+const getsRoute = require("./Routes/gets");
+const postRoute = require("./Routes/posts");
 
-dotenv.config();
+dotenv.config({ path: ".env" });
 
 require("./config/passport")(passport);
 require("./config/passportTwitter")(passport);
@@ -37,8 +37,8 @@ app.use(bodyParser.urlencoded({ limit: "50mb", extended: false }));
 app.use(bodyParser.json({ limit: "50mb" }));
 
 app.use("/api/user", authRoute);
-app.use("/api/user/get" , getsRoute) ;
-app.use("/api/user/post" , postRoute) ;
+app.use("/api/user/get", getsRoute);
+app.use("/api/user/post", postRoute);
 
 mongoose.connect(process.env.DB_CONNECT, () => {
   console.log("Connected to database");
