@@ -17,21 +17,26 @@ export const useData = () => {
 export const DataContextProvider = (props) => {
   const [twitterCounter, setTwitterCounter] = useState(0);
   const [twitterContent, setTwitterContent] = useState([]);
+  const [twitterPreviewCounter, setTwitterPreviewCounter] = useState(0);
   const [facebookContent, setFacebookContent] = useState("");
   const [linkedinContent, setLinkedinContent] = useState("");
   const [twitterPicture, setTwitterPicture] = useState([]);
   const [facebookPicture, setFacebookPicture] = useState([]);
   const [linkedinPicture, setLinkedinPicture] = useState([]);
-  const [target, setTarget] = useState("");
+  const [target, setTarget] = useState("twitter");
   const [previewTarget, setPreviewTarget] = useState("");
   const [image, setImage] = useState("");
   const [preview, setPreview] = useState(false);
   const [socials, setSocials] = useState([]);
   const [select, setSelect] = useState([]);
 
-  const [state, dispatch] = useReducer(reducer, { value: [] });
+  const [state, dispatch] = useReducer(reducer, {
+    value: [{ text: "", media: [] }],
+  });
 
   const value = {
+    twitterPreviewCounter,
+    setTwitterPreviewCounter,
     state,
     dispatch,
     twitterCounter,

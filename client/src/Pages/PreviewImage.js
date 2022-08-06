@@ -52,6 +52,7 @@ export default function PreviewImage() {
   const navigate = useNavigate();
 
   const error = useRef(null);
+  const { dispatch } = useData();
 
   function onImageLoad(e) {
     if (aspect) {
@@ -121,10 +122,13 @@ export default function PreviewImage() {
           if (imageObject.indexOf("blob") !== -1) {
             type = "image";
           }
-          value.setTwitterPicture((prev) => [
-            ...prev,
-            { type, value: imageObject },
-          ]);
+          dispatch({
+            type: "addPicture",
+            fileType: type,
+            file: imageObject,
+            index: value.twitterCounter,
+          });
+
           navigate("/newpost");
         case "facebook":
           return value.setFacebookPicture(state.image);
@@ -136,8 +140,8 @@ export default function PreviewImage() {
   };
 
   useEffect(() => {
-    console.log(value.twitterPicture.value);
-  }, [value.twitterPicture]);
+    console.log("state is ", value.state);
+  }, [value.state]);
 
   useEffect(() => {
     setCrop(undefined);

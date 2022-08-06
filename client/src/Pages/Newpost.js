@@ -21,6 +21,8 @@ import Dropzone from "../utilities/Dropzone";
 import { GrFormNext } from "react-icons/gr";
 import { GrFormPrevious } from "react-icons/gr";
 import Slider from "../components/slider";
+import { AiOutlinePlusCircle } from "react-icons/ai";
+import { NextPlan } from "@mui/icons-material";
 
 export default function Newpost() {
   const value = useData();
@@ -59,7 +61,12 @@ export default function Newpost() {
   const whichContent = (target) => {
     switch (target) {
       case "twitter":
-        return value.state.value[value.twitterCounter];
+        console.log("blah ", value.state.value);
+        const text =
+          value.state.value.length === 0
+            ? ""
+            : value.state.value[value.twitterCounter].text || "";
+        return text;
       case "facebook":
         return value.facebookContent;
       case "linkedin":
@@ -85,7 +92,7 @@ export default function Newpost() {
   const previewedContent = (previewTarget) => {
     switch (previewTarget) {
       case "twitter":
-        return value.state.value[value.twitterCounter];
+        return value.state.value[value.twitterCounter].text;
       case "facebook":
         return value.facebookContent;
       case "linkedin":
@@ -104,15 +111,41 @@ export default function Newpost() {
     }
   };
 
-  const selectImage = async (uploadedFile, target) => {
-    console.log("target is ", target);
+  const next = (index) => {
+    value.setTwitterCounter((prev) => {
+      const multiple = prev !== value.state.value.length - 1 ? prev + 1 : 0;
+      translate(multiple);
+      return multiple;
+    });
+  };
 
+  const previous = () => {
+    value.setTwitterCounter((prev) => {
+      const multiple = prev !== 0 ? prev - 1 : value.state.value.length - 1;
+      translate(multiple);
+      return multiple;
+    });
+  };
+  useEffect(() => {
+    console.log("counter is ", value.twitterCounter);
+  }, [value.twitterCounter]);
+
+  const translate = (multiple) => {
+    sliderRef.current.style.transform = `translateX(-${
+      (100 / value.state.value.length) * multiple
+    }%)`;
+  };
+
+  const selectImage = (uploadedFile) => {
+    console.log("bro ", value.target);
     setLoading(true);
+
     let type;
     let reader = new FileReader();
     reader.readAsDataURL(uploadedFile);
     reader.onload = function (e) {
       const extension = uploadedFile.name.split(".").pop().toLowerCase();
+      console.log("extension is ", extension);
       if (extension !== "jpg") {
         if (extension === "gif") {
           type = "gif";
@@ -133,7 +166,7 @@ export default function Newpost() {
               setTwitterMax(true);
               setShowError(false);
               setError("");
-              updateContents(type, reader, target);
+              updateContents(type, reader);
               setLoading(false);
               return;
             }
@@ -158,8 +191,8 @@ export default function Newpost() {
     console.log("loading is ", loading);
   }, [loading]);
   useEffect(() => {
-    console.log("twitter picture is ", value.twitterPicture);
-  }, [value.twitterPicture]);
+    console.log("twitter state is ", value.state);
+  }, [value.state]);
 
   useEffect(() => {
     if (error !== "") {
@@ -167,13 +200,25 @@ export default function Newpost() {
     }
   }, [error]);
 
-  const updateContents = async (type, reader, target) => {
-    switch (target) {
+  useEffect(() => {
+    console.log("twitter max is now ", twitterMax);
+  }, [twitterMax]);
+
+  const updateContents = (type, reader) => {
+    console.log("target is ", value.target);
+
+    switch (value.target) {
       case "twitter":
-        value.setTwitterPicture((prev) => [
-          ...prev,
-          { type, value: reader.result },
-        ]);
+        return dispatch({
+          type: "addPicture",
+          fileType: type,
+          file: reader.result,
+          index: value.twitterCounter,
+        });
+        // value.setTwitterPicture((prev) => [
+        //   ...prev,
+        //   { type, value: reader.result },
+        // ]);
         return;
       case "facebook":
         return value.setFacebookPicture(state?.image);
@@ -185,48 +230,44 @@ export default function Newpost() {
   const previewPicture = (previewTarget) => {
     switch (previewTarget) {
       case "twitter":
-        return value.twitterPicture;
+        return value.state.value[value.twitterPreviewCounter].media;
+      // return value.twitterPicture;
       case "facebook":
         return value.facebookPicture;
       case "linkedin":
         return value.linkedinPicture;
     }
   };
-  useEffect(() => {
-    imageRef.current = previewPicture(value.previewTarget)?.map(
-      (item, i) => imageRef.current[i] ?? createRef()
-    );
-  }, [value.previewTarget]);
 
   useEffect(() => {
     console.log("new target is ", value.target);
   }, [value.target]);
 
   const publish = async () => {
-    const image = value.twitterPicture.value;
-    console.log("image is ", image);
-    const files = await Promise.all(
-      image.map(async (item) => {
-        const filename = await fetch(item)
-          .then((r) => r.blob())
-          .then(
-            (blobFile) =>
-              new File([blobFile], "fileName", { type: blobFile.type })
-          );
-        return filename;
-      })
-    );
+    // const image = value.twitterPicture.value;
+    // console.log("image is ", image);
+    // const files = await Promise.all(
+    //   image.map(async (item) => {
+    //     const filename = await fetch(item)
+    //       .then((r) => r.blob())
+    //       .then(
+    //         (blobFile) =>
+    //           new File([blobFile], "fileName", { type: blobFile.type })
+    //       );
+    //     return filename;
+    //   })
+    // );
 
-    const bases = await Promise.all(
-      files.map(async (item) => {
-        const base = await getBase64(item);
-        return base;
-      })
-    );
+    // const bases = await Promise.all(
+    //   files.map(async (item) => {
+    //     const base = await getBase64(item);
+    //     return base;
+    //   })
+    // );
 
-    console.log("bases  are", bases);
+    // console.log("bases  are", bases);
 
-    const data = value.state.value[twitterCounter];
+    const data = value.state.value[value.twitterPreviewCounter];
     console.log("data sent to server is ", data);
     // axios
     //   .post("http://localhost:5000/api/user/post/twitter", {
@@ -235,7 +276,7 @@ export default function Newpost() {
     //     image: bases,
     //   })
     //   .then((res) => {
-    //     console.log(res);
+    //     console.log(res);p
     //   });
   };
 
@@ -243,14 +284,19 @@ export default function Newpost() {
     console.log("pic is ", pic);
     switch (value.previewTarget) {
       case "twitter":
-        if (pic.type === "gif" || pic.type === "video") {
-          setTwitterMax(false);
-        }
+        dispatch({
+          type: "removeMedia",
+          media: pic,
+          index: value.twitterCounter,
+        });
         value.setTwitterPicture(
           previewPicture(value.previewTarget).filter(
             (item) => item.value !== pic.value
           )
         );
+        if (pic.type === "gif" || pic.type === "video") {
+          setTwitterMax(false);
+        }
     }
     previewPicture(value.previewTarget).filter(
       (item) => item.value !== pic.value
@@ -455,32 +501,89 @@ export default function Newpost() {
                   </div>
                 </div>
               </div>
-
-              <div
-                className={
-                  value.select.length === 0
-                    ? "hidden"
-                    : " relative w-full md:w-[500px]"
-                }
-              >
-                <div className="absolute -top-7 right-0 flex space-x-2 items-center">
-                  <img className="w-4 h-4" src={contentIcon(value.target)} />
-                  <p className="text-ogray">
-                    {whichContent(value.target)?.length}/280
-                  </p>
+              <div className={value.select.length === 0 ? "hidden" : ""}>
+                <div className="mb-2 flex justify-end">
+                  <div className="flex space-x-1">
+                    <img className="w-5 h-5" src={contentIcon(value.target)} />
+                    <p>{whichContent(value.target).length}/280</p>
+                  </div>
                 </div>
-                {/* <Slider /> */}
-                <div>
-                  <textarea
-                    maxLength={280}
-                    value={whichContent(value.target)}
-                    onChange={(e) => changeContent(e.target.value)}
-                    className="font-bold min-w-full p-2 rounded-lg border border-dblue min-h-[200px]"
-                    placeholder="Enter your text here"
-                  />
-                  <div className="absolute bottom-4 right-1 flex">
-                    <GrFormPrevious />
-                    <GrFormNext />
+                <div className="relative w-full">
+                  {/* <Slider /> */}
+                  <div className="w-full overflow-hidden">
+                    {/* <div className={`width-[${100 * value.state.value.length}%] flex`}> */}
+                    <div
+                      ref={sliderRef}
+                      className="flex transition-all duration-300"
+                      style={{ width: `${100 * value.state.value.length}%` }}
+                    >
+                      {value.state.value.map((item) => (
+                        <div
+                          style={{
+                            width: `${
+                              (100 * value.state.value.length) /
+                              value.state.value.length
+                            }%`,
+                          }}
+                        >
+                          <textarea
+                            maxLength={280}
+                            value={whichContent(value.target)}
+                            onChange={(e) => changeContent(e.target.value)}
+                            className="w-full font-bold  p-2 rounded-lg border border-dblue min-h-[200px]"
+                            placeholder="Enter your text here"
+                          />
+                          <div className="flex justify-between">
+                            <div
+                              className={
+                                value.state.value.length < 2
+                                  ? "hidden"
+                                  : " bottom-4 right-1 flex"
+                              }
+                            >
+                              <div
+                                onClick={(e) => {
+                                  previous();
+                                }}
+                              >
+                                <GrFormPrevious />
+                              </div>
+                              <div
+                                onClick={(e) => {
+                                  next();
+                                }}
+                              >
+                                <GrFormNext />
+                              </div>
+                            </div>
+                            <div
+                              onClick={(e) => {
+                                dispatch({ type: "addEmpty" });
+                                sliderRef.current.style.transform = `translateX(-${0}%)`;
+                              }}
+                              className={
+                                value.target === "twitter"
+                                  ? "mt-2 flex justify-end"
+                                  : "hidden"
+                              }
+                            >
+                              <AiOutlinePlusCircle />
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                      {/* <textarea
+                        maxLength={280}
+                        value={whichContent(value.target)}
+                        onChange={(e) => changeContent(e.target.value)}
+                        className="font-bold min-w-full p-2 rounded-lg border border-dblue min-h-[200px]"
+                        placeholder="Enter your text here"
+                      />
+                      <div className="absolute bottom-4 right-1 flex">
+                        <GrFormPrevious />
+                        <GrFormNext />
+                      </div> */}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -501,15 +604,16 @@ export default function Newpost() {
               >
                 <h2 className="font-black text-xl">Media</h2>
               </div>
-              <Dropzone
-                selectImage={selectImage}
+              <div
                 className={
                   twitterMax ||
                   previewPicture(value.previewTarget)?.length === 4
                     ? "hidden"
-                    : "border w-xl md:w-[500px] border-dashed border-dblue p-2 rounded-lg flex flex-col space-y-3 items-center justify-center min-h-[200px] "
+                    : ""
                 }
-              />
+              >
+                <Dropzone selectImage={selectImage} />
+              </div>
             </div>
 
             <div
@@ -595,13 +699,6 @@ export default function Newpost() {
                     : " relative w-xl md:w-[500px]"
                 }
               >
-                <div className="absolute -top-7 right-0 flex space-x-2 items-center">
-                  <img
-                    className="w-4 h-4"
-                    src={contentPreviewIcon(value.previewTarget)}
-                  />
-                  {/* <p className="text-ogray">1/200</p> */}
-                </div>
                 <div className="p-2 w-full rounded-lg border border-dblue  flex flex-col">
                   <div className="flex space-x-4 p-4">
                     <img
@@ -635,25 +732,26 @@ export default function Newpost() {
                     <div className="flex flex-wrap w-full max-w-full">
                       {previewPicture(value.previewTarget) &&
                         previewPicture(value.previewTarget).map(
-                          (pic, index) => (
+                          (media, index) => (
                             <div className="w-1/2 relative">
-                              {pic.type === "image" || pic.type === "gif" ? (
+                              {media.type === "image" ||
+                              media.type === "gif" ? (
                                 <img
                                   ref={imageRef.current[index]}
                                   className="rounded-lg w-full h-[150px] object-cover "
-                                  src={pic.value}
+                                  src={media.file}
                                 />
                               ) : (
                                 <video
-                                  ref={imageRef.current[index]}
+                                  // ref={imageRef.current[index]}
                                   className="rounded-lg w-full h-[150px] object-cover "
-                                  src={pic.value}
+                                  src={media.file}
                                 />
                               )}
 
                               <MdOutlineCancel
                                 onClick={(e) => {
-                                  removeImage(e, pic);
+                                  removeImage(e, media);
                                 }}
                                 className="absolute -top-3 -right-2 text-ored"
                               />

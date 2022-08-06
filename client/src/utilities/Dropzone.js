@@ -8,8 +8,7 @@ export default function Dropzone({ selectImage }) {
 
   const onDrop = useCallback((acceptedFiles) => {
     const uploadPictures = async (image) => {
-      console.log("value . target is ", value.target);
-      await selectImage(image, value.target);
+      await selectImage(image);
     };
     uploadPictures(acceptedFiles[0]);
   }, []);
@@ -23,7 +22,7 @@ export default function Dropzone({ selectImage }) {
   }, [acceptedFiles]);
   return (
     <div
-      className="border w-xl md:w-[500px] border-dashed border-dblue p-2 rounded-lg flex flex-col space-y-3 items-center justify-center min-h-[200px] "
+      className="border w-xl border-dashed border-dblue p-2 rounded-lg flex flex-col space-y-3 items-center justify-center min-h-[200px] "
       {...getRootProps()}
     >
       <input {...getInputProps()} />
