@@ -1,49 +1,72 @@
 const router = require("express").Router();
-const twit = require("twitter");
+const twitter = require("twitter");
+const twit = require("twit");
 const user = require("../models/googleUser");
 const twitterModel = require("../models/twitterConnect");
+const { TwitThread } = require("twit-thread");
 
 router.post("/twitter", async (req, res) => {
-  const tweet = req.body.data;
+  const data = req.body.data;
+  console.log("data is ", data, "and id is ", req.body.id);
+  // const tweet = req.body.data;
   const userId = req.body.id;
-  const images = req.body.image.map((item) => item.split("base64,")[1]);
+  // const images = req.body.image.map((item) => item.split("base64,")[1]);
   // const gifImage = req.body.image[0];
 
   const userFound = await user.findOne({ _id: userId }).lean();
+  console.log("userfound is ", userFound);
   if (userFound) {
     const twitterId = userFound.connect.find((a) => a.social === "twitter").id;
     const tweetObj = await twitterModel.findOne({ twitterId }).lean();
 
+    const config = {
+      consumer_key: process.env.TWITTER_CONSUMER_KEY,
+      consumer_secret: process.env.TWITTER_CONSUMER_SECRET,
+      access_token: tweetObj.accessToken,
+      access_token_secret: tweetObj.accessTokenSecret,
+    };
+
+    async function tweetThread() {
+      const t = new TwitThread(config);
+      const texts = data.map((obj) => {
+        return { text: obj.text };
+      });
+      await t.tweetThread(texts);
+    }
+    tweetThread();
+    console.log("done");
+    return res.send("ok");
+
     const twitter = new twit({
       consumer_key: process.env.TWITTER_CONSUMER_KEY,
       consumer_secret: process.env.TWITTER_CONSUMER_SECRET,
-      access_token_key: tweetObj.accessToken,
+      access_token: tweetObj.accessToken,
       access_token_secret: tweetObj.accessTokenSecret,
     });
-    if (images) {
-      const mediaData = new Buffer.from(images[0], "base64");
-      const mediaSize = mediaData.length;
-      const mediaType = "image/gif";
-      // const mediaType = "video/mp4";
-      initializeMediaUpload(mediaData, mediaSize, mediaType, twitter);
-      //gif
-      // const buffer = Buffer.from(video.data, "binary").toString("base64");
-      // twitter.post(
-      //   "media/upload",
-      //   { media_data: img },
-      //   function (err, data, response) {
-      //     const id = data.media_id_string;
-      //     console.log(id);
-      //     if (err) {
-      //       console.log("gif error is ", err);
-      //     }
-      //   }
-      // );
-      //jpg png
-      // tweetImages(images, tweet, twitter);
-    } else {
-      console.log("no image");
-    }
+
+    // if (images) {
+    //   const mediaData = new Buffer.from(images[0], "base64");
+    //   const mediaSize = mediaData.length;
+    //   const mediaType = "image/gif";
+    // const mediaType = "video/mp4";
+    // initializeMediaUpload(mediaData, mediaSize, mediaType, twitter);
+    //gif
+    // const buffer = Buffer.from(video.data, "binary").toString("base64");
+    // twitter.post(
+    //   "media/upload",
+    //   { media_data: img },
+    //   function (err, data, response) {
+    //     const id = data.media_id_string;
+    //     console.log(id);
+    //     if (err) {
+    //       console.log("gif error is ", err);
+    //     }
+    //   }
+    // );
+    //jpg png
+    // tweetImages(images, tweet, twitter);
+    postThreadNoMedia(twitter, data);
+
     // twitter.post(
     //   "statuses/update",
     //   {
@@ -55,6 +78,17 @@ router.post("/twitter", async (req, res) => {
     //   }
     // );
   }
+
+  //  twitter.post(
+  //   "statuses/update",
+  //   {
+  //     status:
+  //       "Hello twitter , If youre seeing this then the web app that im building is working so far. This is not tweeted from twitter",
+  //   },
+  //   function (err, data, response) {
+  //     console.log(data);
+  //   }
+  // );
 
   function tweetImages(files, status, twitter) {
     let mediaIds = new Array();

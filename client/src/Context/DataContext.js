@@ -29,12 +29,15 @@ export const DataContextProvider = (props) => {
   const [preview, setPreview] = useState(false);
   const [socials, setSocials] = useState([]);
   const [select, setSelect] = useState([]);
+  const [twitterMax, setTwitterMax] = useState([]);
 
   const [state, dispatch] = useReducer(reducer, {
     value: [{ text: "", media: [] }],
   });
 
   const value = {
+    twitterMax,
+    setTwitterMax,
     twitterPreviewCounter,
     setTwitterPreviewCounter,
     state,

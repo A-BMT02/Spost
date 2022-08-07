@@ -40,7 +40,6 @@ export default function Newpost() {
 
   const { state } = useLocation();
 
-  const [twitterMax, setTwitterMax] = useState(false);
   const [showError, setShowError] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -65,7 +64,7 @@ export default function Newpost() {
         const text =
           value.state.value.length === 0
             ? ""
-            : value.state.value[value.twitterCounter].text || "";
+            : value.state.value[value.twitterCounter]?.text || "";
         return text;
       case "facebook":
         return value.facebookContent;
@@ -111,6 +110,21 @@ export default function Newpost() {
     }
   };
 
+  const maxMedia = () => {
+    let max = false;
+    const targetMedia = value.state.value[value.twitterCounter].media;
+    const result = targetMedia?.map((obj) => {
+      if (obj.type === "gif" || obj.type === "video") {
+        max = true;
+      }
+    });
+    if (value.state.value[value.twitterCounter]?.media?.length === 4) {
+      max = true;
+    }
+    console.log("max is ", max);
+    return max;
+  };
+
   const next = (index) => {
     value.setTwitterCounter((prev) => {
       const multiple = prev !== value.state.value.length - 1 ? prev + 1 : 0;
@@ -149,7 +163,8 @@ export default function Newpost() {
       if (extension !== "jpg") {
         if (extension === "gif") {
           type = "gif";
-          setTwitterMax(true);
+          // setTwitterMax(true);
+          value.setTwitterMax((prev) => [...prev, true]);
           updateContents(type, reader);
           setLoading(false);
         } else {
@@ -160,10 +175,14 @@ export default function Newpost() {
               setError("Video cannot be longer than 2min:20sec");
               setShowError(true);
               setLoading(false);
-              setTwitterMax(false);
+              // setTwitterMax(false);
+              value.setTwitterMax((prev) => [...prev, false]);
+
               return;
             } else {
-              setTwitterMax(true);
+              // setTwitterMax(true);
+              value.setTwitterMax((prev) => [...prev, true]);
+
               setShowError(false);
               setError("");
               updateContents(type, reader);
@@ -201,8 +220,8 @@ export default function Newpost() {
   }, [error]);
 
   useEffect(() => {
-    console.log("twitter max is now ", twitterMax);
-  }, [twitterMax]);
+    console.log("twitter max is now ", value.twitterMax);
+  }, [value.twitterMax]);
 
   const updateContents = (type, reader) => {
     console.log("target is ", value.target);
@@ -230,7 +249,7 @@ export default function Newpost() {
   const previewPicture = (previewTarget) => {
     switch (previewTarget) {
       case "twitter":
-        return value.state.value[value.twitterPreviewCounter].media;
+        return value.state.value[value.twitterCounter].media;
       // return value.twitterPicture;
       case "facebook":
         return value.facebookPicture;
@@ -244,40 +263,51 @@ export default function Newpost() {
   }, [value.target]);
 
   const publish = async () => {
-    // const image = value.twitterPicture.value;
-    // console.log("image is ", image);
-    // const files = await Promise.all(
-    //   image.map(async (item) => {
-    //     const filename = await fetch(item)
-    //       .then((r) => r.blob())
-    //       .then(
-    //         (blobFile) =>
-    //           new File([blobFile], "fileName", { type: blobFile.type })
-    //       );
-    //     return filename;
-    //   })
-    // );
-
-    // const bases = await Promise.all(
-    //   files.map(async (item) => {
-    //     const base = await getBase64(item);
-    //     return base;
-    //   })
-    // );
-
-    // console.log("bases  are", bases);
-
-    const data = value.state.value[value.twitterPreviewCounter];
-    console.log("data sent to server is ", data);
-    // axios
-    //   .post("http://localhost:5000/api/user/post/twitter", {
-    //     data,
-    //     id: user._id,
-    //     image: bases,
-    //   })
-    //   .then((res) => {
-    //     console.log(res);p
+    // const allData = value.state.value.map((obj) => {
+    //   console.log("obj is ", obj);
+    //   const media = obj.media.map((mediaObj) => {
+    //     console.log("type is ", mediaObj.type);
+    //     if (mediaObj.type === "image") {
+    //       console.log("here");
+    //       let a = blobToBase64(mediaObj.file);
+    //       console.log("a is ", a);
+    //       return { ...mediaObj, file: a };
+    //     } else {
+    //       return { ...mediaObj };
+    //     }
     //   });
+    //   return { ...obj, media };
+    // });
+
+    const allData = await Promise.all(
+      value.state.value.map(async (obj) => {
+        const media = await Promise.all(
+          obj.media.map(async (mediaObj) => {
+            if (mediaObj.type === "image") {
+              const filename = await fetch(mediaObj.file)
+                .then((r) => r.blob())
+                .then(
+                  (blobFile) =>
+                    new File([blobFile], "fileName", { type: blobFile.type })
+                );
+              return { ...mediaObj, file: await getBase64(filename) };
+            } else {
+              return { ...mediaObj };
+            }
+          })
+        );
+        return { ...obj, media };
+      })
+    );
+
+    axios
+      .post("http://localhost:5000/api/user/post/twitter", {
+        data: allData,
+        id: user.user._id,
+      })
+      .then((res) => {
+        console.log(res);
+      });
   };
 
   const removeImage = (e, pic) => {
@@ -295,7 +325,8 @@ export default function Newpost() {
           )
         );
         if (pic.type === "gif" || pic.type === "video") {
-          setTwitterMax(false);
+          // setTwitterMax(false);
+          value.setTwitterMax((prev) => [...prev, false]);
         }
     }
     previewPicture(value.previewTarget).filter(
@@ -360,7 +391,7 @@ export default function Newpost() {
               : "flex justify-center w-full"
           }
         >
-          <div className="flex flex-col md:w-1/2 space-y-6 font-inter">
+          <div className="flex flex-col md:w-1/2 space-y-6 space-x-6 font-inter">
             <div>
               <h2 className="text-4xl font-black text-dblue">New Post</h2>
             </div>
@@ -502,7 +533,33 @@ export default function Newpost() {
                 </div>
               </div>
               <div className={value.select.length === 0 ? "hidden" : ""}>
-                <div className="mb-2 flex justify-end">
+                <div className="mb-2 flex justify-between items-center">
+                  <div
+                    onClick={(e) => {
+                      dispatch({ type: "delete", index: value.twitterCounter });
+                      value.setTwitterCounter((prev) => {
+                        const multiple = 0;
+                        translate(multiple);
+                        return multiple;
+                      });
+                      value.setTwitterMax(prev, () => {
+                        const newMax = prev.map((item, index) => {
+                          if (index === value.twitterCounter) {
+                            return;
+                          }
+                        });
+                      });
+                    }}
+                    className={
+                      value.state.value.length > 1 ? "text-ored " : "hidden"
+                    }
+                  >
+                    <MdOutlineCancel />
+                  </div>
+                  <div
+                    className={value.state.value.length > 1 ? "hidden" : ""}
+                  ></div>
+                  <div className={value.sele}></div>
                   <div className="flex space-x-1">
                     <img className="w-5 h-5" src={contentIcon(value.target)} />
                     <p>{whichContent(value.target).length}/280</p>
@@ -538,7 +595,7 @@ export default function Newpost() {
                               className={
                                 value.state.value.length < 2
                                   ? "hidden"
-                                  : " bottom-4 right-1 flex"
+                                  : " bottom-4 right-1 flex items-center"
                               }
                             >
                               <div
@@ -554,6 +611,12 @@ export default function Newpost() {
                                 }}
                               >
                                 <GrFormNext />
+                              </div>
+                              <div>
+                                <p>
+                                  {value.twitterCounter + 1}/
+                                  {value.state.value.length}
+                                </p>
                               </div>
                             </div>
                             <div
@@ -594,24 +657,10 @@ export default function Newpost() {
                 value.select.length === 0 ? "hidden" : "flex flex-col space-y-2"
               }
             >
-              <div
-                className={
-                  twitterMax ||
-                  previewPicture(value.previewTarget)?.length === 4
-                    ? "hidden"
-                    : ""
-                }
-              >
+              <div className={maxMedia() ? "hidden" : ""}>
                 <h2 className="font-black text-xl">Media</h2>
               </div>
-              <div
-                className={
-                  twitterMax ||
-                  previewPicture(value.previewTarget)?.length === 4
-                    ? "hidden"
-                    : ""
-                }
-              >
+              <div className={maxMedia() ? "hidden" : ""}>
                 <Dropzone selectImage={selectImage} />
               </div>
             </div>

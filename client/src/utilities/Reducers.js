@@ -20,7 +20,12 @@ export const reducer = (state, action) => {
       return removedMedia;
 
     case "addEmpty":
-      return { value: [...state.value, {}] };
+      return { value: [...state.value, { text: "", media: [] }] };
+
+    case "delete":
+      const updatedState = deleteOne(action.index, state);
+      return updatedState;
+
     default:
       return state;
   }
@@ -45,9 +50,15 @@ const addItem = (item, index, state) => {
 const addPicture = (fileType, file, index, state) => {
   const newValue = state.value.map((obj, i) => {
     if (i === index) {
-      const allMedia = obj.media;
-      allMedia.push({ file, type: fileType });
-      return { ...obj, media: allMedia };
+      if (obj.media.length == 0) {
+        const allMedia = [];
+        allMedia.push({ file, type: fileType });
+        return { ...obj, media: allMedia };
+      } else {
+        const allMedia = obj.media;
+        allMedia.push({ file, type: fileType });
+        return { ...obj, media: allMedia };
+      }
     } else {
       return obj;
     }
@@ -69,6 +80,13 @@ const removeMedia = (media, index, state) => {
     }
   });
 
+  return { value: newValue };
+};
+
+const deleteOne = (index, state) => {
+  const newValue = state.value.filter((obj, i) => {
+    return i !== index;
+  });
   console.log("new value is ", newValue);
   return { value: newValue };
 };
