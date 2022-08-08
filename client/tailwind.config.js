@@ -18,6 +18,7 @@ module.exports = {
       lwhite: "#F9FAFC",
       ogray: "#8B8686",
       ored: "#FF0000",
+      ogreen : '#3CB35A'
     },
     extend: {
       fontFamily: {

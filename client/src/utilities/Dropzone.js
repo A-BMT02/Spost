@@ -6,11 +6,8 @@ import { useData } from "../Context/DataContext";
 export default function Dropzone({ selectImage }) {
   const value = useData();
 
-  const onDrop = useCallback((acceptedFiles) => {
-    const uploadPictures = async (image) => {
-      await selectImage(image);
-    };
-    uploadPictures(acceptedFiles[0]);
+  const onDrop = useCallback(async (acceptedFiles) => {
+ 
   }, []);
 
   const { getRootProps, getInputProps, acceptedFiles } = useDropzone({
@@ -18,7 +15,9 @@ export default function Dropzone({ selectImage }) {
   });
 
   useEffect(() => {
-    console.log("files are ", acceptedFiles);
+    if(acceptedFiles.length !== 0) {
+      selectImage(acceptedFiles[0] , value.twitterCounter) ; 
+    }
   }, [acceptedFiles]);
   return (
     <div

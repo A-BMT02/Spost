@@ -90,12 +90,7 @@ export default function PreviewImage() {
     } else if (state.extension === "gif") {
       extension = "image/gif";
     }
-    console.log(
-      "state extension is ",
-      state.extension,
-      " and extension is ",
-      extension
-    );
+  
 
     convertAndSave(extension, pass);
   };
@@ -114,10 +109,8 @@ export default function PreviewImage() {
       }
       pass = true;
       setImageError("");
-      console.log("state for is ", state.for);
       switch (state.for) {
         case "twitter":
-          console.log("bro imageObject is ", imageObject);
           let type;
           if (imageObject.indexOf("blob") !== -1) {
             type = "image";
@@ -139,9 +132,6 @@ export default function PreviewImage() {
     }, extension);
   };
 
-  useEffect(() => {
-    console.log("state is ", value.state);
-  }, [value.state]);
 
   useEffect(() => {
     setCrop(undefined);

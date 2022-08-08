@@ -1,12 +1,13 @@
-const router = require("express").Router();
-const user = require("../models/googleUser");
-const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
-const { registerValidation } = require("../utils/validation");
-const passport = require("passport");
-const protect = require("../Middleware/authMiddleware");
-const twitter = require("../models/twitterConnect");
+import Express from "express";
+import user from "../models/googleUser.js";
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
+import { registerValidation } from "../utils/validation.js";
+import passport from "passport";
+// import protect from "../Middleware/authMiddleware.js";
+import twitter from "../models/twitterConnect.js";
 
+const router = Express.Router();
 router.post("/register", async (req, res) => {
   const { email, password } = req.body;
 
@@ -20,7 +21,6 @@ router.post("/register", async (req, res) => {
   const salt = await bcrypt.genSalt(10);
   const hashedPassword = await bcrypt.hash(password, salt);
   if (emailExist && !emailExist.password) {
-    console.log("email ", emailExist);
     await user.findOneAndUpdate({ email }, { password: hashedPassword });
     return res.json({ status: "ok", data: email });
   } else if (emailExist && emailExist.password) {
@@ -130,9 +130,7 @@ router.get(
 router.get("/twitter/logout", async (req, res) => {
   const id = req.query["id"];
 
-  console.log(id);
   const target = await twitter.findOne({ twitterId: id }).lean();
-  console.log("target is ", target);
   const deleteTwitter = await twitter.findOneAndDelete({ twitterId: id });
 
   const userTarget = await user.findOneAndUpdate(
@@ -147,4 +145,4 @@ router.get("/twitter/logout", async (req, res) => {
   res.json({ status: "ok" });
 });
 
-module.exports = router;
+export default router;

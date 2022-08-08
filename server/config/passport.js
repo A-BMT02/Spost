@@ -1,9 +1,11 @@
-const GoogleStrategy = require("passport-google-oauth20").Strategy;
-const mongoose = require("mongoose");
-const user = require("../models/googleUser");
-const normalUser = require("../models/user");
+import googleStrategy from "passport-google-oauth20";
+import mongoose from "mongoose";
+import user from "../models/googleUser.js";
+import normalUser from "../models/user.js";
 
-module.exports = function (passport) {
+const GoogleStrategy = googleStrategy.Strategy;
+
+export default function (passport) {
   passport.use(
     new GoogleStrategy(
       {
@@ -45,7 +47,6 @@ module.exports = function (passport) {
             done(null, user);
           }
         } catch (err) {
-          console.log(err);
         }
       }
     )
@@ -57,4 +58,4 @@ module.exports = function (passport) {
   passport.deserializeUser((id, done) => {
     user.findById(id, (err, user) => done(err, user));
   });
-};
+}

@@ -2,10 +2,11 @@
   "name": "server",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "exports": "./index.js" ,
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "type": "module" ,
   "keywords": [],
   "author": "",
   "license": "ISC",
@@ -23,6 +24,7 @@
     "dotenv": "^16.0.1",
     "express": "^4.18.1",
     "express-session": "^1.17.3",
+    "file-type": "^17.1.6",
     "joi": "^17.6.0",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^6.4.5",
@@ -33,6 +35,7 @@
     "passport-twitter": "^1.0.4",
     "twit": "^2.2.11",
     "twit-thread": "^2.1.0",
-    "twitter": "^1.7.1"
+    "twitter": "^1.7.1",
+    "twitter-api-v2": "^1.12.3"
   }
 }

@@ -47,7 +47,6 @@ export default function Dashboard() {
     const con = user.user.connect?.find((target) => {
       return target.social === "twitter";
     });
-    console.log("con is ", con);
     axios
       .get("http://localhost:5000/api/user/get/twitter", {
         params: {
@@ -55,10 +54,8 @@ export default function Dashboard() {
         },
       })
       .then((res) => {
-        console.log("res is ", res);
         if (res.data.status === "ok") {
           if (res.data.data !== null) {
-            console.log("data is ", res.data.data);
             setSocials((prev) => [
               ...prev,
               {
@@ -74,9 +71,7 @@ export default function Dashboard() {
       });
   }, []);
 
-  useEffect(() => {
-    console.log(socials);
-  }, [socials]);
+
 
   const connectTwitter = () => {
     window.open("http://localhost:5000/api/user/twitter", "_self");
@@ -92,7 +87,6 @@ export default function Dashboard() {
   };
 
   const logoutTwitter = async (e) => {
-    console.log(user.connect);
     const con = user.connect.find((target) => {
       return target.social === "twitter";
     });

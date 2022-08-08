@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 
 const twitterConnect = new mongoose.Schema({
   twitterId: {
@@ -29,4 +29,4 @@ const twitterConnect = new mongoose.Schema({
 
 const twitterInfo = mongoose.model("twitterInfo", twitterConnect);
 
-module.exports = twitterInfo;
+export default twitterInfo;

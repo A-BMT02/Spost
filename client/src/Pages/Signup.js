@@ -24,7 +24,6 @@ export default function Signup() {
     if (password === secondPassword) {
       setLoading(true);
       const res = await signup(email, password);
-      console.log(res);
       if (res.access == false) {
         setError(res.error);
         setLoading(false);

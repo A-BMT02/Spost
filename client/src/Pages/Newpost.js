@@ -43,8 +43,11 @@ export default function Newpost() {
   const [showError, setShowError] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [load , setLoad] = useState(false) ;
+  const [success , setSuccess] = useState(false) ;  
 
   const errorRef = useRef(null);
+  const successRef = useRef(null) ; 
 
   const contentIcon = (target) => {
     switch (target) {
@@ -60,7 +63,6 @@ export default function Newpost() {
   const whichContent = (target) => {
     switch (target) {
       case "twitter":
-        console.log("blah ", value.state.value);
         const text =
           value.state.value.length === 0
             ? ""
@@ -121,7 +123,7 @@ export default function Newpost() {
     if (value.state.value[value.twitterCounter]?.media?.length === 4) {
       max = true;
     }
-    console.log("max is ", max);
+    
     return max;
   };
 
@@ -129,6 +131,7 @@ export default function Newpost() {
     value.setTwitterCounter((prev) => {
       const multiple = prev !== value.state.value.length - 1 ? prev + 1 : 0;
       translate(multiple);
+      // const next = prev
       return multiple;
     });
   };
@@ -141,7 +144,6 @@ export default function Newpost() {
     });
   };
   useEffect(() => {
-    console.log("counter is ", value.twitterCounter);
   }, [value.twitterCounter]);
 
   const translate = (multiple) => {
@@ -150,16 +152,13 @@ export default function Newpost() {
     }%)`;
   };
 
-  const selectImage = (uploadedFile) => {
-    console.log("bro ", value.target);
+  const selectImage = (uploadedFile , index) => {
     setLoading(true);
-
     let type;
     let reader = new FileReader();
     reader.readAsDataURL(uploadedFile);
     reader.onload = function (e) {
       const extension = uploadedFile.name.split(".").pop().toLowerCase();
-      console.log("extension is ", extension);
       if (extension !== "jpg") {
         if (extension === "gif") {
           type = "gif";
@@ -202,16 +201,12 @@ export default function Newpost() {
           },
         });
         setLoading(false);
+        return ; 
       }
     };
   };
 
-  useEffect(() => {
-    console.log("loading is ", loading);
-  }, [loading]);
-  useEffect(() => {
-    console.log("twitter state is ", value.state);
-  }, [value.state]);
+
 
   useEffect(() => {
     if (error !== "") {
@@ -219,25 +214,19 @@ export default function Newpost() {
     }
   }, [error]);
 
-  useEffect(() => {
-    console.log("twitter max is now ", value.twitterMax);
-  }, [value.twitterMax]);
+
 
   const updateContents = (type, reader) => {
-    console.log("target is ", value.target);
 
     switch (value.target) {
       case "twitter":
-        return dispatch({
+        dispatch({
           type: "addPicture",
           fileType: type,
           file: reader.result,
           index: value.twitterCounter,
         });
-        // value.setTwitterPicture((prev) => [
-        //   ...prev,
-        //   { type, value: reader.result },
-        // ]);
+        
         return;
       case "facebook":
         return value.setFacebookPicture(state?.image);
@@ -258,27 +247,9 @@ export default function Newpost() {
     }
   };
 
-  useEffect(() => {
-    console.log("new target is ", value.target);
-  }, [value.target]);
 
   const publish = async () => {
-    // const allData = value.state.value.map((obj) => {
-    //   console.log("obj is ", obj);
-    //   const media = obj.media.map((mediaObj) => {
-    //     console.log("type is ", mediaObj.type);
-    //     if (mediaObj.type === "image") {
-    //       console.log("here");
-    //       let a = blobToBase64(mediaObj.file);
-    //       console.log("a is ", a);
-    //       return { ...mediaObj, file: a };
-    //     } else {
-    //       return { ...mediaObj };
-    //     }
-    //   });
-    //   return { ...obj, media };
-    // });
-
+    setLoad(true) ; 
     const allData = await Promise.all(
       value.state.value.map(async (obj) => {
         const media = await Promise.all(
@@ -306,12 +277,17 @@ export default function Newpost() {
         id: user.user._id,
       })
       .then((res) => {
-        console.log(res);
+        setLoad(false) ;
+        if(res.data.status === 'ok') {
+          setSuccess(true) ; 
+        } else {
+          setError(res.data.error) ; 
+          setShowError(true);
+        }
       });
   };
 
   const removeImage = (e, pic) => {
-    console.log("pic is ", pic);
     switch (value.previewTarget) {
       case "twitter":
         dispatch({
@@ -344,11 +320,7 @@ export default function Newpost() {
   }
 
   const slider = (e) => {
-    // e.stopPropagation();
-    // const target =
-    //   e.target.parentElement.parentElement.previousSibling.parentElement;
-    // console.log("target is ", target);
-    // target.classList.add("translate-x-1/4");
+    
     sliderRef.current.classList.add("-translate-x-full");
   };
 
@@ -375,6 +347,25 @@ export default function Newpost() {
               errorRef.current.classList.add("hidden");
               setShowError(false);
               setError("");
+            }}
+            className="font-inter font-black self-center"
+          >
+            X
+          </p>
+        </div>
+        <div
+        ref={successRef}
+          className={
+            success 
+              ? "flex space-x-6 justify-center mx-auto border border-ogreen px-4 py-3 text-xl rounded-lg bg-ogreen text-owhite max-w-[300px]"
+              : "hidden"
+          }
+        >
+          <p className="font-inter font-bold">Successfully posted</p>
+          <p
+            onClick={(e) => {
+              successRef.current.classList.add("hidden");
+              setSuccess(false) ; 
             }}
             className="font-inter font-black self-center"
           >
@@ -811,12 +802,16 @@ export default function Newpost() {
                   </div>
                 </div>
                 <div className="mt-10 w-full flex justify-center">
-                  <button
+                  {load ? <CircularProgress/> 
+                  :
+                   <button
                     className="bg-dblue text-sm py-4 px-9 md:text-lg  text-owhite rounded-lg font-bold hover:bg-lblue hover:text-dblue hover:border-2"
                     onClick={(e) => publish()}
                   >
                     Publish
                   </button>
+                   }
+                 
                 </div>
               </div>
             </div>

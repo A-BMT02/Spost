@@ -24,7 +24,7 @@ export const DataContextProvider = (props) => {
   const [facebookPicture, setFacebookPicture] = useState([]);
   const [linkedinPicture, setLinkedinPicture] = useState([]);
   const [target, setTarget] = useState("twitter");
-  const [previewTarget, setPreviewTarget] = useState("");
+  const [previewTarget, setPreviewTarget] = useState("twitter");
   const [image, setImage] = useState("");
   const [preview, setPreview] = useState(false);
   const [socials, setSocials] = useState([]);

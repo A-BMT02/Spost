@@ -1,8 +1,10 @@
-const Strategy = require("passport-twitter").Strategy;
-const twitter = require("../models/twitterConnect");
-const user = require("../models/googleUser");
+import strategy from "passport-twitter";
+import twitter from "../models/twitterConnect.js";
+import user from "../models/googleUser.js";
 
-module.exports = function (passport) {
+const Strategy = strategy.Strategy;
+
+export default function (passport) {
   passport.use(
     new Strategy(
       {
@@ -29,12 +31,12 @@ module.exports = function (passport) {
             {
               $push: {
                 connect: {
-                  'social': 'twitter',
-                  'id': profile.id,
+                  social: "twitter",
+                  id: profile.id,
                 },
               },
             }
-          ); 
+          );
 
           let twitterFound = await twitter.findOne({ twitterId: profile.id });
           if (twitterFound) {
@@ -44,7 +46,6 @@ module.exports = function (passport) {
             cb(null, profile);
           }
         } catch (err) {
-          console.log(err);
         }
       }
     )
@@ -57,4 +58,4 @@ module.exports = function (passport) {
   passport.deserializeUser(function (obj, cb) {
     cb(null, obj);
   });
-};
+}

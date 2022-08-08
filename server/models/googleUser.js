@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 
 const googleSchema = new mongoose.Schema({
   displayName: {
@@ -26,5 +26,4 @@ const googleSchema = new mongoose.Schema({
 });
 
 const googleUser = mongoose.model("googleUser", googleSchema);
-
-module.exports = googleUser;
+export default googleUser;

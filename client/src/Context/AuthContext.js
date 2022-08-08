@@ -63,7 +63,6 @@ export const UserProvider = (props) => {
         },
       })
       .then((res) => {
-        console.log("res is ", res.data.data);
         if (typeof res.data.data == "undefined") {
           setUser({});
         } else if (res.data.data) {
@@ -76,9 +75,6 @@ export const UserProvider = (props) => {
       });
   }, []);
 
-  useEffect(() => {
-    console.log("user is ", user);
-  }, [user]);
 
   return (
     <UserContext.Provider value={value}>

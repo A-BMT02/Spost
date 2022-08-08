@@ -23,7 +23,6 @@ export default function Signin() {
   const signinNow = async (email, password) => {
     setLoading(true);
     const res = await signin(email, password);
-    console.log(res);
     if (res.access == false) {
       setError(res.error);
       setLoading(false);
@@ -42,7 +41,6 @@ export default function Signin() {
       setShow(false);
       navigate("/dashboard");
     }
-    console.log("user is ", user, " and show is ", show);
   }, []);
 
   useEffect(() => {

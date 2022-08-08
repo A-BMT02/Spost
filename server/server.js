@@ -1,20 +1,22 @@
-const express = require("express");
-const cors = require("cors");
-const bodyParser = require("body-parser");
-const mongoose = require("mongoose");
-const dotenv = require("dotenv");
-const authRoute = require("./Routes/auth");
-const passport = require("passport");
-const session = require("express-session");
-const mongoStore = require("connect-mongo");
-const cookieParser = require("cookie-parser");
-const getsRoute = require("./Routes/gets");
-const postRoute = require("./Routes/posts");
+import express from "express";
+import cors from "cors";
+import parser from "body-parser";
+import mongoose from "mongoose";
+import dotenv from "dotenv";
+import authRoute from "./Routes/auth.js";
+import passport from "passport";
+import session from "express-session";
+import mongoCreate from "connect-mongo";
+import cookieParser from "cookie-parser";
+import getsRoute from "./Routes/gets.js";
+import postRoute from "./Routes/posts.js";
+import passportConfig from "./config/passport.js";
+import twitterConfig from "./config/passportTwitter.js";
 
 dotenv.config({ path: ".env" });
 
-require("./config/passport")(passport);
-require("./config/passportTwitter")(passport);
+passportConfig(passport);
+twitterConfig(passport);
 const PORT = process.env.PORT || 5000;
 
 const app = express();
@@ -27,14 +29,14 @@ app.use(
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
-    store: mongoStore.create({ mongoUrl: process.env.DB_CONNECT }),
+    store: mongoCreate.create({ mongoUrl: process.env.DB_CONNECT }),
   })
 );
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.use(bodyParser.urlencoded({ limit: "50mb", extended: false }));
-app.use(bodyParser.json({ limit: "50mb" }));
+app.use(parser.urlencoded({ limit: "50mb", extended: false }));
+app.use(parser.json({ limit: "50mb" }));
 
 app.use("/api/user", authRoute);
 app.use("/api/user/get", getsRoute);
