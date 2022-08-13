@@ -13,7 +13,7 @@ import postRoute from "./Routes/posts.js";
 import passportConfig from "./config/passport.js";
 // import twitterConfig from "./config/passportTwitter.js";
 
-dotenv.config({ path: ".env" });
+dotenv.config();
 
 // twitterConfig(passport);
 passportConfig(passport);
