@@ -2,7 +2,7 @@
   "homepage": "https://spost.netlify.app/",
   "name": "client",
   "version": "0.1.0",
-  "private": true,
+  "private": false,
   "dependencies": {
     "@emotion/react": "^11.9.3",
     "@emotion/styled": "^11.9.3",
