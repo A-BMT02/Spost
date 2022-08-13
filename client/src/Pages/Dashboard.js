@@ -22,6 +22,8 @@ export default function Dashboard() {
   const [connect, setConnect] = useState(false);
   const [loading, setLoading] = useState(true);
   const [deleteTwitter, setDeleteTwitter] = useState(false);
+  const [connecting , setConnecting] = useState(false) ; 
+  const [deleting , setDeleting] = useState(false) ; 
 
   const toggleSidebar = () => {
     ref.current.classList.toggle("open");
@@ -52,7 +54,6 @@ export default function Dashboard() {
 
     axios
       .get("http://localhost:5000/api/user/get/twitter", {
-        withCredentials: true,
         params: {
           id: con?.id,
         },
@@ -77,13 +78,15 @@ export default function Dashboard() {
 
 
   const connectTwitter = async () => {
+    setConnecting(true) ; 
     const result = await axios.get('http://localhost:5000/api/user/twitter' ,  {
       headers : {
         id : user._id
       }
     })
     console.log('result is ' , result) ; 
-    window.location.href = result.data.URL ; 
+    window.location.href = result.data.URL ;
+    setConnecting(false) ;  
 
     // window.open("http://localhost:5000/api/user/twitter", "_self");
   };
@@ -98,6 +101,7 @@ export default function Dashboard() {
   };
 
   const logoutTwitter = async (e) => {
+    setDeleting(true) ; 
     const con = user.connect.find((target) => {
       return target.social === "twitter";
     });
@@ -113,6 +117,8 @@ export default function Dashboard() {
         if (res.data.status === "ok") {
           // console.log('here') ;
           window.location.reload(false);
+          setDeleting(true) ; 
+
         }
       });
   };
@@ -201,6 +207,7 @@ export default function Dashboard() {
                 Your social media profiles
               </h2>
             </div>
+            {console.log('socials is ' , socials)}
             {socials.map((social) => (
               <div className="flex flex-col space-y-4">
                 <div className="flex space-x-6 items-center">
@@ -231,12 +238,13 @@ export default function Dashboard() {
                     >
                       Cancel
                     </button>
-                    <button
+                    {!deleting ? <button
                       onClick={(e) => logoutTwitter()}
                       className="rounded-lg p-2 bg-ored text-owhite border"
                     >
                       Delete
-                    </button>
+                    </button> : <CircularProgress/> }
+                    
                   </div>
                 </div>
               </div>
@@ -260,18 +268,20 @@ export default function Dashboard() {
             <h2 className="text-[25px] md:text-3xl font-black font-bold mt-10 md:mt-32 text-center">
               Connect your social media profiles
             </h2>
-            <div className="flex justify-between max-w-{500px} w-full md:space-x-10  w-full md:w-auto">
+            <div className="flex justify-between max-w-{500px} w-full md:space-x-10  w-full md:w-auto items-center">
               <img
                 className="w-12 h-12 md:w-20 md:h-20 cursor-pointer "
                 src={instagram}
               />
-              <img
+              {socials[0]?.type !== 'twitter' && connecting ? <CircularProgress/> : <img
                 onClick={(e) => {
                   connectTwitter();
                 }}
                 className="w-12 h-12 md:w-20 md:h-20 cursor-pointer "
                 src={twitter}
               />
+              }
+              
               <img
                 className="w-12 h-12 md:w-20 md:h-20 cursor-pointer "
                 src={facebook}

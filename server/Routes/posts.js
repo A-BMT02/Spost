@@ -88,7 +88,7 @@ const getMediaId = async (client, mediaArray) => {
     );
   });
   } else {
-    if (mediaArray[0].type === "gif") {
+    if (mediaArray[0]?.type === "gif") {
       type = "image/gif";
       imagesBuffer = mediaArray.map((image) => {
     return Buffer.from(
@@ -96,7 +96,7 @@ const getMediaId = async (client, mediaArray) => {
       "base64"
     );
   });
-    } else if (mediaArray[0].type === "video") {
+    } else if (mediaArray[0]?.type === "video") {
       type = "video/mp4";
        imagesBuffer = mediaArray.map((image) => {
     return Buffer.from(
@@ -134,13 +134,13 @@ const oneTweetNoMedia = async (client, text, res) => {
 const mediaNoTweet = async (client, media, res) => {
   let image = "";
   let type = "";
-  if (media.type === "image") {
+  if (media?.type === "image") {
     image = media.file.replace(/^data:image\/\w+;base64,/, "");
     type = "image/jpeg";
-  } else if (media.type === "gif") {
+  } else if (media?.type === "gif") {
     image = media.file.replace(/^data:image\/\w+;base64,/, "");
     type = "image/gif";
-  } else if (media.type === "video") {
+  } else if (media?.type === "video") {
     image = media.file.replace(/^data:video\/\w+;base64,/, "");
     type = "video/mp4";
   }
@@ -193,13 +193,13 @@ const multipleImagesNoText = async (client, media, res) => {
 const oneTweetAndOneMedia = async (client, data, res) => {
   let image = "";
   let type = "";
-  if (data.media[0].type === "image") {
+  if (data.media[0]?.type === "image") {
     image = data.media[0].file.replace(/^data:image\/\w+;base64,/, "");
     type = "image/jpeg";
-  } else if (data.media[0].type === "gif") {
+  } else if (data.media[0]?.type === "gif") {
     image = data.media[0].file.replace(/^data:image\/\w+;base64,/, "");
     type = "image/gif";
-  } else if (data.media[0].type === "video") {
+  } else if (data.media[0]?.type === "video") {
     image = data.media[0].file.replace(/^data:video\/\w+;base64,/, "");
     type = "video/mp4";
   }

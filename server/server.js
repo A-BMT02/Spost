@@ -40,6 +40,10 @@ app.use("/api/user", authRoute);
 app.use("/api/user/get", getsRoute);
 app.use("/api/user/post", postRoute);
 
+app.get('/testing' , (req , res) => {
+  res.send('hello from the server') ; 
+})
+
 mongoose.connect(process.env.DB_CONNECT, () => {
   console.log("Connected to database");
 });

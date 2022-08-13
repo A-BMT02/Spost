@@ -208,8 +208,7 @@ export default function Newpost() {
 
 
 
-  useEffect(() => {
-    if (error !== "") {
+  useEffect(() => {    if (error !== "") {
       setShowError(true);
     }
   }, [error]);
@@ -274,7 +273,7 @@ export default function Newpost() {
     axios
       .post("http://localhost:5000/api/user/post/twitter", {
         data: allData,
-        id: user.user._id,
+        id: user._id,
       })
       .then((res) => {
         setLoad(false) ;

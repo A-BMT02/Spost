@@ -70,9 +70,7 @@ router.get("/login/failed", (req, res) => {
 });
 
 router.get("/login/success", async (req, res) => {
-  console.log('session is ' , req.session) ; 
   if (req.user && typeof req.user.googleId === "string") {
-    console.log('we are here') ; 
     return res.json({ status: "ok", data: req.user });
   } else if (req.get("token")) {
     const token = req.get("token");
@@ -139,7 +137,6 @@ router.get("/logout", async (req, res) => {
 // );
 
 router.get('/twitter' , async (req ,res) => {
-  console.log('get is ' , req.get("id")) ; 
 const Client = new TwitterApi({ 
   appKey : process.env.TWITTER_CONSUMER_KEY , 
   appSecret : process.env.TWITTER_CONSUMER_SECRET
