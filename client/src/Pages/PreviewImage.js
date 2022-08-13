@@ -133,11 +133,11 @@ export default function PreviewImage() {
   };
 
 
-  useEffect(() => {
-    setCrop(undefined);
-    const reader = new FileReader();
-    reader.addEventListener("load", () => setImage(back));
-  }, []);
+  // useEffect(() => {
+  //   setCrop(undefined);
+  //   const reader = new FileReader();
+  //   reader.addEventListener("load", () => setImage(back));
+  // }, []);
 
   useEffect(() => {
     if (imageError !== "") {

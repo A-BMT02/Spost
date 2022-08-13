@@ -461,7 +461,7 @@ export default function Newpost() {
                       const index = value.select.indexOf("linkedin");
                       value.setSelect([
                         ...value.select.slice(0, index),
-                        ...value.select.slice(index + 1, select.length),
+                        ...value.select.slice(index + 1, value.select.length),
                       ]);
                     }}
                     className="font-black text-ored "
@@ -532,7 +532,7 @@ export default function Newpost() {
                         translate(multiple);
                         return multiple;
                       });
-                      value.setTwitterMax(prev, () => {
+                      value.setTwitterMax(prev => {
                         const newMax = prev.map((item, index) => {
                           if (index === value.twitterCounter) {
                             return;
