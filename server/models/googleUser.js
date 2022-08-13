@@ -23,6 +23,14 @@ const googleSchema = new mongoose.Schema({
       id: String,
     },
   ],
+  tokens :{
+    tempToken : {
+    type : String
+    } , 
+    tempTokenSecret : {
+    type : String
+    }
+  }
 });
 
 const googleUser = mongoose.model("googleUser", googleSchema);

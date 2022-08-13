@@ -11,19 +11,18 @@ import cookieParser from "cookie-parser";
 import getsRoute from "./Routes/gets.js";
 import postRoute from "./Routes/posts.js";
 import passportConfig from "./config/passport.js";
-import twitterConfig from "./config/passportTwitter.js";
+// import twitterConfig from "./config/passportTwitter.js";
 
 dotenv.config({ path: ".env" });
 
+// twitterConfig(passport);
 passportConfig(passport);
-twitterConfig(passport);
 const PORT = process.env.PORT || 5000;
-
 const app = express();
 app.use(cors({ credentials: true, origin: "http://localhost:3000" }));
 
 app.use(cookieParser());
-
+app.use(parser.urlencoded({ limit: "50mb", extended: false }));
 app.use(
   session({
     secret: process.env.SESSION_SECRET,
@@ -35,7 +34,6 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.use(parser.urlencoded({ limit: "50mb", extended: false }));
 app.use(parser.json({ limit: "50mb" }));
 
 app.use("/api/user", authRoute);

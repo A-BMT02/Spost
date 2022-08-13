@@ -42,13 +42,17 @@ export default function Dashboard() {
   };
 
   useEffect(() => {
+
     setSocials([]);
     setLoading(true);
-    const con = user.user.connect?.find((target) => {
+    const con = user?.connect?.find((target) => {
       return target.social === "twitter";
     });
+            console.log('here' , user._id) ;
+
     axios
       .get("http://localhost:5000/api/user/get/twitter", {
+        withCredentials: true,
         params: {
           id: con?.id,
         },
@@ -72,9 +76,16 @@ export default function Dashboard() {
   }, []);
 
 
+  const connectTwitter = async () => {
+    const result = await axios.get('http://localhost:5000/api/user/twitter' ,  {
+      headers : {
+        id : user._id
+      }
+    })
+    console.log('result is ' , result) ; 
+    window.location.href = result.data.URL ; 
 
-  const connectTwitter = () => {
-    window.open("http://localhost:5000/api/user/twitter", "_self");
+    // window.open("http://localhost:5000/api/user/twitter", "_self");
   };
 
   const socialImage = (type) => {
@@ -92,12 +103,15 @@ export default function Dashboard() {
     });
     axios
       .get("http://localhost:5000/api/user/twitter/logout", {
+        withCredentials: true,
         params: {
           id: con.id,
+          user
         },
       })
       .then((res) => {
         if (res.data.status === "ok") {
+          // console.log('here') ;
           window.location.reload(false);
         }
       });
@@ -121,7 +135,7 @@ export default function Dashboard() {
                   onClick={(e) => {
                     logoutNow();
                   }}
-                  className="bg-lblue border border-white text-sm md:text-lg p-2 md:p-3 text-dblue rounded-lg font-bold font-inter hover:bg-dblue hover:text-owhite"
+                  className="bg-lblue border border-dblue text-sm md:text-lg p-2 md:p-3 text-dblue rounded-lg font-bold font-inter hover:bg-dblue hover:text-owhite"
                 >
                   Log out
                 </button>
@@ -268,7 +282,7 @@ export default function Dashboard() {
               />
             </div>
 
-            <div className="cursor-pointer self-center border w-full max-w-[300px] border-dashed border-dblue p-2 rounded-lg flex space-x-3 items-center justify-center">
+            <div className="cursor-pointer self-center border w-full max-w-[300px] hover:bg-dblue hover:text-owhite border-dblue p-2 rounded-lg flex space-x-3 items-center justify-center">
               <p className="font-black" onClick={(e) => setConnect(false)}>
                 View Connected Accounts
               </p>

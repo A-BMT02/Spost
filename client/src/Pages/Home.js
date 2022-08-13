@@ -20,7 +20,7 @@ export default function Home() {
             </div>
             <div>
               <button
-                className="bg-lblue border border-white text-sm md:text-lg p-2 md:p-3 text-dblue rounded-lg font-bold font-inter hover:bg-dblue hover:text-owhite"
+                className="bg-lblue border border-dblue text-sm md:text-lg p-2 md:p-3 text-dblue rounded-lg font-bold font-inter hover:bg-dblue hover:text-owhite"
                 onClick={(e) => navigate("/signin")}
               >
                 Login
@@ -48,7 +48,7 @@ export default function Home() {
             <div>
               <button
                 onClick={(e) => navigate("/signup")}
-                className="bg-dblue text-sm md:text-lg p-2 md:p-4 text-owhite rounded-lg font-bold hover:bg-lblue hover:text-dblue hover:border-2"
+                className="bg-dblue text-sm md:text-lg p-2 md:p-4 text-owhite rounded-lg font-bold hover:bg-lblue hover:text-dblue hover:border-2 hover:border-dblue"
               >
                 Get Started
               </button>

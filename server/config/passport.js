@@ -1,7 +1,8 @@
 import googleStrategy from "passport-google-oauth20";
 import mongoose from "mongoose";
-import user from "../models/googleUser.js";
+import User from "../models/googleUser.js";
 import normalUser from "../models/user.js";
+import { Serialize , Deserialize } from "../utils/serialize.js";
 
 const GoogleStrategy = googleStrategy.Strategy;
 
@@ -22,12 +23,12 @@ export default function (passport) {
         };
 
         try {
-          const duplicate = await user.findOne({
+          const duplicate = await User.findOne({
             email: profile.emails[0].value,
           });
 
           if (duplicate && !duplicate.googleId) {
-            await user.findOneAndUpdate(
+            await User.findOneAndUpdate(
               { email: profile.emails[0].value },
               {
                 googleId: profile.id,
@@ -36,26 +37,22 @@ export default function (passport) {
               }
             );
           }
-          const userFound = await user
+          const userFound = await User
             .findOne({ email: profile.emails[0].value })
             .lean();
 
           if (userFound) {
             done(null, userFound);
           } else {
-            user.create(newUser);
-            done(null, user);
+            const createdUser = (await User.create(newUser)).toJSON()
+            done(null, createdUser);
           }
         } catch (err) {
         }
       }
     )
   );
-  passport.serializeUser((user, done) => {
-    done(null, user.id);
-  });
+  Serialize
 
-  passport.deserializeUser((id, done) => {
-    user.findById(id, (err, user) => done(err, user));
-  });
+  Deserialize
 }
