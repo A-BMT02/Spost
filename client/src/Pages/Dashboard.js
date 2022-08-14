@@ -95,7 +95,6 @@ export default function Dashboard() {
     window.location.href = result.data.URL ;
     setConnecting(false) ;  
 
-    // window.open("http://localhost:5000/api/user/twitter", "_self");
   };
 
   const socialImage = (type) => {

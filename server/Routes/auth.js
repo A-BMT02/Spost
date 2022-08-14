@@ -74,9 +74,9 @@ router.get("/login/success", async (req, res) => {
   if (req.user && typeof req.user.googleId === "string") {
     return res.json({ status: "ok", data: req.user });
   } 
-   const token = req.get("token");
   //  if(token !== "null") {
     try {
+   const token = req.get("token");
       const decoded = jwt.verify(token, process.env.TOKEN_SECRET);
       const userFound = await user.findById(decoded.id).select("-password");
       if (userFound) {
