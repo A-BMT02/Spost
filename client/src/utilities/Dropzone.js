@@ -12,6 +12,10 @@ export default function Dropzone({ selectImage }) {
 
   const { getRootProps, getInputProps, acceptedFiles } = useDropzone({
     onDrop,
+    accept : {
+      'image/*': ['.jpeg', '.jpg', '.png'],
+      'video/mp4': ['.mp4', '.MP4'],
+    }
   });
 
   useEffect(() => {
