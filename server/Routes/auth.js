@@ -101,8 +101,7 @@ router.get(
 router.get(
   "/google/callback",
   passport.authenticate("google", {
-    failureRedirect: "https://spost-two.vercel.app/login",
-
+    failureRedirect: "https://spost-two.vercel.app/signin",
   }),
   (req, res) => {
     res.redirect("https://spost-two.vercel.app/dashboard");

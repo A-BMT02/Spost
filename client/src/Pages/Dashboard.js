@@ -24,6 +24,7 @@ export default function Dashboard() {
   const [deleteTwitter, setDeleteTwitter] = useState(false);
   const [connecting , setConnecting] = useState(false) ; 
   const [deleting , setDeleting] = useState(false) ; 
+  const [loggingOut , setLoggingOut] = useState(false) ; 
 
   const toggleSidebar = () => {
     ref.current.classList.toggle("open");
@@ -36,11 +37,13 @@ export default function Dashboard() {
   const navigate = useNavigate();
 
   const logoutNow = async () => {
+    setLoggingOut(true) ; 
     const res = await logout();
     if (res.status == "ok") {
       setUser({});
       navigate("/");
     }
+    setLoggingOut(false) ;
   };
 
   useEffect(() => {
@@ -117,7 +120,7 @@ export default function Dashboard() {
         if (res.data.status === "ok") {
           // console.log('here') ;
           window.location.reload(false);
-          setDeleting(true) ; 
+          setDeleting(false) ; 
 
         }
       });
@@ -136,15 +139,16 @@ export default function Dashboard() {
             </h2>
 
             <div className="flex space-x-4">
-              <div className="p-2 font-inter font-bold">
-                <button
+              <div className="p-2 font-inter font-bold flex items-center">
+                {!loggingOut ? <button
                   onClick={(e) => {
                     logoutNow();
                   }}
                   className="bg-lblue border border-dblue text-sm md:text-lg p-2 md:p-3 text-dblue rounded-lg font-bold font-inter hover:bg-dblue hover:text-owhite"
                 >
                   Log out
-                </button>
+                </button>  : <CircularProgress/> }
+                
               </div>
               <div className="flex flex-col space-y-2 justify-center items-center">
                 <img className="w-[50px]" src={account} />
