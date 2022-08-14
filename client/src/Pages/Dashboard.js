@@ -47,9 +47,14 @@ export default function Dashboard() {
   };
 
   useEffect(() => {
+    setLoading(true);
 
     setSocials([]);
+  } , [])
+
+  useEffect(() => {
     setLoading(true);
+    setSocials([]);
     const con = user?.connect?.find((target) => {
       return target.social === "twitter";
     });
@@ -64,8 +69,7 @@ export default function Dashboard() {
       .then((res) => {
         if (res.data.status === "ok") {
           if (res.data.data !== null) {
-            setSocials((prev) => [
-              ...prev,
+            setSocials([
               {
                 type: "twitter",
                 username: res.data.data?.username,

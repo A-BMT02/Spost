@@ -13,6 +13,7 @@ export default function Signin() {
   const [showError, setShowError] = useState(false);
   const [error, setError] = useState("");
   const [show, setShow] = useState(false);
+  const [login , setLogin] = useState(false) ; 
 
   const { signin } = useAuth();
   const { user } = useAuth();
@@ -50,7 +51,9 @@ export default function Signin() {
   }, [error]);
 
   const signinWithGoogle = () => {
+    setLogin(true) ; 
     window.open("https://spost1.herokuapp.com/api/user/google", "_self");
+    setLogin(false) ;
   };
 
   return (
@@ -131,7 +134,7 @@ export default function Signin() {
                   <hr className="w-2/5 m-auto text-ogray"></hr>
                 </div>
                 <div className="cursor-pointer relative bg-lblue w-lg border border-dblue rounded-lg p-2 md:w-80 font-bold hover:bg-dblue hover:text-owhite">
-                  <div className=" flex space-x-6 pointer-events-auto justify-center items-center ">
+                  {login ? <CircularProgress/> : <div className=" flex space-x-6 pointer-events-auto justify-center items-center ">
                     <img src={google} />
                     <p
                       onClick={(e) => signinWithGoogle()}
@@ -139,7 +142,8 @@ export default function Signin() {
                     >
                       Sign in with Google
                     </p>
-                  </div>
+                  </div> }
+                  
                 </div>
                 <p>
                   Need an account?{" "}

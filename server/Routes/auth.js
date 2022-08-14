@@ -105,7 +105,6 @@ router.get(
   }),
   (req, res) => {
     res.redirect("https://spost-two.vercel.app/dashboard");
-
   }
 );
 

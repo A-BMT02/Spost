@@ -13,6 +13,8 @@ export default function Signup() {
   const [loading, setLoading] = useState(false);
   const [showError, setShowError] = useState(false);
   const [show, setShow] = useState(false);
+  const [login , setLogin] = useState(false) ; 
+
 
   const navigate = useNavigate();
   const errorRef = useRef(null);
@@ -53,6 +55,12 @@ export default function Signup() {
       setShow(true);
     }
   }, []);
+
+   const signinWithGoogle = () => {
+    setLogin(true) ; 
+    window.open("https://spost1.herokuapp.com/api/user/google", "_self");
+    setLogin(false) ;
+  };
 
   return (
     <div>
@@ -141,11 +149,17 @@ export default function Signup() {
                   <p>or</p>
                   <hr className="w-2/5 m-auto text-ogray"></hr>
                 </div>
-                <div className="cursor-pointer relative bg-lblue w-lg border border-dblue rounded-lg p-2 md:w-80 font-bold hover:bg-dblue hover:text-owhite">
-                  <div className=" flex space-x-6 pointer-events-auto justify-center items-center  ">
+                  <div className="cursor-pointer relative bg-lblue w-lg border border-dblue rounded-lg p-2 md:w-80 font-bold hover:bg-dblue hover:text-owhite">
+                  {login ? <CircularProgress/> : <div className=" flex space-x-6 pointer-events-auto justify-center items-center ">
                     <img src={google} />
-                    <p className="text-xl font-inter">Sign in with Google</p>
-                  </div>
+                    <p
+                      onClick={(e) => signinWithGoogle()}
+                      className="text-xl font-inter"
+                    >
+                      Sign in with Google
+                    </p>
+                  </div> }
+                  
                 </div>
                 <p>
                   Already have an account?{" "}
