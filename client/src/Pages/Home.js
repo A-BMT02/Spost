@@ -7,7 +7,7 @@ export default function Home() {
   return (
     <div className="flex justify-center md:block md:mx-auto">
       <div className="flex flex-col my-5  mx-5 md:w-10/12 md:mx-auto max-w-lg md:max-w-6xl">
-        <nav className="my-3.5 mb-8xl flex justify-between ">
+        <nav className="mb-8xl flex justify-between ">
           <h2 className="text-5xl md:text-6xl font-a text-dblue">Spost</h2>
           <div className="flex space-x-6">
             <div>

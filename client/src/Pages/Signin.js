@@ -82,7 +82,7 @@ export default function Signin() {
           <div className="flex flex-col my-5  mx-5 md:w-10/12 mx-auto max-w-lg md:max-w-6xl">
             <nav
               onClick={(e) => navigate("/")}
-              className="my-3.5 flex justify-start  "
+              className="flex justify-start  "
             >
               <h2 className="text-5xl md:text-6xl font-a text-dblue">Spost</h2>
             </nav>

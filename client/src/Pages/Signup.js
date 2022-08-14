@@ -81,7 +81,7 @@ export default function Signup() {
             </div>
           </div>
           <div className="flex flex-col my-5  mx-5 md:w-10/12 mx-auto max-w-lg md:max-w-6xl">
-            <nav className="my-3.5 flex justify-start ">
+            <nav className="flex justify-start ">
               <h2
                 onClick={(e) => navigate("/")}
                 className="text-5xl md:text-6xl font-a text-dblue"

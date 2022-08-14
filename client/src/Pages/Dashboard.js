@@ -127,7 +127,7 @@ export default function Dashboard() {
     <div className="block mx-5 md:mx-auto max-w-[800px] ">
       <div className="flex flex-col my-5  mx-5 md:w-10/12 mx-auto max-w-lg md:max-w-6xl">
         <nav className="relative">
-          <div className="flex justify-between border-b border-dblue  mt-3.5 pb-3.5">
+          <div className="flex justify-between border-b border-dblue pb-3.5">
             <h2
               onClick={(e) => navigate("/")}
               className="text-5xl md:text-6xl font-a text-dblue"
