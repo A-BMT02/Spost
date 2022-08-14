@@ -70,23 +70,29 @@ router.get("/login/failed", (req, res) => {
 });
 
 router.get("/login/success", async (req, res) => {
+  console.log('user is ' , req.user) ; 
   if (req.user && typeof req.user.googleId === "string") {
     return res.json({ status: "ok", data: req.user });
   } 
    const token = req.get("token");
-   if(token !== "null") {
-    const decoded = jwt.verify(token, process.env.TOKEN_SECRET);
-    const userFound = await user.findById(decoded.id).select("-password");
-    if (userFound) {
-      return res.json({ status: "ok", data: userFound });
+  //  if(token !== "null") {
+    try {
+      const decoded = jwt.verify(token, process.env.TOKEN_SECRET);
+      const userFound = await user.findById(decoded.id).select("-password");
+      if (userFound) {
+        return res.json({ status: "ok", data: userFound });
     }
-    else {
-    return res.json({ status: "error", error: "user not found" });
-  }
-  }
-  if (token === null || token === "" || token === "null") {
-      return res.json({ status: "error", error: "user not found" });
+      else {
+        return res.json({ status: "error", error: "user not found" });
+        }
+    } catch(err) {
+        return res.json({ status: "error", error: "user not found" });
     }
+    
+  // }
+  // if (token === null || token === "" || token === "null") {
+  //     return res.json({ status: "error", error: "user not found" });
+  //   }
  ; 
   
     
@@ -126,26 +132,12 @@ router.get("/logout", async (req, res) => {
 
 });
 
-// router.get("/twitter", passport.authenticate("twitter"));
-// // failure http://localhost:3000/login
-// // res redirect http://localhost:3000/dashboard
-// router.get(
-//   "/twitter/callback",
-//   passport.authenticate("twitter", {
-//     assignProperty: "federatedUser",
-//     failureRedirect: "http://localhost:3000/login",
-//   }),
-//   function (req, res, next) {
-//     res.redirect("http://localhost:3000/dashboard");
-//   }
-// );
-
 router.get('/twitter' , async (req ,res) => {
 const Client = new TwitterApi({ 
   appKey : process.env.TWITTER_CONSUMER_KEY , 
   appSecret : process.env.TWITTER_CONSUMER_SECRET
 })
-// ''
+
 const authLink = await Client.generateAuthLink('https://spost1.herokuapp.com/api/user/twitter/callback') ; 
 
 const URL = authLink.url ; 
