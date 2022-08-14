@@ -72,11 +72,9 @@ router.get("/login/failed", (req, res) => {
 router.get("/login/success", async (req, res) => {
   if (req.user && typeof req.user.googleId === "string") {
     return res.json({ status: "ok", data: req.user });
-  } else if (req.get("token")) {
-    const token = req.get("token");
-    if (token === null || token === "" || token === "null") {
-      return res.json({ status: "error", error: "user not found" });
-    }
+  } 
+   const token = req.get("token");
+   if(token !== "null") {
     const decoded = jwt.verify(token, process.env.TOKEN_SECRET);
     const userFound = await user.findById(decoded.id).select("-password");
     if (userFound) {
@@ -85,7 +83,13 @@ router.get("/login/success", async (req, res) => {
     else {
     return res.json({ status: "error", error: "user not found" });
   }
-  } 
+  }
+  if (token === null || token === "" || token === "null") {
+      return res.json({ status: "error", error: "user not found" });
+    }
+ ; 
+  
+    
 });
 
 router.get(
