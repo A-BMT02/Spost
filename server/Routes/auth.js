@@ -101,8 +101,8 @@ router.get(
 router.get(
   "/google/callback",
   passport.authenticate("google", {
-    // failureRedirect: "http://localhost:3000/login",
-    failureRedirect: "www.google.com",
+    failureRedirect: "https://spost-two.vercel.app//login",
+    // failureRedirect: "www.google.com",
 
   }),
   (req, res) => {
@@ -204,8 +204,8 @@ let client = new TwitterApi({
   })
 
 
-  // return res.redirect('http://localhost:3000/dashboard')
-  return res.redirect('www.google.com')
+  return res.redirect('https://spost-two.vercel.app/dashboard')
+  // return res.redirect('www.google.com')
 
 
 

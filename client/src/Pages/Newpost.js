@@ -271,7 +271,7 @@ export default function Newpost() {
     );
 
     axios
-      .post("http://localhost:5000/api/user/post/twitter", {
+      .post("https://spost1.herokuapp.com/api/user/post/twitter", {
         data: allData,
         id: user._id,
       })

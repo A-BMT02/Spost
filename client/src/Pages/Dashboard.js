@@ -53,7 +53,7 @@ export default function Dashboard() {
             console.log('here' , user._id) ;
 
     axios
-      .get("http://localhost:5000/api/user/get/twitter", {
+      .get("https://spost1.herokuapp.com/api/user/get/twitter", {
         params: {
           id: con?.id,
         },
@@ -79,7 +79,7 @@ export default function Dashboard() {
 
   const connectTwitter = async () => {
     setConnecting(true) ; 
-    const result = await axios.get('http://localhost:5000/api/user/twitter' ,  {
+    const result = await axios.get('https://spost1.herokuapp.com/api/user/twitter' ,  {
       headers : {
         id : user._id
       }
@@ -106,7 +106,7 @@ export default function Dashboard() {
       return target.social === "twitter";
     });
     axios
-      .get("http://localhost:5000/api/user/twitter/logout", {
+      .get("https://spost1.herokuapp.com/api/user/twitter/logout", {
         withCredentials: true,
         params: {
           id: con.id,

@@ -50,7 +50,7 @@ export default function Signin() {
   }, [error]);
 
   const signinWithGoogle = () => {
-    window.open("http://localhost:5000/api/user/google", "_self");
+    window.open("https://spost1.herokuapp.com/api/user/google", "_self");
   };
 
   return (
