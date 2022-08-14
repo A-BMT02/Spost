@@ -101,10 +101,14 @@ router.get(
 router.get(
   "/google/callback",
   passport.authenticate("google", {
-    failureRedirect: "http://localhost:3000/login",
+    // failureRedirect: "http://localhost:3000/login",
+    failureRedirect: "www.google.com",
+
   }),
   (req, res) => {
-    res.redirect("http://localhost:3000/dashboard");
+    // res.redirect("http://localhost:3000/dashboard");
+    res.redirect("www.google.com");
+
   }
 );
 
@@ -200,7 +204,9 @@ let client = new TwitterApi({
   })
 
 
-  return res.redirect('http://localhost:3000/dashboard')
+  // return res.redirect('http://localhost:3000/dashboard')
+  return res.redirect('www.google.com')
+
 
 
 
