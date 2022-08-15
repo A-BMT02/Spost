@@ -14,8 +14,7 @@ import passportConfig from "./config/passport.js";
 import path from 'path' ; 
 import { fileURLToPath } from 'url';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const __dirname1 = path.resolve() ;
 
 dotenv.config();
 
@@ -58,9 +57,9 @@ mongoose.connect(process.env.DB_CONNECT, () => {
   console.log("Connected to database");
 });
 
-app.use(express.static(path.join(__dirname,'/client/build')));
+app.use(express.static(path.join(__dirname1,'/client/build')));
  app.get('*', (req, res) => {
- res.sendFile(path.resolve(__dirname, 'client' , 'build' , 'index.html'));
+ res.sendFile(path.resolve(__dirname1, 'client' , 'build' , 'index.html'));
  });
 
 app.listen(PORT, () => {
