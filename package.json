@@ -4,10 +4,6 @@
     "postcss": "^8.4.14",
     "tailwindcss": "^3.1.7"
   },
-  "scripts": {
-    "start": "node server/server.js",
-    "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false npm install --prefix client && npm run build --prefix client"
-  },
   "dependencies": {
     "flowbite": "^1.5.1",
     "flowbite-react": "^0.1.5",
