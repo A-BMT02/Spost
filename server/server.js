@@ -11,7 +11,7 @@ import cookieParser from "cookie-parser";
 import getsRoute from "./Routes/gets.js";
 import postRoute from "./Routes/posts.js";
 import passportConfig from "./config/passport.js";
-// import twitterConfig from "./config/passportTwitter.js";
+import path from 'path' ; 
 
 dotenv.config();
 
