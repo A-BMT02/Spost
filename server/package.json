@@ -7,6 +7,11 @@
     "node": "16.x",
     "npm": "8.3.0"
   },
+  "scripts": {
+    "start": "node server.js",
+    "client": "npm start --prefix client",
+    "dev": "concurrently \"npm start\" \"npm run client\""
+  },
   "type": "module",
   "keywords": [],
   "author": "",

@@ -2,10 +2,11 @@ import googleStrategy from "passport-google-oauth20";
 import mongoose from "mongoose";
 import User from "../models/googleUser.js";
 import normalUser from "../models/user.js";
+
 // import { Serialize , Deserialize } from "../utils/serialize.js";
 
 const GoogleStrategy = googleStrategy.Strategy;
-
+console.log('id is ' , process.env.GOOGLE_CLIENT_ID)
 export default function (passport) {
   passport.use(
     new GoogleStrategy(

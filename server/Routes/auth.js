@@ -70,7 +70,7 @@ router.get("/login/failed", (req, res) => {
 });
 
 router.get("/login/success", async (req, res) => {
-  console.log('user is ' , req.user) ; 
+  // console.log('user is ' , req.user) ; 
   if (req.user && typeof req.user.googleId === "string") {
     return res.json({ status: "ok", data: req.user });
   } 
@@ -111,10 +111,10 @@ router.get(
 router.get(
   "/google/callback",
   passport.authenticate("google", {
-    failureRedirect: "https://spost-two.vercel.app/signin",
+    failureRedirect: "/signin",
   }),
   (req, res) => {
-    res.redirect("https://spost-two.vercel.app/dashboard");
+    res.redirect("/dashboard");
   }
 );
 
@@ -196,7 +196,7 @@ let client = new TwitterApi({
   })
 
 
-  return res.redirect('https://spost-two.vercel.app/dashboard')
+  return res.redirect('/dashboard')
 
 
 
