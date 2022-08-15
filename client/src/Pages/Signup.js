@@ -58,7 +58,7 @@ export default function Signup() {
 
    const signinWithGoogle = () => {
     setLogin(true) ; 
-    window.open("https://spost1.herokuapp.com/api/user/google", "_self");
+    window.open("/api/user/google", "_self");
     setLogin(false) ;
   };
 

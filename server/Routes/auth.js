@@ -138,7 +138,7 @@ const Client = new TwitterApi({
   appSecret : process.env.TWITTER_CONSUMER_SECRET
 })
 
-const authLink = await Client.generateAuthLink('https://spost1.herokuapp.com/api/user/twitter/callback') ; 
+const authLink = await Client.generateAuthLink('/api/user/twitter/callback') ; 
 
 const URL = authLink.url ; 
 const oauthToken = authLink.oauth_token ; 

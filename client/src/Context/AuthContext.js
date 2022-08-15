@@ -13,7 +13,7 @@ export const UserProvider = (props) => {
   const [isAuth , setIsAuth] = useState(false) ; 
 
   const signup = async (email, password) => {
-    const result = await axios.post("https://spost1.herokuapp.com/api/user/register", {
+    const result = await axios.post("/api/user/register", {
       email,
       password,
     });
@@ -25,7 +25,7 @@ export const UserProvider = (props) => {
   };
 
   const signin = async (email, password) => {
-    const result = await axios.post("https://spost1.herokuapp.com/api/user/login", {
+    const result = await axios.post("/api/user/login", {
       email,
       password,
     });
@@ -41,7 +41,7 @@ export const UserProvider = (props) => {
   };
 
   const logout = async () => {
-    const res = await axios.get("https://spost1.herokuapp.com/api/user/logout" , {
+    const res = await axios.get("/api/user/logout" , {
         withCredentials: true,
     });
     localStorage.removeItem("token");
@@ -62,7 +62,7 @@ export const UserProvider = (props) => {
     setLoading(true);
     const token = localStorage.getItem("token");
     axios
-      .get("https://spost1.herokuapp.com/api/user/login/success", {
+      .get("/api/user/login/success", {
         withCredentials: true,
         headers: {
           token: token,

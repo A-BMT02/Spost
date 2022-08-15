@@ -17,6 +17,12 @@ dotenv.config();
 
 // twitterConfig(passport);
 passportConfig(passport);
+if (process.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'staging') {
+ app.use(express.static('client/build'));
+ app.get('*', (req, res) => {
+ res.sendFile(path.join(__dirname + '/client/build/index.html'));
+ });
+}
 const PORT = process.env.PORT || 5000;
 const app = express();
 app.use(cors({ credentials: true, origin : ['https://spost.netlify.app/' , 'https://spost-two.vercel.app' , 'http://localhost:3000'] }));
