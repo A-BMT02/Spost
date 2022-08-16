@@ -6,7 +6,6 @@ import normalUser from "../models/user.js";
 // import { Serialize , Deserialize } from "../utils/serialize.js";
 
 const GoogleStrategy = googleStrategy.Strategy;
-console.log('id is ' , process.env.GOOGLE_CLIENT_ID)
 export default function (passport) {
   passport.use(
     new GoogleStrategy(
@@ -29,7 +28,7 @@ export default function (passport) {
           });
 
           if (duplicate && !duplicate.googleId) {
-            console.log('duplicate is ' , duplicate.lean()) ; 
+            console.log("duplicate is ", duplicate);
             const updatedUser = await User.findOneAndUpdate(
               { email: profile.emails[0].value },
               {
@@ -38,23 +37,23 @@ export default function (passport) {
                 image: profile.photos[0].value,
               }
             );
-            console.log('updated user is ' , updatedUser) ; 
+            console.log("updated user is ", updatedUser);
           }
-          const userFound = await User
-            .findOne({ email: profile.emails[0].value })
-            .lean();
+          const userFound = await User.findOne({
+            email: profile.emails[0].value,
+          });
 
           if (userFound) {
             // console.log('userFound is ' , userFound) ;
             done(null, userFound);
           } else {
-            const createdUser = (await User.create(newUser)).toJSON()
+            const createdUser = (await User.create(newUser)).toJSON();
             // console.log('created user is ', createdUser) ;
             done(null, createdUser);
           }
         } catch (err) {
-          console.log('err is ' , err) ; 
-          done(err) ; 
+          console.log("err is ", err);
+          done(err);
         }
       }
     )
@@ -65,11 +64,10 @@ export default function (passport) {
   });
 
   passport.deserializeUser((id, done) => {
-    // console.log('id is ' , id) ; 
+    // console.log('id is ' , id) ;
     User.findById(id, (err, user) => {
-      // console.log('User 2 is ' , user ) ; 
-      done(null, user)
-    }
-    );
+      // console.log('User 2 is ' , user ) ;
+      done(null, user);
+    });
   });
 }

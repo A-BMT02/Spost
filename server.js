@@ -36,7 +36,7 @@ app.use(
       "https://spost.netlify.app/",
       "https://spost-two.vercel.app",
       "http://localhost:3000",
-      "https://spostapp.herokuapp.com/",
+      "https://spostapp.herokuapp.com",
     ],
   })
 );
