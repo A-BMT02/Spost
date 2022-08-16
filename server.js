@@ -11,10 +11,10 @@ import cookieParser from "cookie-parser";
 import getsRoute from "./Routes/gets.js";
 import postRoute from "./Routes/posts.js";
 import passportConfig from "./config/passport.js";
-import path from 'path' ; 
-import { fileURLToPath } from 'url';
+import path from "path";
+import { fileURLToPath } from "url";
 
-const __dirname1 = path.resolve() ;
+const __dirname1 = path.resolve();
 
 dotenv.config();
 
@@ -29,7 +29,17 @@ passportConfig(passport);
 const PORT = process.env.PORT || 5000;
 // console.log(PORT)
 const app = express();
-app.use(cors({ credentials: true, origin : ['https://spost.netlify.app/' , 'https://spost-two.vercel.app' , 'http://localhost:3000' , 'https://spostapp.herokuapp.com/'] }));
+app.use(
+  cors({
+    credentials: true,
+    origin: [
+      "https://spost.netlify.app/",
+      "https://spost-two.vercel.app",
+      "http://localhost:3000",
+      "https://spostapp.herokuapp.com/",
+    ],
+  })
+);
 
 app.use(cookieParser());
 app.use(parser.urlencoded({ limit: "50mb", extended: false }));
@@ -50,26 +60,20 @@ app.use("/api/user", authRoute);
 app.use("/api/user/get", getsRoute);
 app.use("/api/user/post", postRoute);
 
-app.get('/testing' , (req , res) => {
-  res.send('hello from the server') ; 
-})
+app.get("/testing", (req, res) => {
+  res.send("hello from the server");
+});
 
 mongoose.connect(process.env.DB_CONNECT, () => {
   console.log("Connected to database");
 });
-if(process.env.NODE_ENV === "production") {
-  console.log('here') ;
-app.use(express.static(path.join(__dirname1,'/client/build')));
- app.get('*', (req, res) => {
- res.sendFile(path.resolve(__dirname1, 'client' , 'build' , 'index.html'));
- });
-} else {
-console.log('test server') ; 
-app.get('/' , (req , res) => {
-  res.send('test server') ;
-})
+if (process.env.NODE_ENV === "production") {
+  console.log("here");
+  app.use(express.static(path.join(__dirname1, "/client/build")));
+  app.get("*", (req, res) => {
+    res.sendFile(path.resolve(__dirname1, "client", "build", "index.html"));
+  });
 }
-
 
 app.listen(PORT, () => {
   console.log("Server listening on ", PORT);
