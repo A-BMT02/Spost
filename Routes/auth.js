@@ -141,6 +141,7 @@ router.get("/logout", async (req, res) => {
 });
 
 router.get("/twitter", async (req, res) => {
+  console.log("here twitter");
   try {
     const Client = new TwitterApi({
       appKey: process.env.TWITTER_CONSUMER_KEY,
@@ -148,9 +149,8 @@ router.get("/twitter", async (req, res) => {
     });
 
     const authLink = await Client.generateAuthLink(
-      "/api/user/twitter/callback"
+      "http://spostapp.herokuapp.com/api/user/twitter/callback"
     );
-
     const URL = authLink.url;
     const oauthToken = authLink.oauth_token;
     const oauthTokenSecret = authLink.oauth_token_secret;
@@ -168,6 +168,7 @@ router.get("/twitter", async (req, res) => {
 
     res.json({ URL });
   } catch (err) {
+    console.log("err is ", err);
     return res.json({
       status: "error",
       error: "An error occured. Try again later",
@@ -176,47 +177,53 @@ router.get("/twitter", async (req, res) => {
 });
 
 router.get("/twitter/callback", async (req, res) => {
-  const { oauth_token, oauth_verifier } = req.query;
-  const target = await user.findOne({ "tokens.tempToken": oauth_token });
-  const oauth_token_secret = target.tokens.tempTokenSecret;
+  console.log("here 1");
+  try {
+    console.log("here 2");
+    const { oauth_token, oauth_verifier } = req.query;
+    const target = await user.findOne({ "tokens.tempToken": oauth_token });
+    const oauth_token_secret = target.tokens.tempTokenSecret;
 
-  if (!oauth_token || !oauth_verifier || !oauth_token_secret) {
-    console.log("you denied access");
-    return;
-  }
-
-  let client = new TwitterApi({
-    appKey: process.env.TWITTER_CONSUMER_KEY,
-    appSecret: process.env.TWITTER_CONSUMER_SECRET,
-    accessToken: oauth_token,
-    accessSecret: oauth_token_secret,
-  });
-
-  const loggedObj = await client.login(oauth_verifier);
-  client = new TwitterApi({
-    appKey: process.env.TWITTER_CONSUMER_KEY,
-    appSecret: process.env.TWITTER_CONSUMER_SECRET,
-    accessToken: loggedObj.accessToken,
-    accessSecret: loggedObj.accessSecret,
-  });
-  const twitterObj = await client.currentUser();
-  await twitter.create({
-    twitterId: twitterObj.id,
-    displayName: twitterObj.name,
-    image: twitterObj.profile_image_url,
-    username: twitterObj.screen_name,
-    accessToken: loggedObj.accessToken,
-    accessTokenSecret: loggedObj.accessSecret,
-  });
-
-  await user.findOneAndUpdate(
-    { "tokens.tempToken": oauth_token },
-    {
-      $push: { connect: { social: "twitter", id: twitterObj.id } },
+    if (!oauth_token || !oauth_verifier || !oauth_token_secret) {
+      console.log("you denied access");
+      return res.redirect("/dashboard");
     }
-  );
 
-  return res.redirect("/dashboard");
+    let client = new TwitterApi({
+      appKey: process.env.TWITTER_CONSUMER_KEY,
+      appSecret: process.env.TWITTER_CONSUMER_SECRET,
+      accessToken: oauth_token,
+      accessSecret: oauth_token_secret,
+    });
+
+    const loggedObj = await client.login(oauth_verifier);
+    client = new TwitterApi({
+      appKey: process.env.TWITTER_CONSUMER_KEY,
+      appSecret: process.env.TWITTER_CONSUMER_SECRET,
+      accessToken: loggedObj.accessToken,
+      accessSecret: loggedObj.accessSecret,
+    });
+    const twitterObj = await client.currentUser();
+    await twitter.create({
+      twitterId: twitterObj.id,
+      displayName: twitterObj.name,
+      image: twitterObj.profile_image_url,
+      username: twitterObj.screen_name,
+      accessToken: loggedObj.accessToken,
+      accessTokenSecret: loggedObj.accessSecret,
+    });
+
+    await user.findOneAndUpdate(
+      { "tokens.tempToken": oauth_token },
+      {
+        $push: { connect: { social: "twitter", id: twitterObj.id } },
+      }
+    );
+
+    return res.redirect("/dashboard");
+  } catch (err) {
+    console.log("twitter err is ", err);
+  }
 });
 
 router.get("/twitter/logout", async (req, res) => {
