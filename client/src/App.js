@@ -9,13 +9,13 @@ import PreviewImage from "./Pages/PreviewImage";
 import { DataContextProvider } from "./Context/DataContext";
 import { UserProvider } from "./Context/AuthContext";
 import ProtectedRoute from "./utilities/ProtectedRoute";
-import ReactGA from "react-ga";
+import ReactGA from "react-ga4";
 
 function App() {
   useEffect(() => {
     const TRACKING_ID = "G-68HCGL7WDH";
     ReactGA.initialize(TRACKING_ID);
-    ReactGA.pageview(window.location.pathname + window.location.search);
+    ReactGA.send("pageview");
   }, []);
   return (
     <DataContextProvider>
