@@ -5,6 +5,7 @@ import { useAuth } from "../Context/AuthContext";
 import CircularProgress from "@mui/material/CircularProgress";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import ReactGA from "react-ga";
 
 export default function Signin() {
   const [emailValue, setEmailValue] = useState("");
@@ -13,7 +14,7 @@ export default function Signin() {
   const [showError, setShowError] = useState(false);
   const [error, setError] = useState("");
   const [show, setShow] = useState(false);
-  const [login , setLogin] = useState(false) ; 
+  const [login, setLogin] = useState(false);
 
   const { signin } = useAuth();
   const { user } = useAuth();
@@ -51,9 +52,9 @@ export default function Signin() {
   }, [error]);
 
   const signinWithGoogle = () => {
-    setLogin(true) ; 
+    setLogin(true);
     window.open("/api/user/google", "_self");
-    setLogin(false) ;
+    setLogin(false);
   };
 
   return (
@@ -134,16 +135,19 @@ export default function Signin() {
                   <hr className="w-2/5 m-auto text-ogray"></hr>
                 </div>
                 <div className="cursor-pointer relative bg-lblue w-lg border border-dblue rounded-lg p-2 md:w-80 font-bold hover:bg-dblue hover:text-owhite">
-                  {login ? <CircularProgress/> : <div className=" flex space-x-6 pointer-events-auto justify-center items-center ">
-                    <img src={google} />
-                    <p
-                      onClick={(e) => signinWithGoogle()}
-                      className="text-xl font-inter"
-                    >
-                      Sign in with Google
-                    </p>
-                  </div> }
-                  
+                  {login ? (
+                    <CircularProgress />
+                  ) : (
+                    <div className=" flex space-x-6 pointer-events-auto justify-center items-center ">
+                      <img src={google} />
+                      <p
+                        onClick={(e) => signinWithGoogle()}
+                        className="text-xl font-inter"
+                      >
+                        Sign in with Google
+                      </p>
+                    </div>
+                  )}
                 </div>
                 <p>
                   Need an account?{" "}

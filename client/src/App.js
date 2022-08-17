@@ -8,7 +8,10 @@ import PreviewImage from "./Pages/PreviewImage";
 import { DataContextProvider } from "./Context/DataContext";
 import { UserProvider } from "./Context/AuthContext";
 import ProtectedRoute from "./utilities/ProtectedRoute";
+import ReactGA from "react-ga";
 
+const TRACKING_ID = "G-1FGV6VMEZV";
+ReactGA.initialize(TRACKING_ID);
 function App() {
   return (
     <DataContextProvider>
