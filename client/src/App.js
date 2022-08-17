@@ -1,3 +1,4 @@
+import React, { useEffect } from "react";
 import Home from "./Pages/Home";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Signup from "./Pages/Signup";
@@ -10,9 +11,12 @@ import { UserProvider } from "./Context/AuthContext";
 import ProtectedRoute from "./utilities/ProtectedRoute";
 import ReactGA from "react-ga";
 
-const TRACKING_ID = "G-1FGV6VMEZV";
-ReactGA.initialize(TRACKING_ID);
 function App() {
+  useEffect(() => {
+    const TRACKING_ID = "G-1FGV6VMEZV";
+    ReactGA.initialize(TRACKING_ID);
+    ReactGA.pageview(window.location.pathname + window.location.search);
+  }, []);
   return (
     <DataContextProvider>
       <UserProvider>
