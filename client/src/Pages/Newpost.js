@@ -43,11 +43,11 @@ export default function Newpost() {
   const [showError, setShowError] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const [load , setLoad] = useState(false) ;
-  const [success , setSuccess] = useState(false) ;  
+  const [load, setLoad] = useState(false);
+  const [success, setSuccess] = useState(false);
 
   const errorRef = useRef(null);
-  const successRef = useRef(null) ; 
+  const successRef = useRef(null);
 
   const contentIcon = (target) => {
     switch (target) {
@@ -123,7 +123,7 @@ export default function Newpost() {
     if (value.state.value[value.twitterCounter]?.media?.length === 4) {
       max = true;
     }
-    
+
     return max;
   };
 
@@ -143,8 +143,7 @@ export default function Newpost() {
       return multiple;
     });
   };
-  useEffect(() => {
-  }, [value.twitterCounter]);
+  useEffect(() => {}, [value.twitterCounter]);
 
   const translate = (multiple) => {
     sliderRef.current.style.transform = `translateX(-${
@@ -152,7 +151,7 @@ export default function Newpost() {
     }%)`;
   };
 
-  const selectImage = (uploadedFile , index) => {
+  const selectImage = (uploadedFile, index) => {
     setLoading(true);
     let type;
     let reader = new FileReader();
@@ -191,32 +190,33 @@ export default function Newpost() {
           };
         }
       } else {
-        // setImage(reader.result) ;
-        navigate("/previewImage", {
-          state: {
-            image: reader.result,
-            for: value.target,
-            social: value.target,
-            extension,
-          },
-        });
-        setLoading(false);
-        return ; 
+        if (window.screen.width > 768) {
+          navigate("/previewImage", {
+            state: {
+              image: reader.result,
+              for: value.target,
+              social: value.target,
+              extension,
+            },
+          });
+          setLoading(false);
+          return;
+        } else {
+          type = "image";
+          updateContents(type, reader);
+          setLoading(false);
+        }
       }
     };
   };
 
-
-
-  useEffect(() => {    if (error !== "") {
+  useEffect(() => {
+    if (error !== "") {
       setShowError(true);
     }
   }, [error]);
 
-
-
   const updateContents = (type, reader) => {
-
     switch (value.target) {
       case "twitter":
         dispatch({
@@ -225,7 +225,7 @@ export default function Newpost() {
           file: reader.result,
           index: value.twitterCounter,
         });
-        
+
         return;
       case "facebook":
         return value.setFacebookPicture(state?.image);
@@ -246,9 +246,8 @@ export default function Newpost() {
     }
   };
 
-
   const publish = async () => {
-    setLoad(true) ; 
+    setLoad(true);
     const allData = await Promise.all(
       value.state.value.map(async (obj) => {
         const media = await Promise.all(
@@ -276,11 +275,11 @@ export default function Newpost() {
         id: user._id,
       })
       .then((res) => {
-        setLoad(false) ;
-        if(res.data.status === 'ok') {
-          setSuccess(true) ; 
+        setLoad(false);
+        if (res.data.status === "ok") {
+          setSuccess(true);
         } else {
-          setError(res.data.error) ; 
+          setError(res.data.error);
           setShowError(true);
         }
       });
@@ -319,7 +318,6 @@ export default function Newpost() {
   }
 
   const slider = (e) => {
-    
     sliderRef.current.classList.add("-translate-x-full");
   };
 
@@ -353,9 +351,9 @@ export default function Newpost() {
           </p>
         </div>
         <div
-        ref={successRef}
+          ref={successRef}
           className={
-            success 
+            success
               ? "flex space-x-6 justify-center mx-auto border border-ogreen px-4 py-3 text-xl rounded-lg bg-ogreen text-owhite max-w-[300px]"
               : "hidden"
           }
@@ -364,7 +362,7 @@ export default function Newpost() {
           <p
             onClick={(e) => {
               successRef.current.classList.add("hidden");
-              setSuccess(false) ; 
+              setSuccess(false);
             }}
             className="font-inter font-black self-center"
           >
@@ -532,7 +530,7 @@ export default function Newpost() {
                         translate(multiple);
                         return multiple;
                       });
-                      value.setTwitterMax(prev => {
+                      value.setTwitterMax((prev) => {
                         const newMax = prev.map((item, index) => {
                           if (index === value.twitterCounter) {
                             return;
@@ -773,6 +771,7 @@ export default function Newpost() {
                         previewPicture(value.previewTarget).map(
                           (media, index) => (
                             <div className="w-1/2 relative">
+                              {console.log("media type is ", media.type)}
                               {media.type === "image" ||
                               media.type === "gif" ? (
                                 <img
@@ -801,16 +800,16 @@ export default function Newpost() {
                   </div>
                 </div>
                 <div className="mt-10 w-full flex justify-center">
-                  {load ? <CircularProgress/> 
-                  :
-                   <button
-                    className="bg-dblue text-sm py-4 px-9 md:text-lg  text-owhite rounded-lg font-bold hover:bg-lblue hover:text-dblue hover:border-2"
-                    onClick={(e) => publish()}
-                  >
-                    Publish
-                  </button>
-                   }
-                 
+                  {load ? (
+                    <CircularProgress />
+                  ) : (
+                    <button
+                      className="bg-dblue text-sm py-4 px-9 md:text-lg  text-owhite rounded-lg font-bold hover:bg-lblue hover:text-dblue hover:border-2"
+                      onClick={(e) => publish()}
+                    >
+                      Publish
+                    </button>
+                  )}
                 </div>
               </div>
             </div>
