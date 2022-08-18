@@ -13,8 +13,7 @@ export default function Signup() {
   const [loading, setLoading] = useState(false);
   const [showError, setShowError] = useState(false);
   const [show, setShow] = useState(false);
-  const [login , setLogin] = useState(false) ; 
-
+  const [login, setLogin] = useState(false);
 
   const navigate = useNavigate();
   const errorRef = useRef(null);
@@ -25,7 +24,8 @@ export default function Signup() {
   const signupNow = async (email, password) => {
     if (password === secondPassword) {
       setLoading(true);
-      const res = await signup(email, password);
+
+      const res = await signup(email.toLowerCase(), password);
       if (res.access == false) {
         setError(res.error);
         setLoading(false);
@@ -56,10 +56,10 @@ export default function Signup() {
     }
   }, []);
 
-   const signinWithGoogle = () => {
-    setLogin(true) ; 
+  const signinWithGoogle = () => {
+    setLogin(true);
     window.open("/api/user/google", "_self");
-    setLogin(false) ;
+    setLogin(false);
   };
 
   return (
@@ -149,17 +149,20 @@ export default function Signup() {
                   <p>or</p>
                   <hr className="w-2/5 m-auto text-ogray"></hr>
                 </div>
-                  <div className="cursor-pointer relative bg-lblue w-lg border border-dblue rounded-lg p-2 md:w-80 font-bold hover:bg-dblue hover:text-owhite">
-                  {login ? <CircularProgress/> : <div className=" flex space-x-6 pointer-events-auto justify-center items-center ">
-                    <img src={google} />
-                    <p
-                      onClick={(e) => signinWithGoogle()}
-                      className="text-xl font-inter"
-                    >
-                      Sign in with Google
-                    </p>
-                  </div> }
-                  
+                <div className="cursor-pointer relative bg-lblue w-lg border border-dblue rounded-lg p-2 md:w-80 font-bold hover:bg-dblue hover:text-owhite">
+                  {login ? (
+                    <CircularProgress />
+                  ) : (
+                    <div className=" flex space-x-6 pointer-events-auto justify-center items-center ">
+                      <img src={google} />
+                      <p
+                        onClick={(e) => signinWithGoogle()}
+                        className="text-xl font-inter"
+                      >
+                        Sign in with Google
+                      </p>
+                    </div>
+                  )}
                 </div>
                 <p>
                   Already have an account?{" "}

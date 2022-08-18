@@ -24,7 +24,7 @@ export default function Signin() {
 
   const signinNow = async (email, password) => {
     setLoading(true);
-    const res = await signin(email, password);
+    const res = await signin(email.toLowerCase(), password);
     if (res.access == false) {
       setError(res.error);
       setLoading(false);
