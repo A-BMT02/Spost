@@ -22,9 +22,9 @@ export default function Dashboard() {
   const [connect, setConnect] = useState(false);
   const [loading, setLoading] = useState(true);
   const [deleteTwitter, setDeleteTwitter] = useState(false);
-  const [connecting , setConnecting] = useState(false) ; 
-  const [deleting , setDeleting] = useState(false) ; 
-  const [loggingOut , setLoggingOut] = useState(false) ; 
+  const [connecting, setConnecting] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+  const [loggingOut, setLoggingOut] = useState(false);
 
   const toggleSidebar = () => {
     ref.current.classList.toggle("open");
@@ -37,20 +37,20 @@ export default function Dashboard() {
   const navigate = useNavigate();
 
   const logoutNow = async () => {
-    setLoggingOut(true) ; 
+    setLoggingOut(true);
     const res = await logout();
     if (res.status == "ok") {
       setUser({});
       navigate("/");
     }
-    setLoggingOut(false) ;
+    setLoggingOut(false);
   };
 
   useEffect(() => {
     setLoading(true);
 
     setSocials([]);
-  } , [])
+  }, []);
 
   useEffect(() => {
     setLoading(true);
@@ -58,7 +58,7 @@ export default function Dashboard() {
     const con = user?.connect?.find((target) => {
       return target.social === "twitter";
     });
-            console.log('here' , user._id) ;
+    console.log("here", user._id);
 
     axios
       .get("/api/user/get/twitter", {
@@ -83,18 +83,16 @@ export default function Dashboard() {
       });
   }, []);
 
-
   const connectTwitter = async () => {
-    setConnecting(true) ; 
-    const result = await axios.get('/api/user/twitter' ,  {
-      headers : {
-        id : user._id
-      }
-    })
-    console.log('result is ' , result) ; 
-    window.location.href = result.data.URL ;
-    setConnecting(false) ;  
-
+    setConnecting(true);
+    const result = await axios.get("/api/user/twitter", {
+      headers: {
+        id: user._id,
+      },
+    });
+    console.log("result is ", result);
+    window.location.href = result.data.URL;
+    setConnecting(false);
   };
 
   const socialImage = (type) => {
@@ -107,7 +105,7 @@ export default function Dashboard() {
   };
 
   const logoutTwitter = async (e) => {
-    setDeleting(true) ; 
+    setDeleting(true);
     const con = user.connect.find((target) => {
       return target.social === "twitter";
     });
@@ -116,15 +114,14 @@ export default function Dashboard() {
         withCredentials: true,
         params: {
           id: con.id,
-          user
+          user,
         },
       })
       .then((res) => {
         if (res.data.status === "ok") {
           // console.log('here') ;
           window.location.reload(false);
-          setDeleting(false) ; 
-
+          setDeleting(false);
         }
       });
   };
@@ -143,15 +140,18 @@ export default function Dashboard() {
 
             <div className="flex space-x-4">
               <div className="p-2 font-inter font-bold flex items-center">
-                {!loggingOut ? <button
-                  onClick={(e) => {
-                    logoutNow();
-                  }}
-                  className="bg-lblue border border-dblue text-sm md:text-lg p-2 md:p-3 text-dblue rounded-lg font-bold font-inter hover:bg-dblue hover:text-owhite"
-                >
-                  Log out
-                </button>  : <CircularProgress/> }
-                
+                {!loggingOut ? (
+                  <button
+                    onClick={(e) => {
+                      logoutNow();
+                    }}
+                    className="bg-lblue border border-dblue text-sm md:text-lg p-2 md:p-3 text-dblue rounded-lg font-bold font-inter hover:bg-dblue hover:text-owhite"
+                  >
+                    Log out
+                  </button>
+                ) : (
+                  <CircularProgress />
+                )}
               </div>
               <div className="flex flex-col space-y-2 justify-center items-center">
                 <img className="w-[50px]" src={account} />
@@ -214,7 +214,7 @@ export default function Dashboard() {
                 Your social media profiles
               </h2>
             </div>
-            {console.log('socials is ' , socials)}
+            {console.log("socials is ", socials)}
             {socials.map((social) => (
               <div className="flex flex-col space-y-4">
                 <div className="flex space-x-6 items-center">
@@ -245,13 +245,16 @@ export default function Dashboard() {
                     >
                       Cancel
                     </button>
-                    {!deleting ? <button
-                      onClick={(e) => logoutTwitter()}
-                      className="rounded-lg p-2 bg-ored text-owhite border"
-                    >
-                      Delete
-                    </button> : <CircularProgress/> }
-                    
+                    {!deleting ? (
+                      <button
+                        onClick={(e) => logoutTwitter()}
+                        className="rounded-lg p-2 bg-ored text-owhite border"
+                      >
+                        Delete
+                      </button>
+                    ) : (
+                      <CircularProgress />
+                    )}
                   </div>
                 </div>
               </div>
@@ -280,15 +283,20 @@ export default function Dashboard() {
                 className="w-12 h-12 md:w-20 md:h-20 cursor-pointer "
                 src={instagram}
               />
-              {socials[0]?.type !== 'twitter' && connecting ? <CircularProgress/> : <img
-                onClick={(e) => {
-                  connectTwitter();
-                }}
-                className="w-12 h-12 md:w-20 md:h-20 cursor-pointer "
-                src={twitter}
-              />
-              }
-              
+              {socials[0]?.type !== "twitter" && connecting ? (
+                <CircularProgress />
+              ) : (
+                socials[0]?.type !== "twitter" && (
+                  <img
+                    onClick={(e) => {
+                      connectTwitter();
+                    }}
+                    className="w-12 h-12 md:w-20 md:h-20 cursor-pointer "
+                    src={twitter}
+                  />
+                )
+              )}
+
               <img
                 className="w-12 h-12 md:w-20 md:h-20 cursor-pointer "
                 src={facebook}
