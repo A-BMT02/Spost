@@ -17,6 +17,7 @@ function App() {
     ReactGA.initialize(TRACKING_ID);
     ReactGA.send("pageview");
   }, []);
+
   return (
     <DataContextProvider>
       <UserProvider>

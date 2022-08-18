@@ -158,37 +158,36 @@ export default function Newpost() {
     reader.readAsDataURL(uploadedFile);
     reader.onload = function (e) {
       const extension = uploadedFile.name.split(".").pop().toLowerCase();
-      if (extension !== "jpg") {
-        if (extension === "gif") {
-          type = "gif";
-          // setTwitterMax(true);
-          value.setTwitterMax((prev) => [...prev, true]);
-          updateContents(type, reader);
-          setLoading(false);
-        } else {
-          type = "video";
-          let media = new Audio(reader.result);
-          media.onloadedmetadata = function () {
-            if (media.duration > 140) {
-              setError("Video cannot be longer than 2min:20sec");
-              setShowError(true);
-              setLoading(false);
-              // setTwitterMax(false);
-              value.setTwitterMax((prev) => [...prev, false]);
+      console.log("extesion is ", extension);
+      if (extension === "gif") {
+        type = "gif";
+        // setTwitterMax(true);
+        value.setTwitterMax((prev) => [...prev, true]);
+        updateContents(type, reader);
+        setLoading(false);
+      } else if (extension === "mp4") {
+        type = "video";
+        let media = new Audio(reader.result);
+        media.onloadedmetadata = function () {
+          if (media.duration > 140) {
+            setError("Video cannot be longer than 2min:20sec");
+            setShowError(true);
+            setLoading(false);
+            // setTwitterMax(false);
+            value.setTwitterMax((prev) => [...prev, false]);
 
-              return;
-            } else {
-              // setTwitterMax(true);
-              value.setTwitterMax((prev) => [...prev, true]);
+            return;
+          } else {
+            // setTwitterMax(true);
+            value.setTwitterMax((prev) => [...prev, true]);
 
-              setShowError(false);
-              setError("");
-              updateContents(type, reader);
-              setLoading(false);
-              return;
-            }
-          };
-        }
+            setShowError(false);
+            setError("");
+            updateContents(type, reader);
+            setLoading(false);
+            return;
+          }
+        };
       } else {
         if (window.screen.width > 768) {
           navigate("/previewImage", {
