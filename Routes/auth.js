@@ -8,6 +8,8 @@ import passport from "passport";
 import twitter from "../models/twitterConnect.js";
 import { TwitterApi } from "twitter-api-v2";
 import tokens from "../models/tempTokens.js";
+import axios from "axios";
+import facebookInfo from "../models/facebookConnect.js";
 
 const router = Express.Router();
 router.post("/register", async (req, res) => {
@@ -248,6 +250,128 @@ router.get("/twitter/logout", async (req, res) => {
       status: "error",
       error: "An error occured. Try again later",
     });
+  }
+});
+
+router.get("/facebook/logout", async (req, res) => {
+  try {
+    const id = req.query["id"];
+
+    const deleteTwitter = await facebookInfo.findOneAndDelete({
+      facebookId: id,
+    });
+    if (deleteTwitter) {
+      const userTarget = await user.findOneAndUpdate(
+        { "connect.id": id },
+        {
+          $pull: {
+            connect: { id: id },
+          },
+        }
+      );
+      if (userTarget) {
+        res.send("success");
+      }
+    }
+  } catch (err) {
+    res.status(400);
+  }
+});
+
+router.get("/facebook", async (req, res) => {
+  const tempToken = req.query["accessToken"];
+  const tempPageToken = req.query["pageToken"];
+  const userId = req.query["user"];
+
+  let facebookId = "";
+  let name = "";
+  let picture = "";
+  let accessToken = "";
+  let pageToken = "";
+
+  try {
+    const result = await axios.get(
+      `https://graph.facebook.com/v14.0/oauth/access_token?grant_type=fb_exchange_token&client_id=${process.env.FACEBOOK_APP_ID}&client_secret=${process.env.FACEBOOK_APP_SECRET}&fb_exchange_token=${tempToken}`
+    );
+    if (result.status === 200) {
+      accessToken = result.data.access_token;
+      const idResult = await axios.get(
+        `https://graph.facebook.com/me?fields=id,email,name&access_token=${accessToken}`
+      );
+      if (idResult.status === 200) {
+        // console.log("user info is ", idResult.data);
+        facebookId = idResult.data.id;
+        name = idResult.data.name;
+        const getPicture = await axios.get(
+          `https://graph.facebook.com/v14.0/${facebookId}/picture?redirect=false&access_token=${accessToken}`
+        );
+        if (getPicture.status === 200) {
+          picture = getPicture.data.data.url;
+          // console.log("picture is ", picture);
+        }
+        const pageResult = await axios.get(
+          `https://graph.facebook.com/v14.0/${facebookId}/accounts?access_token=${accessToken}`
+        );
+        if (pageResult.status === 200) {
+          pageToken = pageResult.data.data[0].access_token;
+          // console.log("pageToken is ", pageToken);
+        }
+      }
+    } else {
+      //error
+      return res.status(400).json({ error: "An error Occured.Try Again!" });
+    }
+
+    if (
+      facebookId !== "" &&
+      name !== "" &&
+      picture !== "" &&
+      accessToken !== "" &&
+      pageToken !== ""
+    ) {
+      const newFacebook = await facebookInfo.create({
+        facebookId,
+        displayName: name,
+        image: picture,
+        accessToken,
+        pageToken,
+      });
+      if (newFacebook) {
+        const updatedUser = await user.findOneAndUpdate(
+          { _id: userId },
+          {
+            $push: { connect: { social: "facebook", id: facebookId } },
+          }
+        );
+        if (updatedUser) {
+          console.log("success");
+          res.json({ status: "ok", data: { name, picture } });
+        }
+      }
+    } else {
+      //error
+      return res.status(400).json({ error: "An error Occured.Try Again!" });
+    }
+  } catch (err) {
+    console.log("err is ", err);
+    return res.status(400).json({ error: "An error Occured.Try Again!" });
+  }
+});
+
+router.get("/facebook/details", async (req, res) => {
+  try {
+    const facebookId = req.query["id"];
+    const foundFacebook = await facebookInfo.findOne({ facebookId });
+    if (foundFacebook) {
+      return res.status(200).json({
+        displayName: foundFacebook.displayName,
+        image: foundFacebook.image,
+      });
+    } else {
+      return res.status(400).json({ error: "An error Occured.Try Again!" });
+    }
+  } catch (err) {
+    return res.status(400).json({ error: "An error Occured.Try Again!" });
   }
 });
 

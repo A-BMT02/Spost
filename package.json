@@ -23,6 +23,7 @@
     "@hapi/joi": "^17.1.1",
     "@mui/material": "^5.9.1",
     "@types/hapi__joi": "^17.1.8",
+    "axios": "^0.27.2",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.20.0",
     "connect-mongo": "^4.6.0",

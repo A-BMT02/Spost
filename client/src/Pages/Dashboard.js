@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState } from "react";
+import React, { useRef, useEffect, useState, useCallback } from "react";
 import account from "../images/account.png";
 import instagram from "../images/instagram.png";
 import twitter from "../images/twitter.png";
@@ -6,18 +6,19 @@ import facebook from "../images/facebook.png";
 import linkedin from "../images/linkedin.png";
 import { useAuth } from "../Context/AuthContext";
 import { useNavigate } from "react-router-dom";
-import { MdOutlineCancel } from "react-icons/md";
+import { MdOutlineCancel, MdRemoveShoppingCart } from "react-icons/md";
 import { BsPlusCircle } from "react-icons/bs";
 import axios from "axios";
 import CircularProgress from "@mui/material/CircularProgress";
 import { useData } from "../Context/DataContext";
+import { useInitFbSDK } from "../utilities/facebookSDK";
 
 export default function Dashboard() {
   const ref = useRef();
   const ref2 = useRef();
 
   const { user } = useAuth();
-  const { socials, setSocials } = useData();
+  const { socials, setSocials } = useData([]);
 
   const [connect, setConnect] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -25,6 +26,11 @@ export default function Dashboard() {
   const [connecting, setConnecting] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [loggingOut, setLoggingOut] = useState(false);
+  const [fbUserAccessToken, setFbUserAccessToken] = useState("");
+  const [fbPageAccessToken, setFbPageAccessToken] = useState("");
+  const [loadingFacebook, setLoadingFacebook] = useState(false);
+  const [deleteFacebook, setDeleteFacebook] = useState(false);
+  const [deletingFacebook, setDeletingFacebook] = useState(false);
 
   const toggleSidebar = () => {
     ref.current.classList.toggle("open");
@@ -58,7 +64,6 @@ export default function Dashboard() {
     const con = user?.connect?.find((target) => {
       return target.social === "twitter";
     });
-    console.log("here", user._id);
 
     axios
       .get("/api/user/get/twitter", {
@@ -79,7 +84,35 @@ export default function Dashboard() {
             ]);
           }
         }
-        setLoading(false);
+        const facebookDetails = user?.connect?.find((target) => {
+          return target.social === "facebook";
+        });
+        console.log("facebookdetails is", facebookDetails);
+
+        // get facebook
+        axios
+          .get("/api/user/facebook/details", {
+            params: {
+              id: facebookDetails?.id,
+            },
+          })
+          .then((res) => {
+            console.log("res is ", res);
+            if (res.status === 200) {
+              setSocials((prev) => [
+                ...prev,
+                {
+                  type: "facebook",
+                  username: res.data.displayName,
+                  image: res.data.image,
+                },
+              ]);
+            }
+            setLoading(false);
+          })
+          .catch((err) => {
+            setLoading(false);
+          });
       });
   }, []);
 
@@ -94,6 +127,54 @@ export default function Dashboard() {
     window.location.href = result.data.URL;
     setConnecting(false);
   };
+
+  const PAGE_ID = "101438839361774";
+  const isFbSDKInitialized = useInitFbSDK();
+  const connectFacebook = async () => {
+    setLoadingFacebook(true);
+    logInToFB();
+  };
+
+  const logInToFB = useCallback(() => {
+    window.FB.login((response) => {
+      setFbUserAccessToken(response.authResponse.accessToken);
+    });
+  }, []);
+
+  useEffect(() => {
+    if (fbUserAccessToken) {
+      console.log("user token is ", fbUserAccessToken);
+      window.FB.api(
+        `/${PAGE_ID}?fields=access_token&access_token=${fbUserAccessToken}`,
+        ({ access_token }) => {
+          setFbPageAccessToken(access_token);
+        }
+      );
+    }
+
+    // sendPostToPage();
+  }, [fbUserAccessToken]);
+
+  useEffect(() => {
+    if (fbPageAccessToken) {
+      axios
+        .get("/api/user/facebook", {
+          withCredentials: true,
+          params: {
+            accessToken: fbUserAccessToken,
+            pageToken: fbPageAccessToken,
+            user: user._id,
+          },
+        })
+        .then((res) => {
+          setLoadingFacebook(false);
+          window.location.reload(false);
+        })
+        .catch((err) => {
+          setLoadingFacebook(false);
+        });
+    }
+  }, [fbPageAccessToken]);
 
   const socialImage = (type) => {
     switch (type) {
@@ -123,6 +204,31 @@ export default function Dashboard() {
           window.location.reload(false);
           setDeleting(false);
         }
+      });
+  };
+
+  const logoutFacebook = () => {
+    setDeletingFacebook(true);
+    const facebookDetails = user?.connect?.find((target) => {
+      return target.social === "facebook";
+    });
+    axios
+      .get("/api/user/facebook/logout", {
+        withCredentials: true,
+        params: {
+          id: facebookDetails.id,
+        },
+      })
+      .then((res) => {
+        if (res.status === 200) {
+          window.location.reload(false);
+          setDeletingFacebook(true);
+        }
+      })
+      .catch((err) => {
+        //err
+        window.location.reload(false);
+        setDeletingFacebook(true);
       });
   };
 
@@ -220,19 +326,26 @@ export default function Dashboard() {
                 <div className="flex space-x-6 items-center">
                   <div className="flex space-x-2 items-center text-lg md:text-xl">
                     <img className="w-5 h-5" src={socialImage(social.type)} />
-                    <p className="font-bold">@AhmadBMTahir</p>
+                    <p className="font-bold">@{social.username}</p>
                   </div>
                   <div className="text-xl">
                     <MdOutlineCancel
                       className="fill-ored cursor-pointer"
-                      onClick={(e) => setDeleteTwitter(true)}
+                      onClick={(e) => {
+                        if (social.type === "twitter") {
+                          setDeleteTwitter(true);
+                        } else if (social.type === "facebook") {
+                          setDeleteFacebook(true);
+                        }
+                      }}
                     />
                   </div>
                 </div>
 
                 <div
                   className={
-                    deleteTwitter
+                    (social.type === "twitter" && deleteTwitter) ||
+                    (social.type === "facebook" && deleteFacebook)
                       ? "flex flex-col font-bold space-y-4 bg-owhite rounded-lg p-2 "
                       : "hidden"
                   }
@@ -240,14 +353,27 @@ export default function Dashboard() {
                   <p>Are you sure you want to delete account</p>
                   <div className="flex justify-center space-x-4">
                     <button
-                      onClick={(e) => setDeleteTwitter(false)}
+                      onClick={(e) => {
+                        if (social.type === "twitter") {
+                          setDeleteTwitter(false);
+                        } else if (social.type === "facebook") {
+                          setDeleteFacebook(false);
+                        }
+                      }}
                       className="rounded-lg p-2 border border-ogray"
                     >
                       Cancel
                     </button>
-                    {!deleting ? (
+                    {(social.type === "twitter" && !deleting) ||
+                    (social.type === "facebook" && !deletingFacebook) ? (
                       <button
-                        onClick={(e) => logoutTwitter()}
+                        onClick={(e) => {
+                          if (social.type === "twitter") {
+                            logoutTwitter();
+                          } else if (social.type === "facebook") {
+                            logoutFacebook();
+                          }
+                        }}
                         className="rounded-lg p-2 bg-ored text-owhite border"
                       >
                         Delete
@@ -296,11 +422,18 @@ export default function Dashboard() {
                   />
                 )
               )}
+              {loadingFacebook ? (
+                <CircularProgress />
+              ) : (
+                socials[1]?.type !== "facebook" && (
+                  <img
+                    onClick={(e) => connectFacebook()}
+                    className="w-12 h-12 md:w-20 md:h-20 cursor-pointer "
+                    src={facebook}
+                  />
+                )
+              )}
 
-              <img
-                className="w-12 h-12 md:w-20 md:h-20 cursor-pointer "
-                src={facebook}
-              />
               <img
                 className="w-12 h-12 md:w-20 md:h-20 cursor-pointer "
                 src={linkedin}
