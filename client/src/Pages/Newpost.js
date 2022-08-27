@@ -327,31 +327,28 @@ export default function Newpost() {
     const facebook = user.connect.find((item) => {
       return item.social === "facebook";
     });
-    axios
-      .post("/api/user/post/facebook", {
+    if (value.facebookContent !== "") {
+      const res = await axios.post("/api/user/post/facebook", {
         data: value.facebookContent,
         id: facebook.id,
-      })
-      .then((res) => {
-        console.log("res is ", res);
-        // post to twitter
-        axios
-          .post("/api/user/post/twitter", {
-            data: allData,
-            id: user._id,
-          })
-          .then((res) => {
-            console.log("res twitter is ", res);
-            setLoad(false);
-            if (res.data.status === "ok") {
-              setSuccess(true);
-            } else {
-              setLoad(false);
-              setError(res.data.error);
-              setShowError(true);
-            }
-          });
       });
+    }
+    if (allData.length > 0) {
+      const res2 = await axios.post("/api/user/post/twitter", {
+        data: allData,
+        id: user._id,
+      });
+      // setLoad(false);
+      if (res2.data.status === "ok") {
+        setSuccess(true);
+      } else {
+        // setLoad(false);
+        setError(res2.data.error);
+        setShowError(true);
+      }
+      setLoad(false);
+    }
+    setLoad(false);
   };
 
   const removeImage = (e, pic) => {
