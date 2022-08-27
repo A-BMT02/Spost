@@ -25,8 +25,9 @@ export const useInitFbSDK = () => {
       // Find your App ID on https://developers.facebook.com/apps/
       appId: "1232028627552604",
       cookie: true,
+      autoLogAppEvents: true,
       xfbml: true,
-      version: "v8.0",
+      version: "v14.0",
     });
 
     window.FB.AppEvents.logPageView();

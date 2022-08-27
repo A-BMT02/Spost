@@ -42,7 +42,9 @@ app.use(
 );
 
 app.use(cookieParser());
-app.use(parser.urlencoded({ limit: "50mb", extended: false }));
+// app.use(parser.urlencoded({ limit: "50mb", extended: false }));
+app.use(parser.urlencoded({ extended: false }));
+
 app.use(
   session({
     secret: process.env.SESSION_SECRET,

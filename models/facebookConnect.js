@@ -18,6 +18,9 @@ const facebookConnect = new mongoose.Schema({
   pageToken: {
     type: String,
   },
+  pageId: {
+    type: String,
+  },
 });
 
 const facebookInfo = mongoose.model("facebookInfo", facebookConnect);

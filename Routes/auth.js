@@ -10,6 +10,9 @@ import { TwitterApi } from "twitter-api-v2";
 import tokens from "../models/tempTokens.js";
 import axios from "axios";
 import facebookInfo from "../models/facebookConnect.js";
+import { Blob } from "node:buffer";
+import { default as FormData } from "form-data";
+import intoStream from "into-stream";
 
 const router = Express.Router();
 router.post("/register", async (req, res) => {
@@ -47,6 +50,7 @@ router.post("/register", async (req, res) => {
       throw error;
     }
   } catch (err) {
+    console.log("err is ", err);
     return res.json({
       status: "error",
       error: "An error occured. Try again later",
@@ -288,6 +292,7 @@ router.get("/facebook", async (req, res) => {
   let picture = "";
   let accessToken = "";
   let pageToken = "";
+  let pageId = "";
 
   try {
     const result = await axios.get(
@@ -314,6 +319,11 @@ router.get("/facebook", async (req, res) => {
         );
         if (pageResult.status === 200) {
           pageToken = pageResult.data.data[0].access_token;
+          const pageIdObject = await axios.get(
+            `https://graph.facebook.com/${facebookId}/accounts?access_token=${accessToken}`
+          );
+          pageId = pageIdObject.data.data[0].id;
+
           // console.log("pageToken is ", pageToken);
         }
       }
@@ -327,7 +337,8 @@ router.get("/facebook", async (req, res) => {
       name !== "" &&
       picture !== "" &&
       accessToken !== "" &&
-      pageToken !== ""
+      pageToken !== "" &&
+      pageId !== ""
     ) {
       const newFacebook = await facebookInfo.create({
         facebookId,
@@ -335,6 +346,7 @@ router.get("/facebook", async (req, res) => {
         image: picture,
         accessToken,
         pageToken,
+        pageId,
       });
       if (newFacebook) {
         const updatedUser = await user.findOneAndUpdate(
@@ -374,5 +386,88 @@ router.get("/facebook/details", async (req, res) => {
     return res.status(400).json({ error: "An error Occured.Try Again!" });
   }
 });
+
+// router.post("/test", async (req, res) => {
+//   // const formdata = req.body.formData;
+//   const reader = req.body.result;
+//   const blob = req.body.blob;
+
+//   const blobObject = DataURIToBlob(reader);
+
+//   console.log("formdata is ", blobObject, " size is ", blobObject.size);
+//   const data = reader.split(",")[1];
+//   const imageString = intoStream(data);
+
+//   let formdata = new FormData();
+//   formdata.append("image", imageString);
+//   // formdata.append("message", "hello");
+//   // formdata.append("image", JSON.stringify(blobObject));
+
+//   console.log("fd is ", formdata);
+//   const result = await axios.post(
+//     `https://graph.facebook.com/v14.0/1232028627552604/uploads?file_length=${blobObject.size}&file_type=image/jpeg&access_token=EAARghgSyyVwBANi7MlNJ33AzeLxMbLe5ZCOxcooGD52B5VZBCv4IGJJBQdekmFCrVlQ9UBI1qBG4FkLYjQAB1hOpt90arq8f98ezMlPZCW6JISofpfN5ZAKs8Q0CK0ZAgJAFLZALr59Jhzj7kmAU7TDZALjYyFhz8kvm52NMeIe3gZDZD`
+//   );
+//   const id = result.data.id;
+
+//   const config = {
+//     headers: {
+//       file_offset: "0",
+//       Authorization:
+//         "OAuth EAARghgSyyVwBAKvsyQ3lhssZBdpptDLNELbOqSTCafs3jl5KujyTTbzkieVcjCm67ZA6LY7oDpyXIZAik9XvnuKlUH66fr4GRj5iQnKICKwbtpXs0Kc98InZAFyP6YEHouQnigWzTOkaN03TyOvZCTS38Kq1aRfTpVedgsBP17AZDZD",
+//       "Content-Length": blobObject.size,
+//       "Content-type": "multipart/form-data",
+//       ...formdata.getHeaders(),
+//     },
+//   };
+//   const result2 = await axios.post(
+//     `http://graph.facebook.com/v14.0/${id}`,
+//     formdata,
+//     config
+//   );
+
+// const result = await axios.post(
+//   "https://graph.facebook.com/v14.0/101438839361774/photos",
+//   formdata
+// );
+// const idResult = await axios.post(
+//   `https://graph.facebook.com/app/uploads?access_token=EAARghgSyyVwBANi7MlNJ33AzeLxMbLe5ZCOxcooGD52B5VZBCv4IGJJBQdekmFCrVlQ9UBI1qBG4FkLYjQAB1hOpt90arq8f98ezMlPZCW6JISofpfN5ZAKs8Q0CK0ZAgJAFLZALr59Jhzj7kmAU7TDZALjYyFhz8kvm52NMeIe3gZDZD`
+// );
+// console.log("idresult is ", idResult.data);
+
+// const config = {
+//   headers: {
+//     file_offset: "0",
+//     Authorization:
+//       "OAuth ghgSyyVwBAKvsyQ3lhssZBdpptDLNELbOqSTCafs3jl5KujyTTbzkieVcjCm67ZA6LY7oDpyXIZAik9XvnuKlUH66fr4GRj5iQnKICKwbtpXs0Kc98InZAFyP6YEHouQnigWzTOkaN03TyOvZCTS38Kq1aRfTpVedgsBP17AZDZD",
+//     Host: "graph.facebook.com",
+//     Connection: "close",
+//     "Content-Type": "multipart/form-data",
+//     "Content-Length": blobObject.size,
+//     ...formdata.getHeaders(),
+//   },
+// };
+// const result = await axios.post(
+//   // &file_length=${blob}&file_type=image/jpeg
+//   `https://graph.facebook.com/v14.0/${idResult.data.id}&file_length=${blobObject.size}&file_type=image/jpeg`,
+//   formdata,
+//   config
+// );
+//   console.log("res is ", result, " and res2 is", result2);
+//   res.send(result.data);
+// });
+
+function DataURIToBlob(dataURI) {
+  const splitDataURI = dataURI.split(",");
+  const byteString =
+    splitDataURI[0].indexOf("base64") >= 0
+      ? atob(splitDataURI[1])
+      : decodeURI(splitDataURI[1]);
+  const mimeString = splitDataURI[0].split(":")[1].split(";")[0];
+
+  const ia = new Uint8Array(byteString.length);
+  for (let i = 0; i < byteString.length; i++) ia[i] = byteString.charCodeAt(i);
+
+  return new Blob([ia], { type: mimeString });
+}
 
 export default router;

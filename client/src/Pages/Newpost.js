@@ -209,6 +209,60 @@ export default function Newpost() {
     };
   };
 
+  // const postToFacebook = async (result) => {
+  // const blob = dataUrltoBlob(result);
+  // const authToken =
+  //   "EAARghgSyyVwBANi7MlNJ33AzeLxMbLe5ZCOxcooGD52B5VZBCv4IGJJBQdekmFCrVlQ9UBI1qBG4FkLYjQAB1hOpt90arq8f98ezMlPZCW6JISofpfN5ZAKs8Q0CK0ZAgJAFLZALr59Jhzj7kmAU7TDZALjYyFhz8kvm52NMeIe3gZDZD";
+  // let formData = new FormData();
+  // fd.append("access_token", authToken);
+  // formData.append("source", blob, "image/jpg");
+
+  // const result2 = await axios.post(
+  //   `https://graph.facebook.com/v14.0/1232028627552604/uploads?file_length=${blob.size}&file_type=image/jpeg&access_token=EAARghgSyyVwBANi7MlNJ33AzeLxMbLe5ZCOxcooGD52B5VZBCv4IGJJBQdekmFCrVlQ9UBI1qBG4FkLYjQAB1hOpt90arq8f98ezMlPZCW6JISofpfN5ZAKs8Q0CK0ZAgJAFLZALr59Jhzj7kmAU7TDZALjYyFhz8kvm52NMeIe3gZDZD`
+  // );
+
+  // const id = result2.data.id;
+
+  // const result3 = window.FB.api(`/v14.0/${id}`, formData, config);
+
+  // console.log("res 1 is ", result, " and res 2 is ", result2);
+  // console.log("id is ", id);
+  // fd.append("message", "Please work");
+  // console.log(
+  //   "blob is ",
+  //   blob,
+  //   " and fd is",
+  //   ...formData,
+  //   " blob size is ",
+  //   blob.size
+  // );
+
+  // const config2 = {
+  //   headers: {
+  //     "Content-Type": "multipart/form-data",
+  //   },
+  //   params: {
+  //     id,
+  //     size: blob.size,
+  //   },
+  // };
+
+  // const res = await axios.post("/api/user/test", {
+  //   blob,
+  //   result: result,
+  // });
+  // };
+
+  function dataUrltoBlob(dataURI) {
+    var byteString = window.atob(dataURI.split(",")[1]);
+    var ab = new ArrayBuffer(byteString.length);
+    var ia = new Uint8Array(ab);
+    for (var i = 0; i < byteString.length; i++) {
+      ia[i] = byteString.charCodeAt(i);
+    }
+    return new Blob([ab], { type: "image/jpg" });
+  }
+
   useEffect(() => {
     if (error !== "") {
       setShowError(true);
@@ -227,6 +281,7 @@ export default function Newpost() {
 
         return;
       case "facebook":
+        console.log("i am here", reader.result);
         return value.setFacebookPicture(state?.image);
       case "linkedin":
         return value.setLinkedinPicture(state?.image);
@@ -268,19 +323,34 @@ export default function Newpost() {
       })
     );
 
+    //post to facebook
+    const facebook = user.connect.find((item) => {
+      return item.social === "facebook";
+    });
     axios
-      .post("/api/user/post/twitter", {
-        data: allData,
-        id: user._id,
+      .post("/api/user/post/facebook", {
+        data: value.facebookContent,
+        id: facebook.id,
       })
       .then((res) => {
-        setLoad(false);
-        if (res.data.status === "ok") {
-          setSuccess(true);
-        } else {
-          setError(res.data.error);
-          setShowError(true);
-        }
+        console.log("res is ", res);
+        // post to twitter
+        axios
+          .post("/api/user/post/twitter", {
+            data: allData,
+            id: user._id,
+          })
+          .then((res) => {
+            console.log("res twitter is ", res);
+            setLoad(false);
+            if (res.data.status === "ok") {
+              setSuccess(true);
+            } else {
+              setLoad(false);
+              setError(res.data.error);
+              setShowError(true);
+            }
+          });
       });
   };
 
@@ -622,17 +692,6 @@ export default function Newpost() {
                           </div>
                         </div>
                       ))}
-                      {/* <textarea
-                        maxLength={280}
-                        value={whichContent(value.target)}
-                        onChange={(e) => changeContent(e.target.value)}
-                        className="font-bold min-w-full p-2 rounded-lg border border-dblue min-h-[200px]"
-                        placeholder="Enter your text here"
-                      />
-                      <div className="absolute bottom-4 right-1 flex">
-                        <GrFormPrevious />
-                        <GrFormNext />
-                      </div> */}
                     </div>
                   </div>
                 </div>
@@ -644,10 +703,18 @@ export default function Newpost() {
                 value.select.length === 0 ? "hidden" : "flex flex-col space-y-2"
               }
             >
-              <div className={maxMedia() ? "hidden" : ""}>
+              <div
+                className={
+                  maxMedia() || value.target === "facebook" ? "hidden" : ""
+                }
+              >
                 <h2 className="font-black text-xl">Media</h2>
               </div>
-              <div className={maxMedia() ? "hidden" : ""}>
+              <div
+                className={
+                  maxMedia() || value.target === "facebook" ? "hidden" : ""
+                }
+              >
                 <Dropzone selectImage={selectImage} />
               </div>
             </div>
@@ -767,7 +834,7 @@ export default function Newpost() {
                   <div className="px-4 mb-4">
                     <div className="flex flex-wrap w-full max-w-full">
                       {previewPicture(value.previewTarget) &&
-                        previewPicture(value.previewTarget).map(
+                        previewPicture(value.previewTarget)?.map(
                           (media, index) => (
                             <div className="w-1/2 relative">
                               {console.log("media type is ", media.type)}

@@ -6,6 +6,8 @@ import twitterModel from "../models/twitterConnect.js";
 // const { TwitThread } = require("twit-thread");
 import { TwitterApi } from "twitter-api-v2";
 import { fileTypeFromFile } from "file-type";
+import facebookInfo from "../models/facebookConnect.js";
+import axios from "axios";
 
 const router = Express.Router();
 router.post("/twitter", async (req, res) => {
@@ -56,6 +58,26 @@ router.post("/twitter", async (req, res) => {
   }
 });
 
+router.post("/facebook", async (req, res) => {
+  try {
+    const data = req.body.data;
+    const id = req.body.id;
+
+    const targetFacebook = await facebookInfo.findOne({ facebookId: id });
+    if (targetFacebook) {
+      const pageToken = targetFacebook.pageToken;
+      console.log("page id is ", pageToken);
+      const postResult = await axios.post(
+        `https://graph.facebook.com/${targetFacebook.pageId}/feed?message=${data}!&access_token=${pageToken}`
+      );
+      console.log("post result is ", postResult);
+      res.send("success");
+    }
+  } catch (err) {
+    console.log("err is ", err);
+  }
+});
+
 //mime types reference => https://github.com/PLhery/node-twitter-api-v2/blob/master/src/types/v1/tweet.v1.types.ts
 const thread = async (client, data, res) => {
   const updatedData = await Promise.all(
@@ -78,32 +100,32 @@ const thread = async (client, data, res) => {
 
 const getMediaId = async (client, mediaArray) => {
   let type = "";
-  let imagesBuffer = [] ;
+  let imagesBuffer = [];
   if (mediaArray.length > 1) {
     type = "image/jpeg";
     imagesBuffer = mediaArray.map((image) => {
-    return Buffer.from(
-      image.file.replace(/^data:image\/\w+;base64,/, ""),
-      "base64"
-    );
-  });
+      return Buffer.from(
+        image.file.replace(/^data:image\/\w+;base64,/, ""),
+        "base64"
+      );
+    });
   } else {
     if (mediaArray[0]?.type === "gif") {
       type = "image/gif";
       imagesBuffer = mediaArray.map((image) => {
-    return Buffer.from(
-      image.file.replace(/^data:image\/\w+;base64,/, ""),
-      "base64"
-    );
-  });
+        return Buffer.from(
+          image.file.replace(/^data:image\/\w+;base64,/, ""),
+          "base64"
+        );
+      });
     } else if (mediaArray[0]?.type === "video") {
       type = "video/mp4";
-       imagesBuffer = mediaArray.map((image) => {
-    return Buffer.from(
-      image.file.replace(/^data:video\/\w+;base64,/, ""),
-      "base64"
-    );
-  });
+      imagesBuffer = mediaArray.map((image) => {
+        return Buffer.from(
+          image.file.replace(/^data:video\/\w+;base64,/, ""),
+          "base64"
+        );
+      });
     }
   }
 
