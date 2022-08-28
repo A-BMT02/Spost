@@ -333,7 +333,9 @@ export default function Newpost() {
         id: facebook.id,
       });
     }
-    if (allData.length > 0) {
+    console.log("alldata is ", allData, " and length is ", allData.length);
+    if (allData[0].text !== "" || allData[0].media.length >= 1) {
+      console.log("posting to twitter");
       const res2 = await axios.post("/api/user/post/twitter", {
         data: allData,
         id: user._id,
@@ -348,6 +350,7 @@ export default function Newpost() {
       }
       setLoad(false);
     }
+    setSuccess(true);
     setLoad(false);
   };
 
@@ -830,7 +833,7 @@ export default function Newpost() {
                     </div>
                   </div>
                   <div className="p-4">
-                    <p className="font-bold">
+                    <p className="font-bold ">
                       {previewedContent(value.previewTarget)}
                     </p>
                   </div>

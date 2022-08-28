@@ -99,7 +99,7 @@ router.get("/login/success", async (req, res) => {
         return res.json({ status: "error", error: "user not found" });
       }
     } catch (err) {
-      return res.json({ status: "error", error: "user not found" });
+      return res.json({ status: "error", error: "An error occured" });
     }
   } catch (err) {
     return res.json({
