@@ -640,8 +640,14 @@ export default function Newpost() {
                           <textarea
                             maxLength={280}
                             value={whichContent(value.target)}
-                            onChange={(e) => changeContent(e.target.value)}
-                            className="w-full font-bold  p-2 rounded-lg border border-dblue min-h-[200px]"
+                            onChange={(e) => {
+                              if (e.target.value == "\n") {
+                                console.log("new line");
+                              }
+                              changeContent(e.target.value);
+                              console.log(whichContent(value.target));
+                            }}
+                            className="textarea w-full font-bold  p-2 rounded-lg border border-dblue min-h-[200px]"
                             placeholder="Enter your text here"
                           />
                           <div className="flex justify-between">
@@ -824,10 +830,15 @@ export default function Newpost() {
                     </div>
                   </div>
                   <div className="p-4">
-                    <p className="font-bold break-words">
+                    <p className="font-bold">
                       {previewedContent(value.previewTarget)}
                     </p>
                   </div>
+                  {/* <textarea
+                    readOnly={true}
+                    value={previewedContent(value.previewTarget)}
+                    className="p-4 bg-lblue font-bold"
+                  /> */}
                   <div className="px-4 mb-4">
                     <div className="flex flex-wrap w-full max-w-full">
                       {previewPicture(value.previewTarget) &&

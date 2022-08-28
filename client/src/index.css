@@ -9,6 +9,14 @@ html {
   background-color: #F8FAFC;
 }
 
+p {
+white-space: pre-wrap;
+}
+
+.textarea {
+  white-space: pre-wrap;
+}
+
 .hamburger {
   cursor: pointer;
   width: 24px;
