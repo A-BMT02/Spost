@@ -100,11 +100,14 @@ export default function Signin() {
                   <h2 className="text-3xl font-black font-bold">Sign in</h2>
                 </div>
                 <div className="relative mx-auto block ">
-                  <p className="absolute top-2 left-5 ">Email Address</p>
+                  <label className="absolute top-2 left-5 ">
+                    Email Address
+                  </label>
                   <input
                     value={emailValue}
                     onChange={(e) => setEmailValue(e.target.value)}
                     className="bg-owhite w-lg border border-dblue rounded-lg p-2 md:w-80 pt-7 pl-5 font-bold"
+                    alt="email"
                   />
                 </div>
                 <div className="relative mx-auto block">
@@ -114,6 +117,7 @@ export default function Signin() {
                     onChange={(e) => setPasswordValue(e.target.value)}
                     type="password"
                     className="bg-owhite w-lg border border-dblue rounded-lg p-2 md:w-80 pt-7 pl-5 font-bold"
+                    alt="password"
                   />
                 </div>
 
