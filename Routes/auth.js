@@ -10,6 +10,7 @@ import { TwitterApi } from "twitter-api-v2";
 import tokens from "../models/tempTokens.js";
 import axios from "axios";
 import facebookInfo from "../models/facebookConnect.js";
+import instagramInfo from "../models/instagramConnect.js";
 import { Blob } from "node:buffer";
 import { default as FormData } from "form-data";
 import intoStream from "into-stream";
@@ -232,6 +233,74 @@ router.get("/twitter/callback", async (req, res) => {
   }
 });
 
+router.get("/instagram", async (req, res) => {
+  const id = req.query["id"];
+
+  const foundUser = await user.findById(id);
+  const facebookId = foundUser.connect.find((item) => {
+    return item.social === "facebook";
+  });
+  if (!facebookId) {
+    return res.json({
+      status: "error",
+      error: "You have to connect your facebook account first",
+    });
+  }
+
+  const facebookObject = await facebookInfo.findOne({
+    facebookId: facebookId.id,
+  });
+  if (!facebookObject) {
+    return res.json({
+      status: "error",
+      error: "You have to connect your facebook account first",
+    });
+  }
+  const pageId = facebookObject.pageId;
+  const accessToken = facebookObject.accessToken;
+  const pageToken = facebookObject.pageToken;
+
+  const result = await axios.get(
+    `https://graph.facebook.com/v14.0/${pageId}?fields=instagram_business_account&access_token=${accessToken}`
+  );
+  if (result.status == 200) {
+    const instagramId = result.data.instagram_business_account.id;
+    console.log("id is ", instagramId);
+    const instagramObj = await axios.get(
+      `https://graph.facebook.com/v14.0/${instagramId}?fields=name,username,profile_picture_url&access_token=${pageToken}`
+    );
+    // console.log("insta obj is ", instagramObj);
+    const instaUsername = instagramObj.data.username;
+    const instaProfile = instagramObj.data.profile_picture_url;
+
+    const saveInstagram = await instagramInfo.create({
+      instagramId,
+      facebookId: facebookId.id,
+      accessToken,
+      username: instaUsername,
+      profilePic: instaProfile,
+    });
+    if (saveInstagram) {
+      const updatedUser = await user.findOneAndUpdate(
+        { _id: id },
+        {
+          $push: { connect: { social: "instagram", id: instagramId } },
+        }
+      );
+      return res.send("success");
+    }
+    // const result2 = await axios.post(
+    //   `https://graph.facebook.com/v14.0/${instagramId}/media?image_url=https%3A%2F%2Fupload.wikimedia.org%2Fwikipedia%2Fcommons%2Fthumb%2Ff%2Ff0%2FBlack_Panther.JPG%2F1200px-Black_Panther.JPG&caption=%23BronzFonz&access_token=EAARghgSyyVwBAOdCTZA3MGO0uaoBzkQEQouBs2Oi4FM2a5Vvb9JUFs8enoRggHs3icVYAlabXZAxtD91SDpvoZBa5FYC6UTQqa2ZBjBjtvm5UNpkriZAqY1LhFInU3F9z0FSYPYfTQndROGrq7hKqmzx8u8HhG0y62ZBtcZB6InLRq4nfG40TWdn0ePnUcUrEQVZCjZA6KngJ4Yr66TA2jxSK`
+    // );
+    // console.log("res is ", result2);
+  }
+
+  return res.json({
+    status: "error",
+    error: "An error Occured",
+  });
+});
+
 router.get("/twitter/logout", async (req, res) => {
   try {
     const id = req.query["id"];
@@ -381,6 +450,21 @@ router.get("/facebook/details", async (req, res) => {
       });
     } else {
       return res.status(400).json({ error: "An error Occured.Try Again!" });
+    }
+  } catch (err) {
+    return res.status(400).json({ error: "An error Occured.Try Again!" });
+  }
+});
+
+router.get("/instagram/details", async (req, res) => {
+  try {
+    const instagramId = req.query["id"];
+    const foundInstagram = await instagramInfo.findOne({ instagramId });
+    if (foundInstagram) {
+      return res.status(200).json({
+        displayName: foundInstagram.username,
+        image: foundInstagram.profilePic,
+      });
     }
   } catch (err) {
     return res.status(400).json({ error: "An error Occured.Try Again!" });

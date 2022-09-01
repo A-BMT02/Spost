@@ -619,7 +619,7 @@ export default function Newpost() {
                   <div className={value.sele}></div>
                   <div className="flex space-x-1">
                     <img className="w-5 h-5" src={contentIcon(value.target)} />
-                    <p>{whichContent(value.target).length}/280</p>
+                    <p>{whichContent(value.target)?.length}/280</p>
                   </div>
                 </div>
                 <div className="relative w-full">
