@@ -69,7 +69,8 @@ export default function Dashboard() {
       .then((res) => {
         if (res.data.status === "ok") {
           if (res.data.data !== null) {
-            setSocials([
+            setSocials((prev) => [
+              ...prev,
               {
                 type: "twitter",
                 username: res.data.data?.username,
@@ -264,6 +265,10 @@ export default function Dashboard() {
         setDeletingFacebook(true);
       });
   };
+
+  // useEffect(() => {
+  //   console.log("soicals is", socials);
+  // }, [socials]);
 
   return (
     Object.keys(user).length !== 0 && (

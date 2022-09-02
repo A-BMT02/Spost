@@ -8,6 +8,7 @@ import React, {
 import twitter from "../images/twitter.png";
 import facebook from "../images/facebook.png";
 import linkedin from "../images/linkedin.png";
+import instagram from "../images/instagram.png";
 import upload from "../images/upload.png";
 import picture from "../images/picture.png";
 import mbj from "../images/mbj.png";
@@ -45,6 +46,7 @@ export default function Newpost() {
   const [loading, setLoading] = useState(false);
   const [load, setLoad] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [imageUrl, setImageUrl] = useState("");
 
   const errorRef = useRef(null);
   const successRef = useRef(null);
@@ -57,6 +59,8 @@ export default function Newpost() {
         return facebook;
       case "linkedin":
         return linkedin;
+      case "instagram":
+        return instagram;
     }
   };
 
@@ -72,6 +76,8 @@ export default function Newpost() {
         return value.facebookContent;
       case "linkedin":
         return value.linkedinContent;
+      case "instagram":
+        return value.instagramContent;
     }
   };
 
@@ -87,6 +93,8 @@ export default function Newpost() {
         return value.setFacebookContent(text);
       case "linkedin":
         return value.setLinkedinContent(text);
+      case "instagram":
+        return value.setInstagramContent(text);
     }
   };
 
@@ -98,6 +106,8 @@ export default function Newpost() {
         return value.facebookContent;
       case "linkedin":
         return value.linkedinContent;
+      case "instagram":
+        return value.instagramContent;
     }
   };
 
@@ -109,6 +119,8 @@ export default function Newpost() {
         return facebook;
       case "linkedin":
         return linkedin;
+      case "instagram":
+        return instagram;
     }
   };
 
@@ -297,6 +309,9 @@ export default function Newpost() {
         return value.facebookPicture;
       case "linkedin":
         return value.linkedinPicture;
+      case "instagram":
+        return [{ type: "image", media: imageUrl, index: 0 }];
+      // return value.instagramPicture;
     }
   };
 
@@ -350,6 +365,20 @@ export default function Newpost() {
       }
       setLoad(false);
     }
+    //post to instagram
+    const instagram = user.connect.find((item) => {
+      return item.social === "instagram";
+    });
+    console.log("image is ", imageUrl);
+    if (imageUrl !== "") {
+      const instaPost = await axios.post("/api/user/post/instagram", {
+        picture: imageUrl,
+        text: value.instagramContent,
+        id: instagram.id,
+      });
+      console.log("insta post is ", instaPost);
+    }
+
     setSuccess(true);
     setLoad(false);
   };
@@ -445,7 +474,7 @@ export default function Newpost() {
           className={
             value.preview
               ? "flex flex-col justify-center items-center w-full "
-              : "flex justify-center w-full"
+              : "flex justify-center w-full space-x-6"
           }
         >
           <div className="flex flex-col md:w-1/2 space-y-6 space-x-6 font-inter">
@@ -572,6 +601,20 @@ export default function Newpost() {
                     }
                   >
                     <img className="w-12 h-12" src={twitter} />
+                  </div>
+                </div>
+                <div
+                  className={value.select.includes("instagram") ? "" : "hidden"}
+                >
+                  <div
+                    onClick={(e) => value.setTarget("instagram")}
+                    className={
+                      value.target === "instagram"
+                        ? "cursor-pointer p-3 bg-gradient-to-b from-dblue to-owhite "
+                        : "cursor-pointer p-3"
+                    }
+                  >
+                    <img className="w-12 h-12" src={instagram} />
                   </div>
                 </div>
                 <div
@@ -716,13 +759,24 @@ export default function Newpost() {
               >
                 <h2 className="font-black text-xl">Media</h2>
               </div>
-              <div
-                className={
-                  maxMedia() || value.target === "facebook" ? "hidden" : ""
-                }
-              >
-                <Dropzone selectImage={selectImage} />
-              </div>
+              {value.target !== "instagram" ? (
+                <div
+                  className={
+                    maxMedia() || value.target === "facebook" ? "hidden" : ""
+                  }
+                >
+                  <Dropzone selectImage={selectImage} />
+                </div>
+              ) : (
+                <div className="flex flex-col space-y-2">
+                  <p className="font-black">Enter image Url below</p>
+                  <input
+                    value={imageUrl}
+                    onChange={(e) => setImageUrl(e.target.value)}
+                    className="rounded-md border border-dblue font-black p-2"
+                  />
+                </div>
+              )}
             </div>
 
             <div
@@ -783,6 +837,20 @@ export default function Newpost() {
                     }
                   >
                     <img className="w-12 h-12" src={twitter} />
+                  </div>
+                </div>
+                <div
+                  className={value.select.includes("instagram") ? "" : "hidden"}
+                >
+                  <div
+                    onClick={(e) => value.setPreviewTarget("instagram")}
+                    className={
+                      value.previewTarget === "instagram"
+                        ? "cursor-pointer p-3 bg-gradient-to-b from-dblue to-owhite "
+                        : "cursor-pointer p-3"
+                    }
+                  >
+                    <img className="w-12 h-12" src={instagram} />
                   </div>
                 </div>
                 <div
@@ -854,7 +922,11 @@ export default function Newpost() {
                                 <img
                                   ref={imageRef.current[index]}
                                   className="rounded-lg w-full h-[150px] object-cover "
-                                  src={media.file}
+                                  src={
+                                    value.previewTarget !== "instagram"
+                                      ? media.file
+                                      : imageUrl
+                                  }
                                 />
                               ) : (
                                 <video

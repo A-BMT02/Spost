@@ -8,6 +8,7 @@ import { TwitterApi } from "twitter-api-v2";
 import { fileTypeFromFile } from "file-type";
 import facebookInfo from "../models/facebookConnect.js";
 import axios from "axios";
+import instagramInfo from "../models/instagramConnect.js";
 
 const router = Express.Router();
 router.post("/twitter", async (req, res) => {
@@ -78,6 +79,34 @@ router.post("/facebook", async (req, res) => {
   }
 });
 
+router.post("/instagram", async (req, res) => {
+  // try {
+  const picture = req.body.picture;
+  const text = req.body.text;
+  const id = req.body.id;
+  console.log("pic ", picture, " text ", text, " id ", id);
+
+  const targetInstagram = await instagramInfo.findOne({ instagramId: id });
+  if (targetInstagram) {
+    const token =
+      "EAARghgSyyVwBAISP34aA5UfduKKxpH7oUTWYu3A4f3Sx8O8zEmQ33LJrEVNKYh5Suz2jJqR1mN8wbGRDtUkQU1zAZCruXqql9pm2xGvFiDc4vyLBSBemXrecOZCaZAufx87DiSmd6BKgEGAIjnhZCdUOOZAhxy7ohr76ZCnzXln887rZBt1Joo5";
+    const initialPost = await axios.post(
+      `https://graph.facebook.com/v14.0/${id}/media?image_url=${picture}&caption=%23BronzFonz&access_token=${token}`
+    );
+    if (initialPost.data.id) {
+      const post = await axios.post(
+        `https://graph.facebook.com/v14.0/${id}/media_publish?creation_id=${initialPost.data.id}&access_token=${token}`
+      );
+      console.log("post is ", post);
+    }
+    // console.log("initail post is ", initialPost.data);
+    return res.status(200).send("done");
+  }
+  // } catch (err) {
+  // console.log("err is ", err, "data is ", err.data);
+  // return res.status(400).send("error");
+  // }
+});
 //mime types reference => https://github.com/PLhery/node-twitter-api-v2/blob/master/src/types/v1/tweet.v1.types.ts
 const thread = async (client, data, res) => {
   const updatedData = await Promise.all(
