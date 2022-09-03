@@ -63,16 +63,25 @@ router.post("/facebook", async (req, res) => {
   try {
     const data = req.body.data;
     const id = req.body.id;
+    const picture = req.body.picture;
 
     const targetFacebook = await facebookInfo.findOne({ facebookId: id });
     if (targetFacebook) {
       const pageToken = targetFacebook.pageToken;
       console.log("page id is ", pageToken);
-      const postResult = await axios.post(
-        `https://graph.facebook.com/${targetFacebook.pageId}/feed?message=${data}!&access_token=${pageToken}`
-      );
-      console.log("post result is ", postResult);
-      res.send("success");
+      if (picture == "") {
+        const postResult = await axios.post(
+          `https://graph.facebook.com/${targetFacebook.pageId}/feed?message=${data}&access_token=${pageToken}`
+        );
+        console.log("post result is ", postResult);
+        return res.send("success");
+      } else {
+        const postResult2 = await axios.post(
+          `https://graph.facebook.com/${targetFacebook.pageId}/photos?url=${picture}&access_token=${pageToken}`
+        );
+        console.log("post result 2 is ", postResult2);
+        return res.send("success");
+      }
     }
   } catch (err) {
     console.log("err is ", err);

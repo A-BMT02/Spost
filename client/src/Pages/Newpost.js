@@ -47,6 +47,7 @@ export default function Newpost() {
   const [load, setLoad] = useState(false);
   const [success, setSuccess] = useState(false);
   const [imageUrl, setImageUrl] = useState("");
+  const [imageUrl2, setImageUrl2] = useState("");
 
   const errorRef = useRef(null);
   const successRef = useRef(null);
@@ -306,7 +307,8 @@ export default function Newpost() {
         return value.state.value[value.twitterCounter].media;
       // return value.twitterPicture;
       case "facebook":
-        return value.facebookPicture;
+        return [{ type: "image", media: imageUrl2, index: 0 }];
+      // return value.facebookPicture;
       case "linkedin":
         return value.linkedinPicture;
       case "instagram":
@@ -346,6 +348,7 @@ export default function Newpost() {
       const res = await axios.post("/api/user/post/facebook", {
         data: value.facebookContent,
         id: facebook.id,
+        picture: imageUrl2,
       });
     }
     console.log("alldata is ", allData, " and length is ", allData.length);
@@ -417,6 +420,16 @@ export default function Newpost() {
 
   const slider = (e) => {
     sliderRef.current.classList.add("-translate-x-full");
+  };
+
+  const setUrlPreview = () => {
+    console.log("here");
+    if (value.previewTarget === "instagram") {
+      console.log("preview is image", imageUrl);
+      return imageUrl;
+    }
+    console.log("preview is image2", imageUrl2);
+    return imageUrl2;
   };
 
   return (
@@ -752,27 +765,23 @@ export default function Newpost() {
                 value.select.length === 0 ? "hidden" : "flex flex-col space-y-2"
               }
             >
-              <div
-                className={
-                  maxMedia() || value.target === "facebook" ? "hidden" : ""
-                }
-              >
+              <div className={maxMedia() ? "hidden" : ""}>
                 <h2 className="font-black text-xl">Media</h2>
               </div>
-              {value.target !== "instagram" ? (
-                <div
-                  className={
-                    maxMedia() || value.target === "facebook" ? "hidden" : ""
-                  }
-                >
+              {value.target !== "instagram" && value.target !== "facebook" ? (
+                <div className={maxMedia() ? "hidden" : ""}>
                   <Dropzone selectImage={selectImage} />
                 </div>
               ) : (
                 <div className="flex flex-col space-y-2">
                   <p className="font-black">Enter image Url below</p>
                   <input
-                    value={imageUrl}
-                    onChange={(e) => setImageUrl(e.target.value)}
+                    value={value.target === "instagram" ? imageUrl : imageUrl2}
+                    onChange={(e) =>
+                      value.target === "instagram"
+                        ? setImageUrl(e.target.value)
+                        : setImageUrl2(e.target.value)
+                    }
                     className="rounded-md border border-dblue font-black p-2"
                   />
                 </div>
@@ -923,9 +932,9 @@ export default function Newpost() {
                                   ref={imageRef.current[index]}
                                   className="rounded-lg w-full h-[150px] object-cover "
                                   src={
-                                    value.previewTarget !== "instagram"
+                                    value.previewTarget === "twitter"
                                       ? media.file
-                                      : imageUrl
+                                      : setUrlPreview()
                                   }
                                 />
                               ) : (
