@@ -344,7 +344,7 @@ export default function Newpost() {
     const facebook = user.connect.find((item) => {
       return item.social === "facebook";
     });
-    if (value.facebookContent !== "") {
+    if (value.facebookContent !== "" || imageUrl2 !== "") {
       const res = await axios.post("/api/user/post/facebook", {
         data: value.facebookContent,
         id: facebook.id,
