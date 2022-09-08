@@ -24,6 +24,7 @@ import { GrFormPrevious } from "react-icons/gr";
 import Slider from "../components/slider";
 import { AiOutlinePlusCircle } from "react-icons/ai";
 import { NextPlan } from "@mui/icons-material";
+import Modal from "../components/modal";
 
 export default function Newpost() {
   const value = useData();
@@ -48,6 +49,8 @@ export default function Newpost() {
   const [success, setSuccess] = useState(false);
   const [imageUrl, setImageUrl] = useState("");
   const [imageUrl2, setImageUrl2] = useState("");
+  const [successProfile, setSuccessProfile] = useState([]);
+  const [showModal, setShowModal] = useState(false);
 
   const errorRef = useRef(null);
   const successRef = useRef(null);
@@ -294,8 +297,7 @@ export default function Newpost() {
 
         return;
       case "facebook":
-        console.log("i am here", reader.result);
-        return value.setFacebookPicture(state?.image);
+        return value.setFacebookPicture(reader.result);
       case "linkedin":
         return value.setLinkedinPicture(state?.image);
     }
@@ -307,8 +309,8 @@ export default function Newpost() {
         return value.state.value[value.twitterCounter].media;
       // return value.twitterPicture;
       case "facebook":
-        return [{ type: "image", media: imageUrl2, index: 0 }];
-      // return value.facebookPicture;
+        // return [{ type: "image", media: imageUrl2, index: 0 }];
+        return [{ type: "image", media: value.facebookPicture, index: 0 }];
       case "linkedin":
         return value.linkedinPicture;
       case "instagram":
@@ -348,8 +350,16 @@ export default function Newpost() {
       const res = await axios.post("/api/user/post/facebook", {
         data: value.facebookContent,
         id: facebook.id,
+        // picture: value.facebookPicture,
         picture: imageUrl2,
       });
+      console.log("res is ", res);
+      if (res.status == 200) {
+        setSuccessProfile((prev) => [...prev, "facebook"]);
+      }
+      // const res = await axios.post("/api/user/post/test").then((res) => {
+      //   console.log("res facebook is ", res);
+      // });
     }
     console.log("alldata is ", allData, " and length is ", allData.length);
     if (allData[0].text !== "" || allData[0].media.length >= 1) {
@@ -358,15 +368,13 @@ export default function Newpost() {
         data: allData,
         id: user._id,
       });
-      // setLoad(false);
       if (res2.data.status === "ok") {
+        setSuccessProfile((prev) => [...prev, "twitter"]);
         setSuccess(true);
       } else {
-        // setLoad(false);
         setError(res2.data.error);
         setShowError(true);
       }
-      setLoad(false);
     }
     //post to instagram
     const instagram = user.connect.find((item) => {
@@ -380,10 +388,14 @@ export default function Newpost() {
         id: instagram.id,
       });
       console.log("insta post is ", instaPost);
+      if (instaPost.status == 200) {
+        setSuccessProfile((prev) => [...prev, "instagram"]);
+      }
     }
 
     setSuccess(true);
     setLoad(false);
+    setShowModal(true);
   };
 
   const removeImage = (e, pic) => {
@@ -429,6 +441,7 @@ export default function Newpost() {
       return imageUrl;
     }
     console.log("preview is image2", imageUrl2);
+    // return value.facebookPicture;
     return imageUrl2;
   };
 
@@ -461,7 +474,12 @@ export default function Newpost() {
             X
           </p>
         </div>
-        <div
+        <Modal
+          showModal={showModal}
+          setShowModal={setShowModal}
+          successProfile={successProfile}
+        />
+        {/* <div
           ref={successRef}
           className={
             success
@@ -479,9 +497,14 @@ export default function Newpost() {
           >
             X
           </p>
-        </div>
+        </div> */}
         <nav className="my-3.5 flex justify-start ">
-          <h2 className="text-5xl md:text-6xl font-a text-dblue">Spost</h2>
+          <h2
+            onClick={(e) => navigate("/")}
+            className="text-5xl md:text-6xl font-a text-dblue cursor-pointer"
+          >
+            Spost
+          </h2>
         </nav>
         <div
           className={

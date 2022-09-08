@@ -392,8 +392,6 @@ router.get("/facebook", async (req, res) => {
             `https://graph.facebook.com/${facebookId}/accounts?access_token=${accessToken}`
           );
           pageId = pageIdObject.data.data[0].id;
-
-          // console.log("pageToken is ", pageToken);
         }
       }
     } else {

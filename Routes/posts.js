@@ -9,6 +9,11 @@ import { fileTypeFromFile } from "file-type";
 import facebookInfo from "../models/facebookConnect.js";
 import axios from "axios";
 import instagramInfo from "../models/instagramConnect.js";
+// import panther from "../images/panther.jpg";
+import fs from "fs";
+import { default as FormData } from "form-data";
+import fetch from "node-fetch";
+import { Blob } from "buffer";
 
 const router = Express.Router();
 router.post("/twitter", async (req, res) => {
@@ -59,7 +64,76 @@ router.post("/twitter", async (req, res) => {
   }
 });
 
+// router.post("/test", async (req, res) => {
+//   const stats = fs.statSync("./images/game.mp4");
+//   const fileSizeInBytes = stats.size;
+
+//   const headers = {
+//     "Content-Type": "multipart/form-data",
+//     file_offset: "0",
+//     Authorization:
+//       "OAuth EAARghgSyyVwBAB3uHVa10JOyZBS07MbjJ9E6ZBGXMEC3y4cP8bSvuyZB1r0Xwxr8eaVdwHFhGXfH7boFIGRsE83cKHDzBBU5iTE2qo62ZByc27e1vkpvpEQOGSlrrMxVcldoFiimy0BOfc6wcZA2ijyVyc25HfZAGdiVYAq3DgdAZDZD",
+//     "Content-Length": fileSizeInBytes,
+//   };
+//   let formdata = new FormData();
+//   const fileData = fs.createReadStream("./images/game.mp4");
+//   const blob = new Blob([fileData]);
+
+//   formdata.append("source", JSON.stringify(blob));
+//   formdata.append(
+//     "access_token",
+//     "EAARghgSyyVwBAB3uHVa10JOyZBS07MbjJ9E6ZBGXMEC3y4cP8bSvuyZB1r0Xwxr8eaVdwHFhGXfH7boFIGRsE83cKHDzBBU5iTE2qo62ZByc27e1vkpvpEQOGSlrrMxVcldoFiimy0BOfc6wcZA2ijyVyc25HfZAGdiVYAq3DgdAZDZD"
+//   );
+
+//   try {
+//     const a = await axios.post(
+//       "https://graph-video.facebook.com/v14.0/101438839361774/videos?access_token=EAARghgSyyVwBAGZAYx6XZBbMKQg3LnAYRRsRrlU2qiE7k1mlxXb4r7GWa47XtZATPZCKJVhxEiy6H0h9QZAZCIUz4vmjtdBcNntMRCkb6vFQeJoXmtVWT2q51ZB3X0lNylH3snJkL6ou9TIIfkzx9kC3YNmw1grVQRbVJwI06AH9JQcGNaTrk1w",
+//       formdata,
+//       { headers: headers }
+//     );
+//     console.log("a is ", a);
+//   } catch (err) {
+//     console.log("err is ", err, " data is ", err.response);
+//     return res.send("success");
+//   }
+
+//   res.send("success");
+// });
+
 router.post("/facebook", async (req, res) => {
+  //posting local file
+  // const stats = fs.statSync("./images/panther.jpg");
+  // const stats2 = fs.statSync("./images/black.png");
+  // const fileSizeInBytes = stats2.size;
+  // const a = await axios.post(
+  //   `https://graph.facebook.com/v14.0/${process.env.FACEBOOK_APP_ID}/uploads?file_length=${fileSizeInBytes}&file_type=image/png&access_token=EAARghgSyyVwBAB3uHVa10JOyZBS07MbjJ9E6ZBGXMEC3y4cP8bSvuyZB1r0Xwxr8eaVdwHFhGXfH7boFIGRsE83cKHDzBBU5iTE2qo62ZByc27e1vkpvpEQOGSlrrMxVcldoFiimy0BOfc6wcZA2ijyVyc25HfZAGdiVYAq3DgdAZDZD`
+  // );
+  // console.log("id is ", a.data.id);
+
+  // const formdata = new FormData();
+  // formdata.append("source", fs.createReadStream("./images/black.png"));
+
+  // const headers = {
+  //   "Content-Type": "multipart/form-data",
+  //   file_offset: "0",
+  //   Authorization:
+  //     "OAuth EAARghgSyyVwBAB3uHVa10JOyZBS07MbjJ9E6ZBGXMEC3y4cP8bSvuyZB1r0Xwxr8eaVdwHFhGXfH7boFIGRsE83cKHDzBBU5iTE2qo62ZByc27e1vkpvpEQOGSlrrMxVcldoFiimy0BOfc6wcZA2ijyVyc25HfZAGdiVYAq3DgdAZDZD",
+  //   "Content-Length": fileSizeInBytes,
+  // };
+
+  // const b = await axios.post(
+  //   `https://graph.facebook.com/v14.0/${a.data.id}&access_token=EAARghgSyyVwBAB3uHVa10JOyZBS07MbjJ9E6ZBGXMEC3y4cP8bSvuyZB1r0Xwxr8eaVdwHFhGXfH7boFIGRsE83cKHDzBBU5iTE2qo62ZByc27e1vkpvpEQOGSlrrMxVcldoFiimy0BOfc6wcZA2ijyVyc25HfZAGdiVYAq3DgdAZDZD`,
+  //   formdata,
+  //   { headers: headers }
+  // );
+
+  // console.log("b is ", b);
+  // console.log("size is ", fileSizeInBytes);
+
+  // res.send("success");
+
+  //working version
+
   try {
     const data = req.body.data;
     const id = req.body.id;
@@ -90,37 +164,39 @@ router.post("/facebook", async (req, res) => {
       }
     }
   } catch (err) {
-    console.log("err is ", err);
+    console.log("err is ", err, " data", err.response);
+    return res.json({
+      status: "error",
+      error: "Unsupported media type!",
+    });
   }
 });
 
 router.post("/instagram", async (req, res) => {
-  // try {
-  const picture = req.body.picture;
-  const text = req.body.text;
-  const id = req.body.id;
-  console.log("pic ", picture, " text ", text, " id ", id);
+  try {
+    const picture = req.body.picture;
+    const text = req.body.text;
+    const id = req.body.id;
+    console.log("pic ", picture, " text ", text, " id ", id);
 
-  const targetInstagram = await instagramInfo.findOne({ instagramId: id });
-  if (targetInstagram) {
-    const token =
-      "EAARghgSyyVwBAISP34aA5UfduKKxpH7oUTWYu3A4f3Sx8O8zEmQ33LJrEVNKYh5Suz2jJqR1mN8wbGRDtUkQU1zAZCruXqql9pm2xGvFiDc4vyLBSBemXrecOZCaZAufx87DiSmd6BKgEGAIjnhZCdUOOZAhxy7ohr76ZCnzXln887rZBt1Joo5";
-    const initialPost = await axios.post(
-      `https://graph.facebook.com/v14.0/${id}/media?image_url=${picture}&caption=%23BronzFonz&access_token=${token}`
-    );
-    if (initialPost.data.id) {
-      const post = await axios.post(
-        `https://graph.facebook.com/v14.0/${id}/media_publish?creation_id=${initialPost.data.id}&access_token=${token}`
+    const targetInstagram = await instagramInfo.findOne({ instagramId: id });
+    if (targetInstagram) {
+      const token = targetInstagram.accessToken;
+      const initialPost = await axios.post(
+        `https://graph.facebook.com/v14.0/${id}/media?image_url=${picture}&caption=${text}&access_token=${token}`
       );
-      console.log("post is ", post);
+      if (initialPost.data.id) {
+        const post = await axios.post(
+          `https://graph.facebook.com/v14.0/${id}/media_publish?creation_id=${initialPost.data.id}&access_token=${token}`
+        );
+        console.log("post is ", post);
+        return res.send("success");
+      }
     }
-    // console.log("initail post is ", initialPost.data);
-    return res.status(200).send("done");
+  } catch (err) {
+    console.log("err is ", err, "data is ", err.data);
+    return res.status(400).send("error");
   }
-  // } catch (err) {
-  // console.log("err is ", err, "data is ", err.data);
-  // return res.status(400).send("error");
-  // }
 });
 //mime types reference => https://github.com/PLhery/node-twitter-api-v2/blob/master/src/types/v1/tweet.v1.types.ts
 const thread = async (client, data, res) => {

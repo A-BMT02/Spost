@@ -278,7 +278,7 @@ export default function Dashboard() {
             <div className="flex justify-between border-b border-dblue pb-3.5">
               <h2
                 onClick={(e) => navigate("/")}
-                className="text-5xl md:text-6xl font-a text-dblue"
+                className="text-5xl md:text-6xl font-a text-dblue cursor-pointer"
               >
                 Spost
               </h2>
@@ -298,9 +298,9 @@ export default function Dashboard() {
                     <CircularProgress />
                   )}
                 </div>
-                <div className="flex flex-col space-y-2 justify-center items-center">
+                {/* <div className="flex flex-col space-y-2 justify-center items-center">
                   <img className="w-[50px]" src={account} />
-                </div>
+                </div> */}
               </div>
             </div>
 
@@ -308,9 +308,14 @@ export default function Dashboard() {
               <div
                 ref={ref2}
                 id="menu"
-                class="absolute hidden flex-col items-center self-end py-8 mt-14 space-y-6 font-bold bg-owhite w-full sm:self-center  drop-shadow-md"
+                class="absolute hidden flex-col items-center self-end mt-14 space-y-6 font-bold bg-owhite w-full sm:self-center  drop-shadow-md"
               >
-                <a onClick={(e) => navigate("/newpost")}>New Post</a>
+                <a
+                  className="cursor-pointer p-5 hover:text-xl hover:text-dblue"
+                  onClick={(e) => navigate("/newpost")}
+                >
+                  New Post
+                </a>
               </div>
             </div>
           </nav>
@@ -425,7 +430,7 @@ export default function Dashboard() {
               ))}
               <div
                 onClick={(e) => setConnect(true)}
-                className="cursor-pointer self-center border w-full max-w-[300px] border-dashed border-dblue p-2 rounded-lg flex space-x-3 items-center justify-center"
+                className="hover:bg-dblue hover:text-owhite  cursor-pointer self-center border w-full max-w-[300px] border-dashed border-dblue p-2 rounded-lg flex space-x-3 items-center justify-center"
               >
                 <BsPlusCircle />
                 <p className="font-black ">Add new social media profile</p>
@@ -439,10 +444,10 @@ export default function Dashboard() {
                   : "hidden"
               }
             >
-              <h2 className="text-[25px] md:text-3xl font-black font-bold mt-10 md:mt-32 text-center">
+              <h2 className="text-[25px] md:text-3xl font-black font-bold mt-10 text-center">
                 Connect your social media profiles
               </h2>
-              <div className="flex justify-between max-w-{500px} w-full md:space-x-10  w-full md:w-auto items-center">
+              <div className="flex justify-center space-x-4 max-w-{500px} w-full md:space-x-10  w-full md:w-auto items-center">
                 {socials[0]?.type !== "twitter" && connecting ? (
                   <CircularProgress />
                 ) : (
@@ -480,11 +485,6 @@ export default function Dashboard() {
                     />
                   )
                 )}
-
-                <img
-                  className="w-12 h-12 md:w-20 md:h-20 cursor-pointer "
-                  src={linkedin}
-                />
               </div>
 
               <div className="cursor-pointer self-center border w-full max-w-[300px] hover:bg-dblue hover:text-owhite border-dblue p-2 rounded-lg flex space-x-3 items-center justify-center">
