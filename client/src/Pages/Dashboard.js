@@ -101,6 +101,7 @@ export default function Dashboard() {
                   type: "facebook",
                   username: res.data.displayName,
                   image: res.data.image,
+                  pageId: res.data.pageId,
                 },
               ]);
             }
@@ -308,7 +309,7 @@ export default function Dashboard() {
               <div
                 ref={ref2}
                 id="menu"
-                class="absolute hidden flex-col items-center self-end mt-14 space-y-6 font-bold bg-owhite w-full sm:self-center  drop-shadow-md"
+                class=" rounded-sm absolute hidden flex-col items-center self-end mt-14 space-y-6 font-bold bg-owhite w-full sm:self-center  drop-shadow-md"
               >
                 <a
                   className="cursor-pointer p-5 hover:text-xl hover:text-dblue"

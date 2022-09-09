@@ -23,9 +23,12 @@ export default function Modal({ showModal, setShowModal, successProfile }) {
     const instaData = socials.find((item) => {
       return item.type == "instagram";
     });
+    const facebookData = socials.find((item) => {
+      return item.type == "facebook";
+    });
     switch (target) {
       case "facebook":
-        return `https://www.facebook.com/profile.php?id=100084484915047`;
+        return `https://www.facebook.com/profile.php?id=${facebookData.pageId}`;
       case "twitter":
         return `https://twitter.com/${twitterData.username}`;
       case "instagram":
@@ -58,7 +61,7 @@ export default function Modal({ showModal, setShowModal, successProfile }) {
               setShowModal(false);
               navigate("/dashboard");
             }}
-            className="absolute text-ored -top-2 -right-2 text-xl"
+            className="cursor-pointer absolute text-ored -top-2 -right-2 text-xl"
           />
           <p className="text-xl ">Successfully Published</p>
           {successProfile.map((item) => (

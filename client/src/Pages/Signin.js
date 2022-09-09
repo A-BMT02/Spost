@@ -57,6 +57,19 @@ export default function Signin() {
     setLogin(false);
   };
 
+  const testLogin = async () => {
+    const res = await signin("spost_zjaojhs_app@tfbnw.net", "12345678");
+    if (res.access == false) {
+      setError(res.error);
+      setLoading(false);
+      return;
+    } else if (res.access === true) {
+      navigate("/dashboard");
+      setLoading(false);
+      return;
+    }
+  };
+
   return (
     <div>
       {show && (
@@ -162,6 +175,17 @@ export default function Signin() {
                     Sign up
                   </span>
                 </p>
+
+                <div
+                  onClick={(e) => testLogin()}
+                  className="cursor-pointer relative bg-ored w-lg hover:border hover:border-ored rounded-lg p-2 md:w-80 font-bold hover:bg-owhite hover:text-owhite"
+                >
+                  <div className=" flex space-x-6 pointer-events-auto justify-center items-center ">
+                    <p className="text-xl font-inter text-owhite hover:text-ored">
+                      Test User login
+                    </p>
+                  </div>
+                </div>
               </div>
             </div>
           </div>

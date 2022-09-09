@@ -362,7 +362,7 @@ router.get("/facebook", async (req, res) => {
   let accessToken = "";
   let pageToken = "";
   let pageId = "";
-
+  let profileId = "";
   try {
     const result = await axios.get(
       `https://graph.facebook.com/v14.0/oauth/access_token?grant_type=fb_exchange_token&client_id=${process.env.FACEBOOK_APP_ID}&client_secret=${process.env.FACEBOOK_APP_SECRET}&fb_exchange_token=${tempToken}`
@@ -381,13 +381,13 @@ router.get("/facebook", async (req, res) => {
         );
         if (getPicture.status === 200) {
           picture = getPicture.data.data.url;
-          // console.log("picture is ", picture);
         }
         const pageResult = await axios.get(
           `https://graph.facebook.com/v14.0/${facebookId}/accounts?access_token=${accessToken}`
         );
         if (pageResult.status === 200) {
           pageToken = pageResult.data.data[0].access_token;
+
           const pageIdObject = await axios.get(
             `https://graph.facebook.com/${facebookId}/accounts?access_token=${accessToken}`
           );
@@ -405,7 +405,8 @@ router.get("/facebook", async (req, res) => {
       picture !== "" &&
       accessToken !== "" &&
       pageToken !== "" &&
-      pageId !== ""
+      pageId !== "" &&
+      profileId !== ""
     ) {
       const newFacebook = await facebookInfo.create({
         facebookId,
@@ -414,6 +415,7 @@ router.get("/facebook", async (req, res) => {
         accessToken,
         pageToken,
         pageId,
+        profileId,
       });
       if (newFacebook) {
         const updatedUser = await user.findOneAndUpdate(
@@ -445,6 +447,7 @@ router.get("/facebook/details", async (req, res) => {
       return res.status(200).json({
         displayName: foundFacebook.displayName,
         image: foundFacebook.image,
+        pageId: foundFacebook.pageId,
       });
     } else {
       return res.status(400).json({ error: "An error Occured.Try Again!" });

@@ -438,13 +438,22 @@ export default function Newpost() {
     console.log("here");
     if (value.previewTarget === "instagram") {
       console.log("preview is image", imageUrl);
-      return imageUrl;
+      if (imageUrl === "") {
+        return "";
+      } else {
+        return imageUrl;
+      }
     }
     console.log("preview is image2", imageUrl2);
     // return value.facebookPicture;
-    return imageUrl2;
+    if (imageUrl2 === "") {
+      return "";
+    } else {
+      return imageUrl2;
+    }
   };
 
+  console.log("social is ", socials);
   return (
     <div className="block mx-5 md:mx-auto">
       <div
@@ -885,20 +894,6 @@ export default function Newpost() {
                     <img className="w-12 h-12" src={instagram} />
                   </div>
                 </div>
-                <div
-                  className={value.select.includes("linkedin") ? "" : "hidden"}
-                >
-                  <div
-                    onClick={(e) => value.setPreviewTarget("linkedin")}
-                    className={
-                      value.previewTarget === "linkedin"
-                        ? "cursor-pointer p-3 bg-gradient-to-b from-dblue to-owhite "
-                        : "cursor-pointer p-3"
-                    }
-                  >
-                    <img className="w-12 h-12" src={linkedin} />
-                  </div>
-                </div>
               </div>
 
               <div
@@ -909,29 +904,31 @@ export default function Newpost() {
                 }
               >
                 <div className="p-2 w-full rounded-lg border border-dblue  flex flex-col">
-                  <div className="flex space-x-4 p-4">
-                    <img
-                      className="rounded-full"
-                      src={
-                        socials.find((item) => item.type === "twitter")?.image
+                  {socials.map((item) => (
+                    <div
+                      className={
+                        value.previewTarget === item.type
+                          ? "flex space-x-4 p-4"
+                          : "hidden"
                       }
-                    />
-                    <div className="flex flex-col space-y-1 justify-center">
-                      <p className="font-black">
-                        {
-                          socials.find((item) => item.type === "twitter")
-                            ?.displayName
-                        }
-                      </p>
-                      <p className="font-bold text-ogray">
-                        @
-                        {
-                          socials.find((item) => item.type === "twitter")
-                            ?.username
-                        }
-                      </p>
+                    >
+                      <img
+                        className="rounded-full w-14 h-14"
+                        src={item.image}
+                      />
+                      <div className="flex flex-col space-y-1 justify-center">
+                        <p
+                          className={
+                            item.type == "twitter" ? "font-black" : "hidden"
+                          }
+                        >
+                          {item.displayName}
+                        </p>
+                        <p className="font-bold text-ogray">@{item.username}</p>
+                      </div>
                     </div>
-                  </div>
+                  ))}
+
                   <div className="p-4">
                     <p className="font-bold ">
                       {previewedContent(value.previewTarget)}
