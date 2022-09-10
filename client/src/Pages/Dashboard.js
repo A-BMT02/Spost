@@ -174,28 +174,26 @@ export default function Dashboard() {
     });
   }, []);
 
+  // useEffect(() => {
+  //   if (fbUserAccessToken) {
+  //     console.log("user token is ", fbUserAccessToken);
+  //     window.FB.api(
+  //       `/${PAGE_ID}?fields=access_token&access_token=${fbUserAccessToken}`,
+  //       ({ access_token }) => {
+  //         setFbPageAccessToken(access_token);
+  //       }
+  //     );
+  //   }
+
+  // }, [fbUserAccessToken]);
+
   useEffect(() => {
     if (fbUserAccessToken) {
-      console.log("user token is ", fbUserAccessToken);
-      window.FB.api(
-        `/${PAGE_ID}?fields=access_token&access_token=${fbUserAccessToken}`,
-        ({ access_token }) => {
-          setFbPageAccessToken(access_token);
-        }
-      );
-    }
-
-    // sendPostToPage();
-  }, [fbUserAccessToken]);
-
-  useEffect(() => {
-    if (fbPageAccessToken) {
       axios
         .get("/api/user/facebook", {
           withCredentials: true,
           params: {
             accessToken: fbUserAccessToken,
-            pageToken: fbPageAccessToken,
             user: user._id,
           },
         })
@@ -207,7 +205,7 @@ export default function Dashboard() {
           setLoadingFacebook(false);
         });
     }
-  }, [fbPageAccessToken]);
+  }, [fbUserAccessToken]);
 
   const socialImage = (type) => {
     switch (type) {

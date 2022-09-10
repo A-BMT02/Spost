@@ -353,7 +353,6 @@ router.get("/facebook/logout", async (req, res) => {
 
 router.get("/facebook", async (req, res) => {
   const tempToken = req.query["accessToken"];
-  const tempPageToken = req.query["pageToken"];
   const userId = req.query["user"];
 
   let facebookId = "";
@@ -368,11 +367,15 @@ router.get("/facebook", async (req, res) => {
       `https://graph.facebook.com/v14.0/oauth/access_token?grant_type=fb_exchange_token&client_id=${process.env.FACEBOOK_APP_ID}&client_secret=${process.env.FACEBOOK_APP_SECRET}&fb_exchange_token=${tempToken}`
     );
     if (result.status === 200) {
+      console.log("here0");
+
       accessToken = result.data.access_token;
       const idResult = await axios.get(
         `https://graph.facebook.com/me?fields=id,email,name&access_token=${accessToken}`
       );
+
       if (idResult.status === 200) {
+        console.log("here1");
         // console.log("user info is ", idResult.data);
         facebookId = idResult.data.id;
         name = idResult.data.name;
@@ -380,24 +383,40 @@ router.get("/facebook", async (req, res) => {
           `https://graph.facebook.com/v14.0/${facebookId}/picture?redirect=false&access_token=${accessToken}`
         );
         if (getPicture.status === 200) {
+          console.log("here2");
           picture = getPicture.data.data.url;
         }
+        console.log("id is ", facebookId, " and token ", accessToken);
         const pageResult = await axios.get(
           `https://graph.facebook.com/v14.0/${facebookId}/accounts?access_token=${accessToken}`
         );
         if (pageResult.status === 200) {
+          console.log("here3");
+          console.log("pageToken is ", pageResult.data);
           pageToken = pageResult.data.data[0].access_token;
 
           const pageIdObject = await axios.get(
             `https://graph.facebook.com/${facebookId}/accounts?access_token=${accessToken}`
           );
+          console.log("here4");
           pageId = pageIdObject.data.data[0].id;
         }
       }
     } else {
       //error
+      console.log("here");
       return res.status(400).json({ error: "An error Occured.Try Again!" });
     }
+    console.log(
+      "res is ",
+      facebookId,
+      name,
+      picture,
+      accessToken,
+      pageToken,
+      pageId,
+      profileId
+    );
 
     if (
       facebookId !== "" &&
@@ -405,8 +424,7 @@ router.get("/facebook", async (req, res) => {
       picture !== "" &&
       accessToken !== "" &&
       pageToken !== "" &&
-      pageId !== "" &&
-      profileId !== ""
+      pageId !== ""
     ) {
       const newFacebook = await facebookInfo.create({
         facebookId,
@@ -415,7 +433,6 @@ router.get("/facebook", async (req, res) => {
         accessToken,
         pageToken,
         pageId,
-        profileId,
       });
       if (newFacebook) {
         const updatedUser = await user.findOneAndUpdate(

@@ -194,7 +194,7 @@ router.post("/instagram", async (req, res) => {
       }
     }
   } catch (err) {
-    console.log("err is ", err, "data is ", err.data);
+    console.log("err is ", err, "data is ", err.response);
     return res.status(400).send("error");
   }
 });
