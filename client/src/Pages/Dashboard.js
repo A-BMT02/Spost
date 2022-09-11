@@ -12,6 +12,7 @@ import axios from "axios";
 import CircularProgress from "@mui/material/CircularProgress";
 import { useData } from "../Context/DataContext";
 import { useInitFbSDK } from "../utilities/facebookSDK";
+import Modal from "../components/modal";
 
 export default function Dashboard() {
   const ref = useRef();
@@ -20,6 +21,7 @@ export default function Dashboard() {
   const { user } = useAuth();
   const { socials, setSocials } = useData();
 
+  const [showModal, setShowModal] = useState(false);
   const [connect, setConnect] = useState(false);
   const [loading, setLoading] = useState(true);
   const [deleteTwitter, setDeleteTwitter] = useState(false);
@@ -31,6 +33,8 @@ export default function Dashboard() {
   const [loadingFacebook, setLoadingFacebook] = useState(false);
   const [loadingInstagram, setLoadingInstagram] = useState(false);
   const [deleteFacebook, setDeleteFacebook] = useState(false);
+  const [deleteInstagram, setDeleteInstagram] = useState(false);
+  const [deletingInstagram, setDeletingInstagram] = useState(false);
   const [deletingFacebook, setDeletingFacebook] = useState(false);
 
   const toggleSidebar = () => {
@@ -221,6 +225,9 @@ export default function Dashboard() {
   };
 
   const logoutTwitter = async (e) => {
+    if (user.email.toLowerCase() === "futuristicaistore@gmail.com") {
+      return setShowModal(true);
+    }
     setDeleting(true);
     const con = user.connect.find((target) => {
       return target.social === "twitter";
@@ -242,7 +249,38 @@ export default function Dashboard() {
       });
   };
 
+  const logoutInstagram = () => {
+    if (user.email.toLowerCase() === "futuristicaistore@gmail.com") {
+      return setShowModal(true);
+    }
+    setDeletingInstagram(true);
+    const instagramDetails = user?.connect?.find((target) => {
+      return target.social === "instagram";
+    });
+    axios
+      .get("/api/user/instagram/logout", {
+        withCredentials: true,
+        params: {
+          id: instagramDetails.id,
+        },
+      })
+      .then((res) => {
+        if (res.status === 200) {
+          window.location.reload(false);
+          setDeletingInstagram(true);
+        }
+      })
+      .catch((err) => {
+        //err
+        window.location.reload(false);
+        setDeletingInstagram(true);
+      });
+  };
+
   const logoutFacebook = () => {
+    if (user.email.toLowerCase() === "futuristicaistore@gmail.com") {
+      return setShowModal(true);
+    }
     setDeletingFacebook(true);
     const facebookDetails = user?.connect?.find((target) => {
       return target.social === "facebook";
@@ -274,6 +312,13 @@ export default function Dashboard() {
   return (
     Object.keys(user).length !== 0 && (
       <div className="block mx-5 md:mx-auto max-w-[800px] ">
+        <Modal
+          successProfile={[]}
+          showModal={showModal}
+          setShowModal={setShowModal}
+          message="You do not have permission to perform this on a test account"
+        />
+
         <div className="flex flex-col my-5  mx-5 md:w-10/12 mx-auto max-w-lg md:max-w-6xl">
           <nav className="relative">
             <div className="flex justify-between border-b border-dblue pb-3.5">
@@ -380,6 +425,8 @@ export default function Dashboard() {
                             setDeleteTwitter(true);
                           } else if (social.type === "facebook") {
                             setDeleteFacebook(true);
+                          } else if (social.type === "instagram") {
+                            setDeleteInstagram(true);
                           }
                         }}
                       />
@@ -389,7 +436,8 @@ export default function Dashboard() {
                   <div
                     className={
                       (social.type === "twitter" && deleteTwitter) ||
-                      (social.type === "facebook" && deleteFacebook)
+                      (social.type === "facebook" && deleteFacebook) ||
+                      (social.type === "instagram" && deleteInstagram)
                         ? "flex flex-col font-bold space-y-4 bg-owhite rounded-lg p-2 "
                         : "hidden"
                     }
@@ -402,6 +450,8 @@ export default function Dashboard() {
                             setDeleteTwitter(false);
                           } else if (social.type === "facebook") {
                             setDeleteFacebook(false);
+                          } else if (social.type === "instagram") {
+                            setDeleteInstagram(false);
                           }
                         }}
                         className="rounded-lg p-2 border border-ogray"
@@ -409,13 +459,16 @@ export default function Dashboard() {
                         Cancel
                       </button>
                       {(social.type === "twitter" && !deleting) ||
-                      (social.type === "facebook" && !deletingFacebook) ? (
+                      (social.type === "facebook" && !deletingFacebook) ||
+                      (social.type === "instagram" && !deletingInstagram) ? (
                         <button
                           onClick={(e) => {
                             if (social.type === "twitter") {
                               logoutTwitter();
                             } else if (social.type === "facebook") {
                               logoutFacebook();
+                            } else if (social.type === "instagram") {
+                              logoutInstagram();
                             }
                           }}
                           className="rounded-lg p-2 bg-ored text-owhite border"

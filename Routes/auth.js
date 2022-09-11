@@ -10,10 +10,10 @@ import { TwitterApi } from "twitter-api-v2";
 import tokens from "../models/tempTokens.js";
 import axios from "axios";
 import facebookInfo from "../models/facebookConnect.js";
-import instagramInfo from "../models/instagramConnect.js";
 import { Blob } from "node:buffer";
 import { default as FormData } from "form-data";
 import intoStream from "into-stream";
+import instagramInfo from "../models/instagramConnect.js";
 
 const router = Express.Router();
 router.post("/register", async (req, res) => {
@@ -347,6 +347,34 @@ router.get("/facebook/logout", async (req, res) => {
       }
     }
   } catch (err) {
+    res.status(400);
+  }
+});
+
+router.get("/instagram/logout", async (req, res) => {
+  try {
+    const id = req.query["id"];
+    console.log("insta is ", id);
+
+    const deleteInstagram = await instagramInfo.findOneAndDelete({
+      instagtamId: id,
+    });
+    if (deleteInstagram) {
+      const userTarget = await user.findOneAndUpdate(
+        { "connect.id": id },
+        {
+          $pull: {
+            connect: { id: id },
+          },
+        }
+      );
+      if (userTarget) {
+        console.log("c");
+        res.send("success");
+      }
+    }
+  } catch (err) {
+    console.log("err is ", err);
     res.status(400);
   }
 });

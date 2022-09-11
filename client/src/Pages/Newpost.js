@@ -484,6 +484,7 @@ export default function Newpost() {
           </p>
         </div>
         <Modal
+          message="Successfully Published"
           showModal={showModal}
           setShowModal={setShowModal}
           successProfile={successProfile}

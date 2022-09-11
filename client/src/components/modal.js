@@ -9,7 +9,12 @@ import { SettingsRemoteOutlined } from "@mui/icons-material";
 import { useAuth } from "../Context/AuthContext";
 import { useData } from "../Context/DataContext";
 
-export default function Modal({ showModal, setShowModal, successProfile }) {
+export default function Modal({
+  message,
+  showModal,
+  setShowModal,
+  successProfile,
+}) {
   const { user } = useAuth();
 
   const navigate = useNavigate();
@@ -48,34 +53,37 @@ export default function Modal({ showModal, setShowModal, successProfile }) {
   };
 
   return (
-    <div
-      className={
-        showModal ? "z-10 w-screen h-screen fixed top-0 left-0 " : "hidden"
-      }
-    >
-      <div className=" w-full h-full  flex justify-center items-center">
-        <div className=" bg-lgray opacity-50 w-full h-full fixed top-0"></div>
-        <div className="fixed opacity-100  drop-shadow-md space-y-4 rounded-md p-5 bg-owhite justify-center items-center flex flex-col">
-          <MdOutlineCancel
-            onClick={(e) => {
-              setShowModal(false);
-              navigate("/dashboard");
-            }}
-            className="cursor-pointer absolute text-ored -top-2 -right-2 text-xl"
-          />
-          <p className="text-xl ">Successfully Published</p>
-          {successProfile.map((item) => (
-            <div className="flex justify-center items-center space-x-2">
-              <img className="w-8 h-8" src={findLogo(item)} />
-              <a
-                href={setUrl(item)}
-                target="_blank"
-                className="cursor-pointer text-dblue"
-              >
-                {setUrl(item)}
-              </a>
-            </div>
-          ))}
+    <div>
+      <div
+        className={
+          showModal ? "z-10 w-screen h-screen fixed top-0 left-0 " : "hidden"
+        }
+      >
+        <div className=" w-full h-full  flex justify-center items-center">
+          <div className=" bg-lgray opacity-50 w-full h-full fixed top-0"></div>
+          <div className="fixed opacity-100  drop-shadow-md space-y-4 rounded-md p-5 bg-owhite justify-center items-center flex flex-col">
+            <MdOutlineCancel
+              onClick={(e) => {
+                setShowModal(false);
+                navigate("/dashboard");
+              }}
+              className="cursor-pointer absolute text-ored -top-2 -right-2 text-xl"
+            />
+            <p className="text-xl ">{message}</p>
+            {successProfile.length !== 0 &&
+              successProfile.map((item) => (
+                <div className="flex justify-center items-center space-x-2">
+                  <img className="w-8 h-8" src={findLogo(item)} />
+                  <a
+                    href={setUrl(item)}
+                    target="_blank"
+                    className="cursor-pointer text-dblue"
+                  >
+                    {setUrl(item)}
+                  </a>
+                </div>
+              ))}
+          </div>
         </div>
       </div>
     </div>
