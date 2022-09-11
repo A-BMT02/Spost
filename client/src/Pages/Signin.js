@@ -58,7 +58,7 @@ export default function Signin() {
   };
 
   const testLogin = async () => {
-    const res = await signin("spost_zjaojhs_app@tfbnw.net", "12345678");
+    const res = await signin("futuristicaistore@gmail.com", "12345678");
     if (res.access == false) {
       setError(res.error);
       setLoading(false);
@@ -178,12 +178,10 @@ export default function Signin() {
 
                 <div
                   onClick={(e) => testLogin()}
-                  className="cursor-pointer relative bg-ored w-lg hover:border hover:border-ored rounded-lg p-2 md:w-80 font-bold hover:bg-owhite hover:text-owhite"
+                  className="cursor-pointer relative bg-ored text-owhite hover:text-ored hover:bg-owhite w-lg hover:border hover:border-ored rounded-lg p-2 md:w-80 font-bold"
                 >
                   <div className=" flex space-x-6 pointer-events-auto justify-center items-center ">
-                    <p className="text-xl font-inter text-owhite hover:text-ored">
-                      Test User login
-                    </p>
+                    <p className="text-xl font-inter  ">Test User login</p>
                   </div>
                 </div>
               </div>

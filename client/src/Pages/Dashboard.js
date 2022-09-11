@@ -189,6 +189,7 @@ export default function Dashboard() {
 
   useEffect(() => {
     if (fbUserAccessToken) {
+      console.log("here", fbUserAccessToken);
       axios
         .get("/api/user/facebook", {
           withCredentials: true,
@@ -198,6 +199,7 @@ export default function Dashboard() {
           },
         })
         .then((res) => {
+          console.log("res is ", res);
           setLoadingFacebook(false);
           window.location.reload(false);
         })

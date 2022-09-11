@@ -64,7 +64,7 @@ export default function Signup() {
   };
 
   const testLogin = async () => {
-    const res = await signin("spost_zjaojhs_app@tfbnw.net", "12345678");
+    const res = await signin("futuristicaistore@gmail.com", "12345678");
     if (res.access == false) {
       setError(res.error);
       setLoading(false);
