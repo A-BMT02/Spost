@@ -399,6 +399,7 @@ export default function Newpost() {
         console.log("insta post is ", instaPost);
         if (instaPost.status == 200) {
           setSuccessProfile((prev) => [...prev, "instagram"]);
+          setSuccess(true);
         }
       } catch (err) {
         console.log("err is ", err.response.data.error);
@@ -409,9 +410,7 @@ export default function Newpost() {
 
     setSuccess(true);
     setLoad(false);
-    if (message == "") {
-      setMessage("Successfully Published!");
-    }
+    setMessage("Successfully Published!");
   };
 
   const removeImage = (e, pic) => {
@@ -986,12 +985,14 @@ export default function Newpost() {
                                 />
                               )}
 
-                              <MdOutlineCancel
-                                onClick={(e) => {
-                                  removeImage(e, media);
-                                }}
-                                className="absolute -top-3 -right-2 text-ored"
-                              />
+                              {value.previewTarget === "twitter" && (
+                                <MdOutlineCancel
+                                  onClick={(e) => {
+                                    removeImage(e, media);
+                                  }}
+                                  className="absolute -top-3 -right-2 text-ored"
+                                />
+                              )}
                             </div>
                           )
                         )}
