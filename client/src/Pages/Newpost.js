@@ -51,6 +51,7 @@ export default function Newpost() {
   const [imageUrl2, setImageUrl2] = useState("");
   const [successProfile, setSuccessProfile] = useState([]);
   const [showModal, setShowModal] = useState(false);
+  const [message, setMessage] = useState("");
 
   const errorRef = useRef(null);
   const successRef = useRef(null);
@@ -320,6 +321,7 @@ export default function Newpost() {
   };
 
   const publish = async () => {
+    setMessage("");
     setLoad(true);
     const allData = await Promise.all(
       value.state.value.map(async (obj) => {
@@ -347,33 +349,39 @@ export default function Newpost() {
       return item.social === "facebook";
     });
     if (value.facebookContent !== "" || imageUrl2 !== "") {
-      const res = await axios.post("/api/user/post/facebook", {
-        data: value.facebookContent,
-        id: facebook.id,
-        // picture: value.facebookPicture,
-        picture: imageUrl2,
-      });
-      console.log("res is ", res);
-      if (res.status == 200) {
-        setSuccessProfile((prev) => [...prev, "facebook"]);
+      try {
+        const res = await axios.post("/api/user/post/facebook", {
+          data: value.facebookContent,
+          id: facebook.id,
+          // picture: value.facebookPicture,
+          picture: imageUrl2,
+        });
+        console.log("res is ", res);
+        if (res.status == 200) {
+          setSuccessProfile((prev) => [...prev, "facebook"]);
+        }
+      } catch (err) {
+        console.log("err is ", err.response.data.error);
+        setLoad(false);
+        return setMessage(err.response.data.error);
       }
-      // const res = await axios.post("/api/user/post/test").then((res) => {
-      //   console.log("res facebook is ", res);
-      // });
     }
     console.log("alldata is ", allData, " and length is ", allData.length);
     if (allData[0].text !== "" || allData[0].media.length >= 1) {
-      console.log("posting to twitter");
-      const res2 = await axios.post("/api/user/post/twitter", {
-        data: allData,
-        id: user._id,
-      });
-      if (res2.data.status === "ok") {
-        setSuccessProfile((prev) => [...prev, "twitter"]);
-        setSuccess(true);
-      } else {
-        setError(res2.data.error);
-        setShowError(true);
+      try {
+        console.log("posting to twitter");
+        const res2 = await axios.post("/api/user/post/twitter", {
+          data: allData,
+          id: user._id,
+        });
+        if (res2.data.status === "ok") {
+          setSuccessProfile((prev) => [...prev, "twitter"]);
+          setSuccess(true);
+        }
+      } catch (err) {
+        console.log("err is ", err.response.data.error);
+        setLoad(false);
+        return setMessage(err.response.data.error);
       }
     }
     //post to instagram
@@ -382,20 +390,28 @@ export default function Newpost() {
     });
     console.log("image is ", imageUrl);
     if (imageUrl !== "") {
-      const instaPost = await axios.post("/api/user/post/instagram", {
-        picture: imageUrl,
-        text: value.instagramContent,
-        id: instagram.id,
-      });
-      console.log("insta post is ", instaPost);
-      if (instaPost.status == 200) {
-        setSuccessProfile((prev) => [...prev, "instagram"]);
+      try {
+        const instaPost = await axios.post("/api/user/post/instagram", {
+          picture: imageUrl,
+          text: value.instagramContent,
+          id: instagram.id,
+        });
+        console.log("insta post is ", instaPost);
+        if (instaPost.status == 200) {
+          setSuccessProfile((prev) => [...prev, "instagram"]);
+        }
+      } catch (err) {
+        console.log("err is ", err.response.data.error);
+        setLoad(false);
+        return setMessage(err.response.data.error);
       }
     }
 
     setSuccess(true);
     setLoad(false);
-    setShowModal(true);
+    if (message == "") {
+      setMessage("Successfully Published!");
+    }
   };
 
   const removeImage = (e, pic) => {
@@ -453,7 +469,11 @@ export default function Newpost() {
     }
   };
 
-  console.log("social is ", socials);
+  useEffect(() => {
+    if (message !== "") {
+      setShowModal(true);
+    }
+  }, [message]);
   return (
     <div className="block mx-5 md:mx-auto">
       <div
@@ -484,7 +504,7 @@ export default function Newpost() {
           </p>
         </div>
         <Modal
-          message="Successfully Published"
+          message={message}
           showModal={showModal}
           setShowModal={setShowModal}
           successProfile={successProfile}

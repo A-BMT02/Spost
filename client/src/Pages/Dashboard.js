@@ -483,7 +483,15 @@ export default function Dashboard() {
                 </div>
               ))}
               <div
-                onClick={(e) => setConnect(true)}
+                onClick={(e) => {
+                  if (
+                    user.email.toLowerCase() === "futuristicaistore@gmail.com"
+                  ) {
+                    setShowModal(true);
+                  } else {
+                    setConnect(true);
+                  }
+                }}
                 className="hover:bg-dblue hover:text-owhite  cursor-pointer self-center border w-full max-w-[300px] border-dashed border-dblue p-2 rounded-lg flex space-x-3 items-center justify-center"
               >
                 <BsPlusCircle />

@@ -61,11 +61,11 @@ export default function Modal({
       >
         <div className=" w-full h-full  flex justify-center items-center">
           <div className=" bg-lgray opacity-50 w-full h-full fixed top-0"></div>
-          <div className="fixed opacity-100  drop-shadow-md space-y-4 rounded-md p-5 bg-owhite justify-center items-center flex flex-col">
+          <div className="fixed w-[80%] opacity-100  drop-shadow-md space-y-4 rounded-md p-5 bg-owhite justify-center items-center flex flex-col">
             <MdOutlineCancel
               onClick={(e) => {
                 setShowModal(false);
-                navigate("/dashboard");
+                successProfile.length > 0 && navigate("/dashboard");
               }}
               className="cursor-pointer absolute text-ored -top-2 -right-2 text-xl"
             />

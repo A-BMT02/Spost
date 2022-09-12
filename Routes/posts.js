@@ -17,50 +17,59 @@ import { Blob } from "buffer";
 
 const router = Express.Router();
 router.post("/twitter", async (req, res) => {
-  const data = req.body.data;
+  try {
+    const data = req.body.data;
 
-  const userId = req.body.id;
-  const userFound = await user.findOne({ _id: userId }).lean();
+    const userId = req.body.id;
+    const userFound = await user.findOne({ _id: userId }).lean();
 
-  if (userFound) {
-    const twitterId = userFound.connect.find((a) => a.social === "twitter").id;
-    const tweetObj = await twitterModel.findOne({ twitterId }).lean();
+    if (userFound) {
+      const twitterId = userFound.connect.find(
+        (a) => a.social === "twitter"
+      ).id;
+      const tweetObj = await twitterModel.findOne({ twitterId }).lean();
 
-    const client = new TwitterApi({
-      appKey: process.env.TWITTER_CONSUMER_KEY,
-      appSecret: process.env.TWITTER_CONSUMER_SECRET,
-      accessToken: tweetObj.accessToken,
-      accessSecret: tweetObj.accessTokenSecret,
-    });
+      const client = new TwitterApi({
+        appKey: process.env.TWITTER_CONSUMER_KEY,
+        appSecret: process.env.TWITTER_CONSUMER_SECRET,
+        accessToken: tweetObj.accessToken,
+        accessSecret: tweetObj.accessTokenSecret,
+      });
 
-    const rwClient = client.readWrite;
-    const v1Client = client.v1;
+      const rwClient = client.readWrite;
+      const v1Client = client.v1;
 
-    const media = data.filter((obj) => {
-      return obj.media.length !== 0;
-    });
+      const media = data.filter((obj) => {
+        return obj.media.length !== 0;
+      });
 
-    if (data.length === 1 && data[0].media.length === 0) {
-      oneTweetNoMedia(client, data[0].text, res);
-    } else if (
-      data.length === 1 &&
-      data[0].text === "" &&
-      data[0].media.length === 1
-    ) {
-      mediaNoTweet(client, data[0].media[0], res);
-    } else if (
-      data.length === 1 &&
-      data[0].text === "" &&
-      data[0].media.length > 1
-    ) {
-      multipleImagesNoText(client, data[0].media, res);
-    } else if (data.length === 1 && data[0].media.length === 1) {
-      oneTweetAndOneMedia(client, data[0], res);
-    } else if (data.length === 1 && data[0].media.length > 1) {
-      oneTweetAndImages(client, data[0], res);
-    } else if (data.length > 1) {
-      thread(client, data, res);
+      if (data.length === 1 && data[0].media.length === 0) {
+        oneTweetNoMedia(client, data[0].text, res);
+      } else if (
+        data.length === 1 &&
+        data[0].text === "" &&
+        data[0].media.length === 1
+      ) {
+        mediaNoTweet(client, data[0].media[0], res);
+      } else if (
+        data.length === 1 &&
+        data[0].text === "" &&
+        data[0].media.length > 1
+      ) {
+        multipleImagesNoText(client, data[0].media, res);
+      } else if (data.length === 1 && data[0].media.length === 1) {
+        oneTweetAndOneMedia(client, data[0], res);
+      } else if (data.length === 1 && data[0].media.length > 1) {
+        oneTweetAndImages(client, data[0], res);
+      } else if (data.length > 1) {
+        thread(client, data, res);
+      }
     }
+  } catch (err) {
+    return res.status(400).json({
+      status: "error",
+      error: "An unknown error occured while posting to twitter!",
+    });
   }
 });
 
@@ -165,9 +174,9 @@ router.post("/facebook", async (req, res) => {
     }
   } catch (err) {
     console.log("err is ", err, " data", err.response);
-    return res.json({
+    return res.status(400).json({
       status: "error",
-      error: "Unsupported media type!",
+      error: "Unsupported media type for facebook post!",
     });
   }
 });
@@ -194,8 +203,11 @@ router.post("/instagram", async (req, res) => {
       }
     }
   } catch (err) {
-    console.log("err is ", err, "data is ", err.response);
-    return res.status(400).send("error");
+    console.log("err is ", err, " data", err.response);
+    return res.status(400).json({
+      status: "error",
+      error: "An unknown error occured while posting to instagram",
+    });
   }
 });
 //mime types reference => https://github.com/PLhery/node-twitter-api-v2/blob/master/src/types/v1/tweet.v1.types.ts
