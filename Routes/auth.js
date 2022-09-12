@@ -123,10 +123,10 @@ router.get(
 router.get(
   "/google/callback",
   passport.authenticate("google", {
-    failureRedirect: "/signin",
+    failureRedirect: "https://spost.onrender.com/signin",
   }),
   (req, res) => {
-    res.redirect("/dashboard");
+    res.redirect("https://spost.onrender.com/dashboard");
   }
 );
 
