@@ -12,28 +12,12 @@ Make sure you have the following installed before making a contribution
 1. Fork the project
 2. Clone the project
 * Server
-3. Navigate to the project directory
-````
-cd spost
-````
-4. Install dependencies
-````
-npm install
-````
-5. Start the Server
-````
-node server
-````
+3. Navigate to the project directory ````cd spost````
+
+4. Install dependencies```` npm install````
+5. Start the Server```` node server````
+
 * Frontend
-6. Navigate to the project directory
-````
-cd spost/client
-````
-7. Install dependencies
-````
-npm install
-````
-8. Start the Frontend
-````
-npm start
-````
+6. Navigate to the project directory```` cd spost/client````
+7. Install dependencies```` npm install````
+8. Start the Frontend```` npm start````
