@@ -180,7 +180,7 @@ export default function Newpost() {
         type = "gif";
         // setTwitterMax(true);
         value.setTwitterMax((prev) => [...prev, true]);
-        updateContents(type, reader);
+        updateContents(type, reader, extension);
         setLoading(false);
       } else if (extension === "mp4") {
         type = "video";
@@ -200,7 +200,7 @@ export default function Newpost() {
 
             setShowError(false);
             setError("");
-            updateContents(type, reader);
+            updateContents(type, reader, extension);
             setLoading(false);
             return;
           }
@@ -219,7 +219,7 @@ export default function Newpost() {
           return;
         } else {
           type = "image";
-          updateContents(type, reader);
+          updateContents(type, reader, extension);
           setLoading(false);
         }
       }
@@ -286,7 +286,7 @@ export default function Newpost() {
     }
   }, [error]);
 
-  const updateContents = (type, reader) => {
+  const updateContents = (type, reader, extension) => {
     switch (value.target) {
       case "twitter":
         dispatch({
@@ -298,7 +298,11 @@ export default function Newpost() {
 
         return;
       case "facebook":
-        return value.setFacebookPicture(reader.result);
+        return value.setFacebookPicture((prev) => [
+          ...prev,
+          { type: "image", file: reader.result, extension },
+        ]);
+
       case "linkedin":
         return value.setLinkedinPicture(state?.image);
     }
@@ -310,8 +314,9 @@ export default function Newpost() {
         return value.state.value[value.twitterCounter].media;
       // return value.twitterPicture;
       case "facebook":
-        // return [{ type: "image", media: imageUrl2, index: 0 }];
-        return [{ type: "image", media: value.facebookPicture, index: 0 }];
+        console.log("facebook pics are", value.facebookPicture);
+        return value.facebookPicture;
+      // return [{ type: "image", media: value.facebookPicture, index: 0 }];
       case "linkedin":
         return value.linkedinPicture;
       case "instagram":
@@ -348,13 +353,13 @@ export default function Newpost() {
     const facebook = user.connect.find((item) => {
       return item.social === "facebook";
     });
-    if (value.facebookContent !== "" || imageUrl2 !== "") {
+    if (value.facebookContent !== "" || value.facebookPicture.length >= 1) {
       try {
         const res = await axios.post("/api/user/post/facebook", {
           data: value.facebookContent,
           id: facebook.id,
           // picture: value.facebookPicture,
-          picture: imageUrl2,
+          picture: value.facebookPicture,
         });
         console.log("res is ", res);
         if (res.status == 200) {
@@ -459,13 +464,8 @@ export default function Newpost() {
         return imageUrl;
       }
     }
-    console.log("preview is image2", imageUrl2);
-    // return value.facebookPicture;
-    if (imageUrl2 === "") {
-      return "";
-    } else {
-      return imageUrl2;
-    }
+    console.log("preview is image2");
+    return value.facebookPicture;
   };
 
   useEffect(() => {
@@ -820,7 +820,7 @@ export default function Newpost() {
               <div className={maxMedia() ? "hidden" : ""}>
                 <h2 className="font-black text-xl">Media</h2>
               </div>
-              {value.target !== "instagram" && value.target !== "facebook" ? (
+              {value.target !== "instagram" ? (
                 <div className={maxMedia() ? "hidden" : ""}>
                   <Dropzone selectImage={selectImage} />
                 </div>
@@ -972,7 +972,7 @@ export default function Newpost() {
                                   ref={imageRef.current[index]}
                                   className="rounded-lg w-full h-[150px] object-cover "
                                   src={
-                                    value.previewTarget === "twitter"
+                                    value.previewTarget !== "instagram"
                                       ? media.file
                                       : setUrlPreview()
                                   }

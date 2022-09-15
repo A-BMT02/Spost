@@ -225,7 +225,7 @@ export default function Dashboard() {
   };
 
   const logoutTwitter = async (e) => {
-    if (user.email.toLowerCase() === "futuristicaistore@gmail.com") {
+    if (user.email.toLowerCase() === "afuturisticaistore@gmail.com") {
       return setShowModal(true);
     }
     setDeleting(true);
@@ -250,7 +250,7 @@ export default function Dashboard() {
   };
 
   const logoutInstagram = () => {
-    if (user.email.toLowerCase() === "futuristicaistore@gmail.com") {
+    if (user.email.toLowerCase() === "afuturisticaistore@gmail.com") {
       return setShowModal(true);
     }
     setDeletingInstagram(true);
@@ -278,7 +278,7 @@ export default function Dashboard() {
   };
 
   const logoutFacebook = () => {
-    if (user.email.toLowerCase() === "futuristicaistore@gmail.com") {
+    if (user.email.toLowerCase() === "afuturisticaistore@gmail.com") {
       return setShowModal(true);
     }
     setDeletingFacebook(true);
@@ -485,7 +485,7 @@ export default function Dashboard() {
               <div
                 onClick={(e) => {
                   if (
-                    user.email.toLowerCase() === "futuristicaistore@gmail.com"
+                    user.email.toLowerCase() === "afuturisticaistore@gmail.com"
                   ) {
                     setShowModal(true);
                   } else {

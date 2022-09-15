@@ -14,6 +14,7 @@ import fs from "fs";
 import { default as FormData } from "form-data";
 import fetch from "node-fetch";
 import { Blob } from "buffer";
+import FB from "fb";
 
 const router = Express.Router();
 router.post("/twitter", async (req, res) => {
@@ -110,25 +111,7 @@ router.post("/twitter", async (req, res) => {
 // });
 
 router.post("/facebook", async (req, res) => {
-  //posting local file
-  // const stats = fs.statSync("./images/panther.jpg");
-  // const stats2 = fs.statSync("./images/black.png");
-  // const fileSizeInBytes = stats2.size;
-  // const a = await axios.post(
-  //   `https://graph.facebook.com/v14.0/${process.env.FACEBOOK_APP_ID}/uploads?file_length=${fileSizeInBytes}&file_type=image/png&access_token=EAARghgSyyVwBAB3uHVa10JOyZBS07MbjJ9E6ZBGXMEC3y4cP8bSvuyZB1r0Xwxr8eaVdwHFhGXfH7boFIGRsE83cKHDzBBU5iTE2qo62ZByc27e1vkpvpEQOGSlrrMxVcldoFiimy0BOfc6wcZA2ijyVyc25HfZAGdiVYAq3DgdAZDZD`
-  // );
-  // console.log("id is ", a.data.id);
-
-  // const formdata = new FormData();
-  // formdata.append("source", fs.createReadStream("./images/black.png"));
-
-  // const headers = {
-  //   "Content-Type": "multipart/form-data",
-  //   file_offset: "0",
-  //   Authorization:
-  //     "OAuth EAARghgSyyVwBAB3uHVa10JOyZBS07MbjJ9E6ZBGXMEC3y4cP8bSvuyZB1r0Xwxr8eaVdwHFhGXfH7boFIGRsE83cKHDzBBU5iTE2qo62ZByc27e1vkpvpEQOGSlrrMxVcldoFiimy0BOfc6wcZA2ijyVyc25HfZAGdiVYAq3DgdAZDZD",
-  //   "Content-Length": fileSizeInBytes,
-  // };
+  // posting local file
 
   // const b = await axios.post(
   //   `https://graph.facebook.com/v14.0/${a.data.id}&access_token=EAARghgSyyVwBAB3uHVa10JOyZBS07MbjJ9E6ZBGXMEC3y4cP8bSvuyZB1r0Xwxr8eaVdwHFhGXfH7boFIGRsE83cKHDzBBU5iTE2qo62ZByc27e1vkpvpEQOGSlrrMxVcldoFiimy0BOfc6wcZA2ijyVyc25HfZAGdiVYAq3DgdAZDZD`,
@@ -152,23 +135,65 @@ router.post("/facebook", async (req, res) => {
     if (targetFacebook) {
       const pageToken = targetFacebook.pageToken;
       console.log("page id is ", pageToken);
-      if (data !== "" && picture !== "") {
-        const postResult0 = await axios.post(
-          `https://graph.facebook.com/${targetFacebook.pageId}/photos?url=${picture}&message=${data}&access_token=${pageToken}`
-        );
-        console.log("post result 0 is ", postResult0);
-        return res.send("success");
+      if (picture !== "") {
+        // const postResult0 = await axios.post(
+        //   `https://graph.facebook.com/${targetFacebook.pageId}/photos?url=${picture}&message=${data}&access_token=${pageToken}`
+        // );
+        // console.log("post result 0 is ", postResult0);
+        picture.map((pic, index) => {
+          console.log("extension is ", pic.extension);
+          const remove = new RegExp(`^data:image\/${pic.extension};base64,`);
+          const base64Data = pic.file.split(",")[1];
+          // const binaryData = new Buffer(base64Data , 'base64').toString('binary') ;
+          fs.writeFile(
+            `./images/image${id}${index}.${pic.extension}`,
+            base64Data,
+            "base64",
+            function (err) {
+              if (err) {
+                console.log("err is ", err);
+                return res.send("success");
+              }
+              console.log("saved to file");
+              FB.options({
+                accessToken: targetFacebook.pageToken,
+              });
+              FB.api(
+                "me/photos",
+                "post",
+                {
+                  source: fs.createReadStream(
+                    `./images/image${id}0.${pic.extension}`
+                  ),
+                  caption: data,
+                },
+                function (response) {
+                  if (!response || response.error) {
+                    console.log(!response ? "error occurred" : response.error);
+                    const errorMessage = response.error.error_user_msg;
+                    console.log("err is ", errorMessage);
+                    return res.send("success");
+                  }
+                  console.log("done", response.id);
+                  console.log(response.name);
+                  //delete image
+                  fs.unlink(
+                    `./images/image${id}${index}.${pic.extension}`,
+                    function (err, stats) {
+                      console.log("deleted", stats);
+                      return res.send("success");
+                    }
+                  );
+                }
+              );
+            }
+          );
+        });
       } else if (picture === "" && data !== "") {
         const postResult = await axios.post(
           `https://graph.facebook.com/${targetFacebook.pageId}/feed?message=${data}&access_token=${pageToken}`
         );
         console.log("post result 1 is ", postResult);
-        return res.send("success");
-      } else {
-        const postResult2 = await axios.post(
-          `https://graph.facebook.com/${targetFacebook.pageId}/photos?url=${picture}&access_token=${pageToken}`
-        );
-        console.log("post result 2 is ", postResult2);
         return res.send("success");
       }
     }
@@ -176,7 +201,7 @@ router.post("/facebook", async (req, res) => {
     console.log("err is ", err, " data", err.response);
     return res.status(400).json({
       status: "error",
-      error: "Unsupported media type for facebook post!",
+      error: "An error occured while posting to facebook!",
     });
   }
 });
