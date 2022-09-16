@@ -56,6 +56,7 @@
     "twit": "^2.2.11",
     "twit-thread": "^2.1.0",
     "twitter": "^1.7.1",
-    "twitter-api-v2": "^1.12.3"
+    "twitter-api-v2": "^1.12.3",
+    "util": "^0.12.4"
   }
 }

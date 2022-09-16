@@ -15,6 +15,7 @@ import { default as FormData } from "form-data";
 import fetch from "node-fetch";
 import { Blob } from "buffer";
 import FB from "fb";
+import { promisify } from "util";
 
 const router = Express.Router();
 router.post("/twitter", async (req, res) => {
@@ -136,59 +137,50 @@ router.post("/facebook", async (req, res) => {
       const pageToken = targetFacebook.pageToken;
       console.log("page id is ", pageToken);
       if (picture !== "") {
+        let postData = {
+          message: data,
+        };
+        let postIds = await Promise.all(
+          picture.map(async (pic, index) => {
+            console.log("extension is ", pic.extension);
+            const remove = new RegExp(`^data:image\/${pic.extension};base64,`);
+            const base64Data = pic.file.split(",")[1];
+            // const binaryData = new Buffer(base64Data , 'base64').toString('binary') ;
+            const readFileAsync = promisify(fs.readFile);
+            const writeFileAsync = promisify(fs.writeFile);
+            const unlinkAsync = promisify(fs.unlink);
+            await writeFileAsync(
+              `./images/image${id}${index}.${pic.extension}`,
+              base64Data,
+              "base64"
+            );
+
+            FB.options({
+              accessToken: targetFacebook.pageToken,
+            });
+            const a = await FB.api("me/photos?published=false", "post", {
+              source: fs.createReadStream(
+                `./images/image${id}${index}.${pic.extension}`
+              ),
+              // caption: data,
+            });
+            await unlinkAsync(`./images/image${id}${index}.${pic.extension}`);
+            // return `attached_media[${index}]=media_fbid: a.post_id`;
+            return (postData[
+              `attached_media[${index}]`
+            ] = `{media_fbid: ${a.id}}`);
+          })
+        );
+
+        console.log("post ids are ", postIds, " and data is ", postData);
+        const b = await FB.api("me/feed", "post", postData);
+
+        return res.send("success");
+
         // const postResult0 = await axios.post(
         //   `https://graph.facebook.com/${targetFacebook.pageId}/photos?url=${picture}&message=${data}&access_token=${pageToken}`
         // );
         // console.log("post result 0 is ", postResult0);
-        picture.map((pic, index) => {
-          console.log("extension is ", pic.extension);
-          const remove = new RegExp(`^data:image\/${pic.extension};base64,`);
-          const base64Data = pic.file.split(",")[1];
-          // const binaryData = new Buffer(base64Data , 'base64').toString('binary') ;
-          fs.writeFile(
-            `./images/image${id}${index}.${pic.extension}`,
-            base64Data,
-            "base64",
-            function (err) {
-              if (err) {
-                console.log("err is ", err);
-                return res.send("success");
-              }
-              console.log("saved to file");
-              FB.options({
-                accessToken: targetFacebook.pageToken,
-              });
-              FB.api(
-                "me/photos",
-                "post",
-                {
-                  source: fs.createReadStream(
-                    `./images/image${id}0.${pic.extension}`
-                  ),
-                  caption: data,
-                },
-                function (response) {
-                  if (!response || response.error) {
-                    console.log(!response ? "error occurred" : response.error);
-                    const errorMessage = response.error.error_user_msg;
-                    console.log("err is ", errorMessage);
-                    return res.send("success");
-                  }
-                  console.log("done", response.id);
-                  console.log(response.name);
-                  //delete image
-                  fs.unlink(
-                    `./images/image${id}${index}.${pic.extension}`,
-                    function (err, stats) {
-                      console.log("deleted", stats);
-                      return res.send("success");
-                    }
-                  );
-                }
-              );
-            }
-          );
-        });
       } else if (picture === "" && data !== "") {
         const postResult = await axios.post(
           `https://graph.facebook.com/${targetFacebook.pageId}/feed?message=${data}&access_token=${pageToken}`
