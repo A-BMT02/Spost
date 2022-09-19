@@ -20,9 +20,11 @@ export const DataContextProvider = (props) => {
   const [twitterPreviewCounter, setTwitterPreviewCounter] = useState(0);
   const [facebookContent, setFacebookContent] = useState("");
   const [linkedinContent, setLinkedinContent] = useState("");
+  const [instagramContent, setInstagramContent] = useState("");
   const [twitterPicture, setTwitterPicture] = useState([]);
   const [facebookPicture, setFacebookPicture] = useState([]);
   const [linkedinPicture, setLinkedinPicture] = useState([]);
+  const [instagramPicture, setInstagramPicture] = useState([]);
   const [target, setTarget] = useState("twitter");
   const [previewTarget, setPreviewTarget] = useState("twitter");
   const [image, setImage] = useState("");
@@ -69,6 +71,8 @@ export const DataContextProvider = (props) => {
     setLinkedinPicture,
     socials,
     setSocials,
+    instagramContent,
+    setInstagramContent,
   };
 
   return (

@@ -5,6 +5,7 @@ import { useAuth } from "../Context/AuthContext";
 import CircularProgress from "@mui/material/CircularProgress";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import ReactGA from "react-ga";
 
 export default function Signin() {
   const [emailValue, setEmailValue] = useState("");
@@ -13,7 +14,7 @@ export default function Signin() {
   const [showError, setShowError] = useState(false);
   const [error, setError] = useState("");
   const [show, setShow] = useState(false);
-  const [login , setLogin] = useState(false) ; 
+  const [login, setLogin] = useState(false);
 
   const { signin } = useAuth();
   const { user } = useAuth();
@@ -23,7 +24,7 @@ export default function Signin() {
 
   const signinNow = async (email, password) => {
     setLoading(true);
-    const res = await signin(email, password);
+    const res = await signin(email.toLowerCase(), password);
     if (res.access == false) {
       setError(res.error);
       setLoading(false);
@@ -51,9 +52,22 @@ export default function Signin() {
   }, [error]);
 
   const signinWithGoogle = () => {
-    setLogin(true) ; 
-    window.open("http://spost1.herokuapp.com/api/user/google", "_self");
-    setLogin(false) ;
+    setLogin(true);
+    window.open("/api/user/google", "_self");
+    setLogin(false);
+  };
+
+  const testLogin = async () => {
+    const res = await signin("futuristicaistore@gmail.com", "12345678");
+    if (res.access == false) {
+      setError(res.error);
+      setLoading(false);
+      return;
+    } else if (res.access === true) {
+      navigate("/dashboard");
+      setLoading(false);
+      return;
+    }
   };
 
   return (
@@ -99,11 +113,14 @@ export default function Signin() {
                   <h2 className="text-3xl font-black font-bold">Sign in</h2>
                 </div>
                 <div className="relative mx-auto block ">
-                  <p className="absolute top-2 left-5 ">Email Address</p>
+                  <label className="absolute top-2 left-5 ">
+                    Email Address
+                  </label>
                   <input
                     value={emailValue}
                     onChange={(e) => setEmailValue(e.target.value)}
                     className="bg-owhite w-lg border border-dblue rounded-lg p-2 md:w-80 pt-7 pl-5 font-bold"
+                    alt="email"
                   />
                 </div>
                 <div className="relative mx-auto block">
@@ -113,6 +130,7 @@ export default function Signin() {
                     onChange={(e) => setPasswordValue(e.target.value)}
                     type="password"
                     className="bg-owhite w-lg border border-dblue rounded-lg p-2 md:w-80 pt-7 pl-5 font-bold"
+                    alt="password"
                   />
                 </div>
 
@@ -134,16 +152,19 @@ export default function Signin() {
                   <hr className="w-2/5 m-auto text-ogray"></hr>
                 </div>
                 <div className="cursor-pointer relative bg-lblue w-lg border border-dblue rounded-lg p-2 md:w-80 font-bold hover:bg-dblue hover:text-owhite">
-                  {login ? <CircularProgress/> : <div className=" flex space-x-6 pointer-events-auto justify-center items-center ">
-                    <img src={google} />
-                    <p
-                      onClick={(e) => signinWithGoogle()}
-                      className="text-xl font-inter"
-                    >
-                      Sign in with Google
-                    </p>
-                  </div> }
-                  
+                  {login ? (
+                    <CircularProgress />
+                  ) : (
+                    <div className=" flex space-x-6 pointer-events-auto justify-center items-center ">
+                      <img src={google} />
+                      <p
+                        onClick={(e) => signinWithGoogle()}
+                        className="text-xl font-inter"
+                      >
+                        Sign in with Google
+                      </p>
+                    </div>
+                  )}
                 </div>
                 <p>
                   Need an account?{" "}
@@ -154,6 +175,15 @@ export default function Signin() {
                     Sign up
                   </span>
                 </p>
+
+                <div
+                  onClick={(e) => testLogin()}
+                  className="cursor-pointer relative bg-ored text-owhite hover:text-ored hover:bg-owhite w-lg hover:border hover:border-ored rounded-lg p-2 md:w-80 font-bold"
+                >
+                  <div className=" flex space-x-6 pointer-events-auto justify-center items-center ">
+                    <p className="text-xl font-inter  ">Test User login</p>
+                  </div>
+                </div>
               </div>
             </div>
           </div>

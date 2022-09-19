@@ -8,6 +8,7 @@ import React, {
 import twitter from "../images/twitter.png";
 import facebook from "../images/facebook.png";
 import linkedin from "../images/linkedin.png";
+import instagram from "../images/instagram.png";
 import upload from "../images/upload.png";
 import picture from "../images/picture.png";
 import mbj from "../images/mbj.png";
@@ -23,6 +24,7 @@ import { GrFormPrevious } from "react-icons/gr";
 import Slider from "../components/slider";
 import { AiOutlinePlusCircle } from "react-icons/ai";
 import { NextPlan } from "@mui/icons-material";
+import Modal from "../components/modal";
 
 export default function Newpost() {
   const value = useData();
@@ -43,11 +45,16 @@ export default function Newpost() {
   const [showError, setShowError] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const [load , setLoad] = useState(false) ;
-  const [success , setSuccess] = useState(false) ;  
+  const [load, setLoad] = useState(false);
+  const [success, setSuccess] = useState(false);
+  const [imageUrl, setImageUrl] = useState("");
+  const [imageUrl2, setImageUrl2] = useState("");
+  const [successProfile, setSuccessProfile] = useState([]);
+  const [showModal, setShowModal] = useState(false);
+  const [message, setMessage] = useState("");
 
   const errorRef = useRef(null);
-  const successRef = useRef(null) ; 
+  const successRef = useRef(null);
 
   const contentIcon = (target) => {
     switch (target) {
@@ -57,6 +64,8 @@ export default function Newpost() {
         return facebook;
       case "linkedin":
         return linkedin;
+      case "instagram":
+        return instagram;
     }
   };
 
@@ -72,6 +81,8 @@ export default function Newpost() {
         return value.facebookContent;
       case "linkedin":
         return value.linkedinContent;
+      case "instagram":
+        return value.instagramContent;
     }
   };
 
@@ -87,6 +98,8 @@ export default function Newpost() {
         return value.setFacebookContent(text);
       case "linkedin":
         return value.setLinkedinContent(text);
+      case "instagram":
+        return value.setInstagramContent(text);
     }
   };
 
@@ -98,6 +111,8 @@ export default function Newpost() {
         return value.facebookContent;
       case "linkedin":
         return value.linkedinContent;
+      case "instagram":
+        return value.instagramContent;
     }
   };
 
@@ -109,6 +124,8 @@ export default function Newpost() {
         return facebook;
       case "linkedin":
         return linkedin;
+      case "instagram":
+        return instagram;
     }
   };
 
@@ -123,7 +140,7 @@ export default function Newpost() {
     if (value.state.value[value.twitterCounter]?.media?.length === 4) {
       max = true;
     }
-    
+
     return max;
   };
 
@@ -143,8 +160,7 @@ export default function Newpost() {
       return multiple;
     });
   };
-  useEffect(() => {
-  }, [value.twitterCounter]);
+  useEffect(() => {}, [value.twitterCounter]);
 
   const translate = (multiple) => {
     sliderRef.current.style.transform = `translateX(-${
@@ -152,71 +168,125 @@ export default function Newpost() {
     }%)`;
   };
 
-  const selectImage = (uploadedFile , index) => {
+  const selectImage = (uploadedFile, index) => {
     setLoading(true);
     let type;
     let reader = new FileReader();
     reader.readAsDataURL(uploadedFile);
     reader.onload = function (e) {
       const extension = uploadedFile.name.split(".").pop().toLowerCase();
-      if (extension !== "jpg") {
-        if (extension === "gif") {
-          type = "gif";
-          // setTwitterMax(true);
-          value.setTwitterMax((prev) => [...prev, true]);
-          updateContents(type, reader);
-          setLoading(false);
-        } else {
-          type = "video";
-          let media = new Audio(reader.result);
-          media.onloadedmetadata = function () {
-            if (media.duration > 140) {
-              setError("Video cannot be longer than 2min:20sec");
-              setShowError(true);
-              setLoading(false);
-              // setTwitterMax(false);
-              value.setTwitterMax((prev) => [...prev, false]);
-
-              return;
-            } else {
-              // setTwitterMax(true);
-              value.setTwitterMax((prev) => [...prev, true]);
-
-              setShowError(false);
-              setError("");
-              updateContents(type, reader);
-              setLoading(false);
-              return;
-            }
-          };
-        }
-      } else {
-        // setImage(reader.result) ;
-        navigate("/previewImage", {
-          state: {
-            image: reader.result,
-            for: value.target,
-            social: value.target,
-            extension,
-          },
-        });
+      console.log("extesion is ", extension);
+      if (extension === "gif") {
+        type = "gif";
+        // setTwitterMax(true);
+        value.setTwitterMax((prev) => [...prev, true]);
+        updateContents(type, reader, extension);
         setLoading(false);
-        return ; 
+      } else if (extension === "mp4") {
+        type = "video";
+        let media = new Audio(reader.result);
+        media.onloadedmetadata = function () {
+          if (media.duration > 140) {
+            setError("Video cannot be longer than 2min:20sec");
+            setShowError(true);
+            setLoading(false);
+            // setTwitterMax(false);
+            value.setTwitterMax((prev) => [...prev, false]);
+
+            return;
+          } else {
+            // setTwitterMax(true);
+            value.setTwitterMax((prev) => [...prev, true]);
+
+            setShowError(false);
+            setError("");
+            updateContents(type, reader, extension);
+            setLoading(false);
+            return;
+          }
+        };
+      } else {
+        if (window.screen.width > 768) {
+          navigate("/previewImage", {
+            state: {
+              image: reader.result,
+              for: value.target,
+              social: value.target,
+              extension,
+            },
+          });
+          setLoading(false);
+          return;
+        } else {
+          type = "image";
+          updateContents(type, reader, extension);
+          setLoading(false);
+        }
       }
     };
   };
 
+  // const postToFacebook = async (result) => {
+  // const blob = dataUrltoBlob(result);
+  // const authToken =
+  //   "EAARghgSyyVwBANi7MlNJ33AzeLxMbLe5ZCOxcooGD52B5VZBCv4IGJJBQdekmFCrVlQ9UBI1qBG4FkLYjQAB1hOpt90arq8f98ezMlPZCW6JISofpfN5ZAKs8Q0CK0ZAgJAFLZALr59Jhzj7kmAU7TDZALjYyFhz8kvm52NMeIe3gZDZD";
+  // let formData = new FormData();
+  // fd.append("access_token", authToken);
+  // formData.append("source", blob, "image/jpg");
 
+  // const result2 = await axios.post(
+  //   `https://graph.facebook.com/v14.0/1232028627552604/uploads?file_length=${blob.size}&file_type=image/jpeg&access_token=EAARghgSyyVwBANi7MlNJ33AzeLxMbLe5ZCOxcooGD52B5VZBCv4IGJJBQdekmFCrVlQ9UBI1qBG4FkLYjQAB1hOpt90arq8f98ezMlPZCW6JISofpfN5ZAKs8Q0CK0ZAgJAFLZALr59Jhzj7kmAU7TDZALjYyFhz8kvm52NMeIe3gZDZD`
+  // );
 
-  useEffect(() => {    if (error !== "") {
+  // const id = result2.data.id;
+
+  // const result3 = window.FB.api(`/v14.0/${id}`, formData, config);
+
+  // console.log("res 1 is ", result, " and res 2 is ", result2);
+  // console.log("id is ", id);
+  // fd.append("message", "Please work");
+  // console.log(
+  //   "blob is ",
+  //   blob,
+  //   " and fd is",
+  //   ...formData,
+  //   " blob size is ",
+  //   blob.size
+  // );
+
+  // const config2 = {
+  //   headers: {
+  //     "Content-Type": "multipart/form-data",
+  //   },
+  //   params: {
+  //     id,
+  //     size: blob.size,
+  //   },
+  // };
+
+  // const res = await axios.post("/api/user/test", {
+  //   blob,
+  //   result: result,
+  // });
+  // };
+
+  function dataUrltoBlob(dataURI) {
+    var byteString = window.atob(dataURI.split(",")[1]);
+    var ab = new ArrayBuffer(byteString.length);
+    var ia = new Uint8Array(ab);
+    for (var i = 0; i < byteString.length; i++) {
+      ia[i] = byteString.charCodeAt(i);
+    }
+    return new Blob([ab], { type: "image/jpg" });
+  }
+
+  useEffect(() => {
+    if (error !== "") {
       setShowError(true);
     }
   }, [error]);
 
-
-
-  const updateContents = (type, reader) => {
-
+  const updateContents = (type, reader, extension) => {
     switch (value.target) {
       case "twitter":
         dispatch({
@@ -225,10 +295,14 @@ export default function Newpost() {
           file: reader.result,
           index: value.twitterCounter,
         });
-        
+
         return;
       case "facebook":
-        return value.setFacebookPicture(state?.image);
+        return value.setFacebookPicture((prev) => [
+          ...prev,
+          { type: "image", file: reader.result, extension },
+        ]);
+
       case "linkedin":
         return value.setLinkedinPicture(state?.image);
     }
@@ -240,15 +314,20 @@ export default function Newpost() {
         return value.state.value[value.twitterCounter].media;
       // return value.twitterPicture;
       case "facebook":
+        console.log("facebook pics are", value.facebookPicture);
         return value.facebookPicture;
+      // return [{ type: "image", media: value.facebookPicture, index: 0 }];
       case "linkedin":
         return value.linkedinPicture;
+      case "instagram":
+        return [{ type: "image", media: imageUrl, index: 0 }];
+      // return value.instagramPicture;
     }
   };
 
-
   const publish = async () => {
-    setLoad(true) ; 
+    setMessage("");
+    setLoad(true);
     const allData = await Promise.all(
       value.state.value.map(async (obj) => {
         const media = await Promise.all(
@@ -270,20 +349,73 @@ export default function Newpost() {
       })
     );
 
-    axios
-      .post("https://spost1.herokuapp.com/api/user/post/twitter", {
-        data: allData,
-        id: user._id,
-      })
-      .then((res) => {
-        setLoad(false) ;
-        if(res.data.status === 'ok') {
-          setSuccess(true) ; 
-        } else {
-          setError(res.data.error) ; 
-          setShowError(true);
+    //post to facebook
+    const facebook = user.connect.find((item) => {
+      return item.social === "facebook";
+    });
+    if (value.facebookContent !== "" || value.facebookPicture.length >= 1) {
+      try {
+        const res = await axios.post("/api/user/post/facebook", {
+          data: value.facebookContent,
+          id: facebook.id,
+          // picture: value.facebookPicture,
+          picture: value.facebookPicture,
+        });
+        console.log("res is ", res);
+        if (res.status == 200) {
+          setSuccessProfile((prev) => [...prev, "facebook"]);
         }
-      });
+      } catch (err) {
+        console.log("err is ", err.response.data.error);
+        setLoad(false);
+        return setMessage(err.response.data.error);
+      }
+    }
+    console.log("alldata is ", allData, " and length is ", allData.length);
+    if (allData[0].text !== "" || allData[0].media.length >= 1) {
+      try {
+        console.log("posting to twitter");
+        const res2 = await axios.post("/api/user/post/twitter", {
+          data: allData,
+          id: user._id,
+        });
+        if (res2.data.status === "ok") {
+          setSuccessProfile((prev) => [...prev, "twitter"]);
+          setSuccess(true);
+        }
+      } catch (err) {
+        console.log("err is ", err.response.data.error);
+        setLoad(false);
+        return setMessage(err.response.data.error);
+      }
+    }
+    //post to instagram
+    const instagram = user.connect.find((item) => {
+      return item.social === "instagram";
+    });
+    console.log("image is ", imageUrl);
+    if (imageUrl !== "") {
+      try {
+        const instaPost = await axios.post("/api/user/post/instagram", {
+          picture: imageUrl,
+          text: value.instagramContent,
+          id: instagram.id,
+        });
+        console.log("insta post is ", instaPost);
+        if (instaPost.status == 200) {
+          setSuccessProfile((prev) => [...prev, "instagram"]);
+          setSuccess(true);
+        }
+      } catch (err) {
+        console.log("err is ", err.response.data.error);
+        setLoad(false);
+        return setMessage(err.response.data.error);
+      }
+    }
+
+    setSuccess(true);
+    setLoad(false);
+    setMessage("Successfully Published!");
   };
 
   const removeImage = (e, pic) => {
@@ -319,10 +451,28 @@ export default function Newpost() {
   }
 
   const slider = (e) => {
-    
     sliderRef.current.classList.add("-translate-x-full");
   };
 
+  const setUrlPreview = () => {
+    console.log("here");
+    if (value.previewTarget === "instagram") {
+      console.log("preview is image", imageUrl);
+      if (imageUrl === "") {
+        return "";
+      } else {
+        return imageUrl;
+      }
+    }
+    console.log("preview is image2");
+    return value.facebookPicture;
+  };
+
+  useEffect(() => {
+    if (message !== "") {
+      setShowModal(true);
+    }
+  }, [message]);
   return (
     <div className="block mx-5 md:mx-auto">
       <div
@@ -352,10 +502,16 @@ export default function Newpost() {
             X
           </p>
         </div>
-        <div
-        ref={successRef}
+        <Modal
+          message={message}
+          showModal={showModal}
+          setShowModal={setShowModal}
+          successProfile={successProfile}
+        />
+        {/* <div
+          ref={successRef}
           className={
-            success 
+            success
               ? "flex space-x-6 justify-center mx-auto border border-ogreen px-4 py-3 text-xl rounded-lg bg-ogreen text-owhite max-w-[300px]"
               : "hidden"
           }
@@ -364,21 +520,26 @@ export default function Newpost() {
           <p
             onClick={(e) => {
               successRef.current.classList.add("hidden");
-              setSuccess(false) ; 
+              setSuccess(false);
             }}
             className="font-inter font-black self-center"
           >
             X
           </p>
-        </div>
+        </div> */}
         <nav className="my-3.5 flex justify-start ">
-          <h2 className="text-5xl md:text-6xl font-a text-dblue">Spost</h2>
+          <h2
+            onClick={(e) => navigate("/")}
+            className="text-5xl md:text-6xl font-a text-dblue cursor-pointer"
+          >
+            Spost
+          </h2>
         </nav>
         <div
           className={
             value.preview
               ? "flex flex-col justify-center items-center w-full "
-              : "flex justify-center w-full"
+              : "flex justify-center w-full space-x-6"
           }
         >
           <div className="flex flex-col md:w-1/2 space-y-6 space-x-6 font-inter">
@@ -508,6 +669,20 @@ export default function Newpost() {
                   </div>
                 </div>
                 <div
+                  className={value.select.includes("instagram") ? "" : "hidden"}
+                >
+                  <div
+                    onClick={(e) => value.setTarget("instagram")}
+                    className={
+                      value.target === "instagram"
+                        ? "cursor-pointer p-3 bg-gradient-to-b from-dblue to-owhite "
+                        : "cursor-pointer p-3"
+                    }
+                  >
+                    <img className="w-12 h-12" src={instagram} />
+                  </div>
+                </div>
+                <div
                   className={value.select.includes("linkedin") ? "" : "hidden"}
                 >
                   <div
@@ -532,7 +707,7 @@ export default function Newpost() {
                         translate(multiple);
                         return multiple;
                       });
-                      value.setTwitterMax(prev => {
+                      value.setTwitterMax((prev) => {
                         const newMax = prev.map((item, index) => {
                           if (index === value.twitterCounter) {
                             return;
@@ -552,7 +727,7 @@ export default function Newpost() {
                   <div className={value.sele}></div>
                   <div className="flex space-x-1">
                     <img className="w-5 h-5" src={contentIcon(value.target)} />
-                    <p>{whichContent(value.target).length}/280</p>
+                    <p>{whichContent(value.target)?.length}/280</p>
                   </div>
                 </div>
                 <div className="relative w-full">
@@ -576,8 +751,14 @@ export default function Newpost() {
                           <textarea
                             maxLength={280}
                             value={whichContent(value.target)}
-                            onChange={(e) => changeContent(e.target.value)}
-                            className="w-full font-bold  p-2 rounded-lg border border-dblue min-h-[200px]"
+                            onChange={(e) => {
+                              if (e.target.value == "\n") {
+                                console.log("new line");
+                              }
+                              changeContent(e.target.value);
+                              console.log(whichContent(value.target));
+                            }}
+                            className="textarea w-full font-bold  p-2 rounded-lg border border-dblue min-h-[200px]"
                             placeholder="Enter your text here"
                           />
                           <div className="flex justify-between">
@@ -625,17 +806,6 @@ export default function Newpost() {
                           </div>
                         </div>
                       ))}
-                      {/* <textarea
-                        maxLength={280}
-                        value={whichContent(value.target)}
-                        onChange={(e) => changeContent(e.target.value)}
-                        className="font-bold min-w-full p-2 rounded-lg border border-dblue min-h-[200px]"
-                        placeholder="Enter your text here"
-                      />
-                      <div className="absolute bottom-4 right-1 flex">
-                        <GrFormPrevious />
-                        <GrFormNext />
-                      </div> */}
                     </div>
                   </div>
                 </div>
@@ -650,9 +820,24 @@ export default function Newpost() {
               <div className={maxMedia() ? "hidden" : ""}>
                 <h2 className="font-black text-xl">Media</h2>
               </div>
-              <div className={maxMedia() ? "hidden" : ""}>
-                <Dropzone selectImage={selectImage} />
-              </div>
+              {value.target !== "instagram" ? (
+                <div className={maxMedia() ? "hidden" : ""}>
+                  <Dropzone selectImage={selectImage} />
+                </div>
+              ) : (
+                <div className="flex flex-col space-y-2">
+                  <p className="font-black">Enter image Url below</p>
+                  <input
+                    value={value.target === "instagram" ? imageUrl : imageUrl2}
+                    onChange={(e) =>
+                      value.target === "instagram"
+                        ? setImageUrl(e.target.value)
+                        : setImageUrl2(e.target.value)
+                    }
+                    className="rounded-md border border-dblue font-black p-2"
+                  />
+                </div>
+              )}
             </div>
 
             <div
@@ -716,17 +901,17 @@ export default function Newpost() {
                   </div>
                 </div>
                 <div
-                  className={value.select.includes("linkedin") ? "" : "hidden"}
+                  className={value.select.includes("instagram") ? "" : "hidden"}
                 >
                   <div
-                    onClick={(e) => value.setPreviewTarget("linkedin")}
+                    onClick={(e) => value.setPreviewTarget("instagram")}
                     className={
-                      value.previewTarget === "linkedin"
+                      value.previewTarget === "instagram"
                         ? "cursor-pointer p-3 bg-gradient-to-b from-dblue to-owhite "
                         : "cursor-pointer p-3"
                     }
                   >
-                    <img className="w-12 h-12" src={linkedin} />
+                    <img className="w-12 h-12" src={instagram} />
                   </div>
                 </div>
               </div>
@@ -739,46 +924,58 @@ export default function Newpost() {
                 }
               >
                 <div className="p-2 w-full rounded-lg border border-dblue  flex flex-col">
-                  <div className="flex space-x-4 p-4">
-                    <img
-                      className="rounded-full"
-                      src={
-                        socials.find((item) => item.type === "twitter")?.image
+                  {socials.map((item) => (
+                    <div
+                      className={
+                        value.previewTarget === item.type
+                          ? "flex space-x-4 p-4"
+                          : "hidden"
                       }
-                    />
-                    <div className="flex flex-col space-y-1 justify-center">
-                      <p className="font-black">
-                        {
-                          socials.find((item) => item.type === "twitter")
-                            ?.displayName
-                        }
-                      </p>
-                      <p className="font-bold text-ogray">
-                        @
-                        {
-                          socials.find((item) => item.type === "twitter")
-                            ?.username
-                        }
-                      </p>
+                    >
+                      <img
+                        className="rounded-full w-14 h-14"
+                        src={item.image}
+                      />
+                      <div className="flex flex-col space-y-1 justify-center">
+                        <p
+                          className={
+                            item.type == "twitter" ? "font-black" : "hidden"
+                          }
+                        >
+                          {item.displayName}
+                        </p>
+                        <p className="font-bold text-ogray">@{item.username}</p>
+                      </div>
                     </div>
-                  </div>
+                  ))}
+
                   <div className="p-4">
-                    <p className="font-bold break-words">
+                    <p className="font-bold ">
                       {previewedContent(value.previewTarget)}
                     </p>
                   </div>
+                  {/* <textarea
+                    readOnly={true}
+                    value={previewedContent(value.previewTarget)}
+                    className="p-4 bg-lblue font-bold"
+                  /> */}
                   <div className="px-4 mb-4">
                     <div className="flex flex-wrap w-full max-w-full">
                       {previewPicture(value.previewTarget) &&
-                        previewPicture(value.previewTarget).map(
+                        previewPicture(value.previewTarget)?.map(
                           (media, index) => (
                             <div className="w-1/2 relative">
+                              {console.log("media type is ", media.type)}
                               {media.type === "image" ||
                               media.type === "gif" ? (
                                 <img
                                   ref={imageRef.current[index]}
                                   className="rounded-lg w-full h-[150px] object-cover "
-                                  src={media.file}
+                                  src={
+                                    value.previewTarget !== "instagram"
+                                      ? media.file
+                                      : setUrlPreview()
+                                  }
                                 />
                               ) : (
                                 <video
@@ -788,12 +985,14 @@ export default function Newpost() {
                                 />
                               )}
 
-                              <MdOutlineCancel
-                                onClick={(e) => {
-                                  removeImage(e, media);
-                                }}
-                                className="absolute -top-3 -right-2 text-ored"
-                              />
+                              {value.previewTarget === "twitter" && (
+                                <MdOutlineCancel
+                                  onClick={(e) => {
+                                    removeImage(e, media);
+                                  }}
+                                  className="absolute -top-3 -right-2 text-ored"
+                                />
+                              )}
                             </div>
                           )
                         )}
@@ -801,16 +1000,16 @@ export default function Newpost() {
                   </div>
                 </div>
                 <div className="mt-10 w-full flex justify-center">
-                  {load ? <CircularProgress/> 
-                  :
-                   <button
-                    className="bg-dblue text-sm py-4 px-9 md:text-lg  text-owhite rounded-lg font-bold hover:bg-lblue hover:text-dblue hover:border-2"
-                    onClick={(e) => publish()}
-                  >
-                    Publish
-                  </button>
-                   }
-                 
+                  {load ? (
+                    <CircularProgress />
+                  ) : (
+                    <button
+                      className="bg-dblue text-sm py-4 px-9 md:text-lg  text-owhite rounded-lg font-bold hover:bg-lblue hover:text-dblue hover:border-2"
+                      onClick={(e) => publish()}
+                    >
+                      Publish
+                    </button>
+                  )}
                 </div>
               </div>
             </div>

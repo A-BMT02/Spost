@@ -13,19 +13,20 @@ export default function Signup() {
   const [loading, setLoading] = useState(false);
   const [showError, setShowError] = useState(false);
   const [show, setShow] = useState(false);
-  const [login , setLogin] = useState(false) ; 
-
+  const [login, setLogin] = useState(false);
 
   const navigate = useNavigate();
   const errorRef = useRef(null);
 
   const { signup } = useAuth();
+  const { signin } = useAuth();
   const { user } = useAuth();
 
   const signupNow = async (email, password) => {
     if (password === secondPassword) {
       setLoading(true);
-      const res = await signup(email, password);
+
+      const res = await signup(email.toLowerCase(), password);
       if (res.access == false) {
         setError(res.error);
         setLoading(false);
@@ -56,10 +57,23 @@ export default function Signup() {
     }
   }, []);
 
-   const signinWithGoogle = () => {
-    setLogin(true) ; 
-    window.open("https://spost1.herokuapp.com/api/user/google", "_self");
-    setLogin(false) ;
+  const signinWithGoogle = () => {
+    setLogin(true);
+    window.open("/api/user/google", "_self");
+    setLogin(false);
+  };
+
+  const testLogin = async () => {
+    const res = await signin("futuristicaistore@gmail.com", "12345678");
+    if (res.access == false) {
+      setError(res.error);
+      setLoading(false);
+      return;
+    } else if (res.access === true) {
+      navigate("/dashboard");
+      setLoading(false);
+      return;
+    }
   };
 
   return (
@@ -149,17 +163,20 @@ export default function Signup() {
                   <p>or</p>
                   <hr className="w-2/5 m-auto text-ogray"></hr>
                 </div>
-                  <div className="cursor-pointer relative bg-lblue w-lg border border-dblue rounded-lg p-2 md:w-80 font-bold hover:bg-dblue hover:text-owhite">
-                  {login ? <CircularProgress/> : <div className=" flex space-x-6 pointer-events-auto justify-center items-center ">
-                    <img src={google} />
-                    <p
-                      onClick={(e) => signinWithGoogle()}
-                      className="text-xl font-inter"
-                    >
-                      Sign in with Google
-                    </p>
-                  </div> }
-                  
+                <div className="cursor-pointer relative bg-lblue w-lg border border-dblue rounded-lg p-2 md:w-80 font-bold hover:bg-dblue hover:text-owhite">
+                  {login ? (
+                    <CircularProgress />
+                  ) : (
+                    <div className=" flex space-x-6 pointer-events-auto justify-center items-center ">
+                      <img src={google} />
+                      <p
+                        onClick={(e) => signinWithGoogle()}
+                        className="text-xl font-inter"
+                      >
+                        Sign in with Google
+                      </p>
+                    </div>
+                  )}
                 </div>
                 <p>
                   Already have an account?{" "}
@@ -170,6 +187,16 @@ export default function Signup() {
                     Sign in
                   </span>
                 </p>
+                <div
+                  onClick={(e) => testLogin()}
+                  className="cursor-pointer relative bg-ored w-lg hover:border hover:border-ored rounded-lg p-2 md:w-80 font-bold hover:bg-owhite hover:text-owhite"
+                >
+                  <div className=" flex space-x-6 pointer-events-auto justify-center items-center ">
+                    <p className="text-xl font-inter text-owhite hover:text-ored">
+                      Test User login
+                    </p>
+                  </div>
+                </div>
               </div>
             </div>
           </div>

@@ -11,8 +11,10 @@
     "@testing-library/jest-dom": "^5.16.4",
     "@testing-library/react": "^13.3.0",
     "@testing-library/user-event": "^13.5.0",
+    "autoprefixer": "^10.4.7",
     "axios": "^0.27.2",
     "openai": "^3.0.0",
+    "postcss": "^8.4.14",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-dropzone": "^14.2.2",
@@ -21,17 +23,17 @@
     "react-router-dom": "^6.3.0",
     "react-scripts": "5.0.1",
     "styled-components": "^5.3.5",
+    "tailwindcss": "^3.1.6",
     "twitter-api-v2": "^1.12.3",
-    "web-vitals": "^2.1.4",
-    "autoprefixer": "^10.4.7",
-    "postcss": "^8.4.14",
-    "tailwindcss": "^3.1.6"
+    "web-vitals": "^2.1.4"
   },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject" ,
+    "cypress:open": "cypress open"
+
   },
   "eslintConfig": {
     "extends": [
@@ -52,8 +54,11 @@
     ]
   },
   "devDependencies": {
+    "@testing-library/cypress": "^8.0.3",
     "autoprefixer": "^10.4.7",
+    "cypress": "^10.6.0",
     "postcss": "^8.4.14",
     "tailwindcss": "^3.1.6"
-  }
+  },
+  "proxy": "http://localhost:5000/"
 }
