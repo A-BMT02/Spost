@@ -90,7 +90,6 @@ export default function PreviewImage() {
     } else if (state.extension === "gif") {
       extension = "image/gif";
     }
-  
 
     convertAndSave(extension, pass);
   };
@@ -131,13 +130,6 @@ export default function PreviewImage() {
       navigate("/newpost");
     }, extension);
   };
-
-
-  // useEffect(() => {
-  //   setCrop(undefined);
-  //   const reader = new FileReader();
-  //   reader.addEventListener("load", () => setImage(back));
-  // }, []);
 
   useEffect(() => {
     if (imageError !== "") {

@@ -1,15 +1,11 @@
 import Express from "express";
-// const twitter = require("twitter");
-// const twit = require("twit");
 import user from "../models/googleUser.js";
 import twitterModel from "../models/twitterConnect.js";
-// const { TwitThread } = require("twit-thread");
 import { TwitterApi } from "twitter-api-v2";
 import { fileTypeFromFile } from "file-type";
 import facebookInfo from "../models/facebookConnect.js";
 import axios from "axios";
 import instagramInfo from "../models/instagramConnect.js";
-// import panther from "../images/panther.jpg";
 import fs from "fs";
 import { default as FormData } from "form-data";
 import fetch from "node-fetch";
@@ -92,7 +88,6 @@ router.post("/facebook", async (req, res) => {
           picture.map(async (pic, index) => {
             const remove = new RegExp(`^data:image\/${pic.extension};base64,`);
             const base64Data = pic.file.split(",")[1];
-            // const binaryData = new Buffer(base64Data , 'base64').toString('binary') ;
             const readFileAsync = promisify(fs.readFile);
             const writeFileAsync = promisify(fs.writeFile);
             const unlinkAsync = promisify(fs.unlink);
@@ -109,10 +104,8 @@ router.post("/facebook", async (req, res) => {
               source: fs.createReadStream(
                 `./images/image${id}${index}.${pic.extension}`
               ),
-              // caption: data,
             });
             await unlinkAsync(`./images/image${id}${index}.${pic.extension}`);
-            // return `attached_media[${index}]=media_fbid: a.post_id`;
             return (postData[
               `attached_media[${index}]`
             ] = `{media_fbid: ${a.id}}`);
@@ -163,7 +156,6 @@ router.post("/instagram", async (req, res) => {
     });
   }
 });
-//mime types reference => https://github.com/PLhery/node-twitter-api-v2/blob/master/src/types/v1/tweet.v1.types.ts
 const thread = async (client, data, res) => {
   const updatedData = await Promise.all(
     data.map(async (item) => {

@@ -148,7 +148,6 @@ export default function Newpost() {
     value.setTwitterCounter((prev) => {
       const multiple = prev !== value.state.value.length - 1 ? prev + 1 : 0;
       translate(multiple);
-      // const next = prev
       return multiple;
     });
   };
@@ -177,7 +176,6 @@ export default function Newpost() {
       const extension = uploadedFile.name.split(".").pop().toLowerCase();
       if (extension === "gif") {
         type = "gif";
-        // setTwitterMax(true);
         value.setTwitterMax((prev) => [...prev, true]);
         updateContents(type, reader, extension);
         setLoading(false);
@@ -189,12 +187,10 @@ export default function Newpost() {
             setError("Video cannot be longer than 2min:20sec");
             setShowError(true);
             setLoading(false);
-            // setTwitterMax(false);
             value.setTwitterMax((prev) => [...prev, false]);
 
             return;
           } else {
-            // setTwitterMax(true);
             value.setTwitterMax((prev) => [...prev, true]);
 
             setShowError(false);
@@ -267,15 +263,12 @@ export default function Newpost() {
     switch (previewTarget) {
       case "twitter":
         return value.state.value[value.twitterCounter].media;
-      // return value.twitterPicture;
       case "facebook":
         return value.facebookPicture;
-      // return [{ type: "image", media: value.facebookPicture, index: 0 }];
       case "linkedin":
         return value.linkedinPicture;
       case "instagram":
         return [{ type: "image", media: imageUrl, index: 0 }];
-      // return value.instagramPicture;
     }
   };
 
@@ -312,7 +305,6 @@ export default function Newpost() {
         const res = await axios.post("/api/user/post/facebook", {
           data: value.facebookContent,
           id: facebook.id,
-          // picture: value.facebookPicture,
           picture: value.facebookPicture,
         });
         if (res.status == 200) {
@@ -378,7 +370,6 @@ export default function Newpost() {
           )
         );
         if (pic.type === "gif" || pic.type === "video") {
-          // setTwitterMax(false);
           value.setTwitterMax((prev) => [...prev, false]);
         }
     }
@@ -495,9 +486,6 @@ export default function Newpost() {
               {socials.map((item) => (
                 <div>
                   <input
-                    // defaultChecked={
-                    //   value.select.includes(item.type) ? true : false
-                    // }
                     checked={value.select.includes(item.type) ? true : false}
                     onChange={(e) => {
                       if (e.target.checked) {
@@ -919,7 +907,6 @@ export default function Newpost() {
                                 />
                               ) : (
                                 <video
-                                  // ref={imageRef.current[index]}
                                   className="rounded-lg w-full h-[150px] object-cover "
                                   src={media.file}
                                 />

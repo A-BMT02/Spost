@@ -134,7 +134,6 @@ export default function Dashboard() {
           .catch((err) => {
             setLoading(false);
           });
-        // setLoading(false);
       });
   }, []);
 
@@ -250,7 +249,6 @@ export default function Dashboard() {
         }
       })
       .catch((err) => {
-        //err
         window.location.reload(false);
         setDeletingInstagram(true);
       });
@@ -278,7 +276,6 @@ export default function Dashboard() {
         }
       })
       .catch((err) => {
-        //err
         window.location.reload(false);
         setDeletingFacebook(true);
       });

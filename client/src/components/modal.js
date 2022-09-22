@@ -18,7 +18,6 @@ export default function Modal({
   const { user } = useAuth();
 
   const navigate = useNavigate();
-  console.log("uploaded are", successProfile);
   const { socials } = useData();
 
   const setUrl = (target) => {

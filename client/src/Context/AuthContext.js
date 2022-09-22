@@ -79,7 +79,6 @@ export const UserProvider = (props) => {
         },
       })
       .then((res) => {
-        console.log("res is ", res);
         if (typeof res.data.data == "undefined") {
           setUser({});
         } else if (res.data.data) {
@@ -92,7 +91,6 @@ export const UserProvider = (props) => {
   }, [isAuth, connected]);
 
   useEffect(() => {
-    console.log("logged user is ", user);
     if (Object.keys(user).length !== 0) {
       setIsAuth(true);
     } else {

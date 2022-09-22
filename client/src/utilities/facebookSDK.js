@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 
-// Injects the Facebook SDK into the page
 const injectFbSDKScript = () => {
   (function (d, s, id) {
     var js,
@@ -18,11 +17,8 @@ const injectFbSDKScript = () => {
 export const useInitFbSDK = () => {
   const [isInitialized, setIsInitialized] = useState(false);
 
-  // Initializes the SDK once the script has been loaded
-  // https://developers.facebook.com/docs/javascript/quickstart/#loading
   window.fbAsyncInit = function () {
     window.FB.init({
-      // Find your App ID on https://developers.facebook.com/apps/
       appId: "1232028627552604",
       cookie: true,
       autoLogAppEvents: true,

@@ -30,10 +30,9 @@ export const reducer = (state, action) => {
       return state;
   }
 };
-//s
 const addItem = (item, index, state) => {
   if (state.value.length == 0) {
-    return { value: [{ text: item } ] };
+    return { value: [{ text: item }] };
   } else {
     const newValue = state.value.map((obj, i) => {
       if (i === index) {
@@ -46,13 +45,12 @@ const addItem = (item, index, state) => {
     return { value: newValue };
   }
 };
-//d
 const addPicture = (fileType, file, index, state) => {
   const newValue = state.value.map((obj, i) => {
-    if (i === index ) {
-        const allMedia = obj.media;
-        allMedia.push({ file, type: fileType });
-        return { ...obj, media: allMedia };
+    if (i === index) {
+      const allMedia = obj.media;
+      allMedia.push({ file, type: fileType });
+      return { ...obj, media: allMedia };
     } else {
       return obj;
     }

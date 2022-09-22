@@ -3,8 +3,6 @@ import mongoose from "mongoose";
 import User from "../models/googleUser.js";
 import normalUser from "../models/user.js";
 
-// import { Serialize , Deserialize } from "../utils/serialize.js";
-
 const GoogleStrategy = googleStrategy.Strategy;
 export default function (passport) {
   passport.use(

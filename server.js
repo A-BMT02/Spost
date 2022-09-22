@@ -35,7 +35,6 @@ app.use(
 );
 
 app.use(cookieParser());
-// app.use(parser.urlencoded({ limit: "50mb", extended: false }));
 app.use(parser.urlencoded({ extended: false }));
 
 app.use(
@@ -62,6 +61,7 @@ app.get("/testing", (req, res) => {
 mongoose.connect(process.env.DB_CONNECT, () => {
   console.log("Connected to database");
 });
+
 //render
 if (process.env.NODE_ENV === "production") {
   app.use(express.static("client/build"));
