@@ -49,6 +49,7 @@ export default function Dashboard() {
 
   const logoutNow = async () => {
     setLoggingOut(true);
+    setSocials([]);
     const res = await logout();
     if (res.status == "ok") {
       setUser({});
