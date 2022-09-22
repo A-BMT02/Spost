@@ -175,7 +175,6 @@ export default function Newpost() {
     reader.readAsDataURL(uploadedFile);
     reader.onload = function (e) {
       const extension = uploadedFile.name.split(".").pop().toLowerCase();
-      console.log("extesion is ", extension);
       if (extension === "gif") {
         type = "gif";
         // setTwitterMax(true);
@@ -226,50 +225,6 @@ export default function Newpost() {
     };
   };
 
-  // const postToFacebook = async (result) => {
-  // const blob = dataUrltoBlob(result);
-  // const authToken =
-  //   "EAARghgSyyVwBANi7MlNJ33AzeLxMbLe5ZCOxcooGD52B5VZBCv4IGJJBQdekmFCrVlQ9UBI1qBG4FkLYjQAB1hOpt90arq8f98ezMlPZCW6JISofpfN5ZAKs8Q0CK0ZAgJAFLZALr59Jhzj7kmAU7TDZALjYyFhz8kvm52NMeIe3gZDZD";
-  // let formData = new FormData();
-  // fd.append("access_token", authToken);
-  // formData.append("source", blob, "image/jpg");
-
-  // const result2 = await axios.post(
-  //   `https://graph.facebook.com/v14.0/1232028627552604/uploads?file_length=${blob.size}&file_type=image/jpeg&access_token=EAARghgSyyVwBANi7MlNJ33AzeLxMbLe5ZCOxcooGD52B5VZBCv4IGJJBQdekmFCrVlQ9UBI1qBG4FkLYjQAB1hOpt90arq8f98ezMlPZCW6JISofpfN5ZAKs8Q0CK0ZAgJAFLZALr59Jhzj7kmAU7TDZALjYyFhz8kvm52NMeIe3gZDZD`
-  // );
-
-  // const id = result2.data.id;
-
-  // const result3 = window.FB.api(`/v14.0/${id}`, formData, config);
-
-  // console.log("res 1 is ", result, " and res 2 is ", result2);
-  // console.log("id is ", id);
-  // fd.append("message", "Please work");
-  // console.log(
-  //   "blob is ",
-  //   blob,
-  //   " and fd is",
-  //   ...formData,
-  //   " blob size is ",
-  //   blob.size
-  // );
-
-  // const config2 = {
-  //   headers: {
-  //     "Content-Type": "multipart/form-data",
-  //   },
-  //   params: {
-  //     id,
-  //     size: blob.size,
-  //   },
-  // };
-
-  // const res = await axios.post("/api/user/test", {
-  //   blob,
-  //   result: result,
-  // });
-  // };
-
   function dataUrltoBlob(dataURI) {
     var byteString = window.atob(dataURI.split(",")[1]);
     var ab = new ArrayBuffer(byteString.length);
@@ -314,7 +269,6 @@ export default function Newpost() {
         return value.state.value[value.twitterCounter].media;
       // return value.twitterPicture;
       case "facebook":
-        console.log("facebook pics are", value.facebookPicture);
         return value.facebookPicture;
       // return [{ type: "image", media: value.facebookPicture, index: 0 }];
       case "linkedin":
@@ -361,20 +315,16 @@ export default function Newpost() {
           // picture: value.facebookPicture,
           picture: value.facebookPicture,
         });
-        console.log("res is ", res);
         if (res.status == 200) {
           setSuccessProfile((prev) => [...prev, "facebook"]);
         }
       } catch (err) {
-        console.log("err is ", err.response.data.error);
         setLoad(false);
         return setMessage(err.response.data.error);
       }
     }
-    console.log("alldata is ", allData, " and length is ", allData.length);
     if (allData[0].text !== "" || allData[0].media.length >= 1) {
       try {
-        console.log("posting to twitter");
         const res2 = await axios.post("/api/user/post/twitter", {
           data: allData,
           id: user._id,
@@ -384,7 +334,6 @@ export default function Newpost() {
           setSuccess(true);
         }
       } catch (err) {
-        console.log("err is ", err.response.data.error);
         setLoad(false);
         return setMessage(err.response.data.error);
       }
@@ -393,7 +342,6 @@ export default function Newpost() {
     const instagram = user.connect.find((item) => {
       return item.social === "instagram";
     });
-    console.log("image is ", imageUrl);
     if (imageUrl !== "") {
       try {
         const instaPost = await axios.post("/api/user/post/instagram", {
@@ -401,13 +349,11 @@ export default function Newpost() {
           text: value.instagramContent,
           id: instagram.id,
         });
-        console.log("insta post is ", instaPost);
         if (instaPost.status == 200) {
           setSuccessProfile((prev) => [...prev, "instagram"]);
           setSuccess(true);
         }
       } catch (err) {
-        console.log("err is ", err.response.data.error);
         setLoad(false);
         return setMessage(err.response.data.error);
       }
@@ -455,16 +401,13 @@ export default function Newpost() {
   };
 
   const setUrlPreview = () => {
-    console.log("here");
     if (value.previewTarget === "instagram") {
-      console.log("preview is image", imageUrl);
       if (imageUrl === "") {
         return "";
       } else {
         return imageUrl;
       }
     }
-    console.log("preview is image2");
     return value.facebookPicture;
   };
 
@@ -753,10 +696,8 @@ export default function Newpost() {
                             value={whichContent(value.target)}
                             onChange={(e) => {
                               if (e.target.value == "\n") {
-                                console.log("new line");
                               }
                               changeContent(e.target.value);
-                              console.log(whichContent(value.target));
                             }}
                             className="textarea w-full font-bold  p-2 rounded-lg border border-dblue min-h-[200px]"
                             placeholder="Enter your text here"
@@ -965,7 +906,6 @@ export default function Newpost() {
                         previewPicture(value.previewTarget)?.map(
                           (media, index) => (
                             <div className="w-1/2 relative">
-                              {console.log("media type is ", media.type)}
                               {media.type === "image" ||
                               media.type === "gif" ? (
                                 <img

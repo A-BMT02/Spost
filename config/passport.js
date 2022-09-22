@@ -28,7 +28,6 @@ export default function (passport) {
           });
 
           if (duplicate && !duplicate.googleId) {
-            console.log("duplicate is ", duplicate);
             const updatedUser = await User.findOneAndUpdate(
               { email: profile.emails[0].value },
               {
@@ -37,36 +36,29 @@ export default function (passport) {
                 image: profile.photos[0].value,
               }
             );
-            console.log("updated user is ", updatedUser);
           }
           const userFound = await User.findOne({
             email: profile.emails[0].value,
           });
 
           if (userFound) {
-            // console.log('userFound is ' , userFound) ;
             done(null, userFound);
           } else {
             const createdUser = (await User.create(newUser)).toJSON();
-            // console.log('created user is ', createdUser) ;
             done(null, createdUser);
           }
         } catch (err) {
-          console.log("err is ", err);
           done(err);
         }
       }
     )
   );
   passport.serializeUser((user, done) => {
-    // console.log('user is ' , user)  ;
     done(null, user._id);
   });
 
   passport.deserializeUser((id, done) => {
-    // console.log('id is ' , id) ;
     User.findById(id, (err, user) => {
-      // console.log('User 2 is ' , user ) ;
       done(null, user);
     });
   });

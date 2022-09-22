@@ -87,7 +87,6 @@ export default function Dashboard() {
         const facebookDetails = user?.connect?.find((target) => {
           return target.social === "facebook";
         });
-        console.log("facebookdetails is", facebookDetails);
 
         // get facebook
         axios
@@ -97,7 +96,6 @@ export default function Dashboard() {
             },
           })
           .then((res) => {
-            console.log("res is ", res);
             if (res.status === 200) {
               setSocials((prev) => [
                 ...prev,
@@ -119,7 +117,6 @@ export default function Dashboard() {
                 },
               })
               .then((res) => {
-                console.log("instagram res is ", res);
                 if (res.status === 200) {
                   setSocials((prev) => [
                     ...prev,
@@ -148,7 +145,6 @@ export default function Dashboard() {
         id: user._id,
       },
     });
-    console.log("result is ", result);
     window.location.href = result.data.URL;
     setConnecting(false);
   };
@@ -160,7 +156,6 @@ export default function Dashboard() {
         id: user._id,
       },
     });
-    console.log(res);
     window.location.reload(false);
     setLoadingInstagram(false);
   };
@@ -178,22 +173,8 @@ export default function Dashboard() {
     });
   }, []);
 
-  // useEffect(() => {
-  //   if (fbUserAccessToken) {
-  //     console.log("user token is ", fbUserAccessToken);
-  //     window.FB.api(
-  //       `/${PAGE_ID}?fields=access_token&access_token=${fbUserAccessToken}`,
-  //       ({ access_token }) => {
-  //         setFbPageAccessToken(access_token);
-  //       }
-  //     );
-  //   }
-
-  // }, [fbUserAccessToken]);
-
   useEffect(() => {
     if (fbUserAccessToken) {
-      console.log("here", fbUserAccessToken);
       axios
         .get("/api/user/facebook", {
           withCredentials: true,
@@ -203,7 +184,6 @@ export default function Dashboard() {
           },
         })
         .then((res) => {
-          console.log("res is ", res);
           setLoadingFacebook(false);
           window.location.reload(false);
         })
@@ -242,7 +222,6 @@ export default function Dashboard() {
       })
       .then((res) => {
         if (res.data.status === "ok") {
-          // console.log('here') ;
           window.location.reload(false);
           setDeleting(false);
         }
@@ -304,10 +283,6 @@ export default function Dashboard() {
         setDeletingFacebook(true);
       });
   };
-
-  // useEffect(() => {
-  //   console.log("soicals is", socials);
-  // }, [socials]);
 
   return (
     Object.keys(user).length !== 0 && (

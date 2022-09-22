@@ -18,11 +18,9 @@ const __dirname1 = path.resolve();
 
 dotenv.config();
 
-// twitterConfig(passport);
 passportConfig(passport);
 
 const PORT = process.env.PORT || 5000;
-// console.log(PORT)
 const app = express();
 app.use(
   cors({
@@ -71,15 +69,6 @@ if (process.env.NODE_ENV === "production") {
     res.sendFile(path.resolve(__dirname, "client", "build", "index.html"))
   );
 }
-
-//heroku
-// if (process.env.NODE_ENV === "production") {
-//   console.log("here");
-//   app.use(express.static(path.join(__dirname1, "/client/build")));
-//   app.get("*", (req, res) => {
-//     res.sendFile(path.resolve(__dirname1, "client", "build", "index.html"));
-//   });
-// }
 
 app.listen(PORT, () => {
   console.log("Server listening on ", PORT);

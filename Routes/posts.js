@@ -84,14 +84,12 @@ router.post("/facebook", async (req, res) => {
     const targetFacebook = await facebookInfo.findOne({ facebookId: id });
     if (targetFacebook) {
       const pageToken = targetFacebook.pageToken;
-      console.log("page id is ", pageToken);
       if (picture !== "") {
         let postData = {
           message: data,
         };
         let postIds = await Promise.all(
           picture.map(async (pic, index) => {
-            console.log("extension is ", pic.extension);
             const remove = new RegExp(`^data:image\/${pic.extension};base64,`);
             const base64Data = pic.file.split(",")[1];
             // const binaryData = new Buffer(base64Data , 'base64').toString('binary') ;
@@ -121,25 +119,17 @@ router.post("/facebook", async (req, res) => {
           })
         );
 
-        console.log("post ids are ", postIds, " and data is ", postData);
         const b = await FB.api("me/feed", "post", postData);
 
         return res.send("success");
-
-        // const postResult0 = await axios.post(
-        //   `https://graph.facebook.com/${targetFacebook.pageId}/photos?url=${picture}&message=${data}&access_token=${pageToken}`
-        // );
-        // console.log("post result 0 is ", postResult0);
       } else if (picture === "" && data !== "") {
         const postResult = await axios.post(
           `https://graph.facebook.com/${targetFacebook.pageId}/feed?message=${data}&access_token=${pageToken}`
         );
-        console.log("post result 1 is ", postResult);
         return res.send("success");
       }
     }
   } catch (err) {
-    console.log("err is ", err, " data", err.response);
     return res.status(400).json({
       status: "error",
       error: "An error occured while posting to facebook!",
@@ -152,7 +142,6 @@ router.post("/instagram", async (req, res) => {
     const picture = req.body.picture;
     const text = req.body.text;
     const id = req.body.id;
-    console.log("pic ", picture, " text ", text, " id ", id);
 
     const targetInstagram = await instagramInfo.findOne({ instagramId: id });
     if (targetInstagram) {
@@ -164,12 +153,10 @@ router.post("/instagram", async (req, res) => {
         const post = await axios.post(
           `https://graph.facebook.com/v14.0/${id}/media_publish?creation_id=${initialPost.data.id}&access_token=${token}`
         );
-        console.log("post is ", post);
         return res.send("success");
       }
     }
   } catch (err) {
-    console.log("err is ", err, " data", err.response);
     return res.status(400).json({
       status: "error",
       error: "An unknown error occured while posting to instagram",
