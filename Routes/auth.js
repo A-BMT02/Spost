@@ -517,6 +517,10 @@ router.get("/instagram/details", async (req, res) => {
   }
 });
 
+router.get("/test", (req, res) => {
+  return res.status(200).send("success");
+});
+
 // router.post("/test", async (req, res) => {
 //   // const formdata = req.body.formData;
 //   const reader = req.body.result;

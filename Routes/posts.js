@@ -75,58 +75,7 @@ router.post("/twitter", async (req, res) => {
   }
 });
 
-// router.post("/test", async (req, res) => {
-//   const stats = fs.statSync("./images/game.mp4");
-//   const fileSizeInBytes = stats.size;
-
-//   const headers = {
-//     "Content-Type": "multipart/form-data",
-//     file_offset: "0",
-//     Authorization:
-//       "OAuth EAARghgSyyVwBAB3uHVa10JOyZBS07MbjJ9E6ZBGXMEC3y4cP8bSvuyZB1r0Xwxr8eaVdwHFhGXfH7boFIGRsE83cKHDzBBU5iTE2qo62ZByc27e1vkpvpEQOGSlrrMxVcldoFiimy0BOfc6wcZA2ijyVyc25HfZAGdiVYAq3DgdAZDZD",
-//     "Content-Length": fileSizeInBytes,
-//   };
-//   let formdata = new FormData();
-//   const fileData = fs.createReadStream("./images/game.mp4");
-//   const blob = new Blob([fileData]);
-
-//   formdata.append("source", JSON.stringify(blob));
-//   formdata.append(
-//     "access_token",
-//     "EAARghgSyyVwBAB3uHVa10JOyZBS07MbjJ9E6ZBGXMEC3y4cP8bSvuyZB1r0Xwxr8eaVdwHFhGXfH7boFIGRsE83cKHDzBBU5iTE2qo62ZByc27e1vkpvpEQOGSlrrMxVcldoFiimy0BOfc6wcZA2ijyVyc25HfZAGdiVYAq3DgdAZDZD"
-//   );
-
-//   try {
-//     const a = await axios.post(
-//       "https://graph-video.facebook.com/v14.0/101438839361774/videos?access_token=EAARghgSyyVwBAGZAYx6XZBbMKQg3LnAYRRsRrlU2qiE7k1mlxXb4r7GWa47XtZATPZCKJVhxEiy6H0h9QZAZCIUz4vmjtdBcNntMRCkb6vFQeJoXmtVWT2q51ZB3X0lNylH3snJkL6ou9TIIfkzx9kC3YNmw1grVQRbVJwI06AH9JQcGNaTrk1w",
-//       formdata,
-//       { headers: headers }
-//     );
-//     console.log("a is ", a);
-//   } catch (err) {
-//     console.log("err is ", err, " data is ", err.response);
-//     return res.send("success");
-//   }
-
-//   res.send("success");
-// });
-
 router.post("/facebook", async (req, res) => {
-  // posting local file
-
-  // const b = await axios.post(
-  //   `https://graph.facebook.com/v14.0/${a.data.id}&access_token=EAARghgSyyVwBAB3uHVa10JOyZBS07MbjJ9E6ZBGXMEC3y4cP8bSvuyZB1r0Xwxr8eaVdwHFhGXfH7boFIGRsE83cKHDzBBU5iTE2qo62ZByc27e1vkpvpEQOGSlrrMxVcldoFiimy0BOfc6wcZA2ijyVyc25HfZAGdiVYAq3DgdAZDZD`,
-  //   formdata,
-  //   { headers: headers }
-  // );
-
-  // console.log("b is ", b);
-  // console.log("size is ", fileSizeInBytes);
-
-  // res.send("success");
-
-  //working version
-
   try {
     const data = req.body.data;
     const id = req.body.id;
