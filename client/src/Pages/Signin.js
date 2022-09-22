@@ -15,6 +15,7 @@ export default function Signin() {
   const [error, setError] = useState("");
   const [show, setShow] = useState(false);
   const [login, setLogin] = useState(false);
+  const [logging, setLogging] = useState(false);
 
   const { signin } = useAuth();
   const { user } = useAuth();
@@ -58,15 +59,16 @@ export default function Signin() {
   };
 
   const testLogin = async () => {
+    setLogging(true);
     const res = await signin("futuristicaistore@gmail.com", "12345678");
     if (res.access == false) {
       setError(res.error);
       setLoading(false);
-      return;
+      return setLogging(false);
     } else if (res.access === true) {
       navigate("/dashboard");
       setLoading(false);
-      return;
+      return setLogging(false);
     }
   };
 
@@ -175,15 +177,20 @@ export default function Signin() {
                     Sign up
                   </span>
                 </p>
-
-                <div
-                  onClick={(e) => testLogin()}
-                  className="cursor-pointer relative bg-ored text-owhite hover:text-ored hover:bg-owhite w-lg hover:border hover:border-ored rounded-lg p-2 md:w-80 font-bold"
-                >
-                  <div className=" flex space-x-6 pointer-events-auto justify-center items-center ">
-                    <p className="text-xl font-inter  ">Test User login</p>
+                {logging ? (
+                  <div className="flex justify-center items-center w-full">
+                    <CircularProgress />
                   </div>
-                </div>
+                ) : (
+                  <div
+                    onClick={(e) => testLogin()}
+                    className="cursor-pointer relative bg-ored text-owhite hover:text-ored hover:bg-owhite w-lg hover:border hover:border-ored rounded-lg p-2 md:w-80 font-bold"
+                  >
+                    <div className=" flex space-x-6 pointer-events-auto justify-center items-center ">
+                      <p className="text-xl font-inter  ">Test User login</p>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           </div>
