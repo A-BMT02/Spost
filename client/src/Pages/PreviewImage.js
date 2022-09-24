@@ -168,14 +168,14 @@ export default function PreviewImage() {
             : "hidden"
         }
       >
-        <p className="font-inter font-bold">{imageError}</p>
+        <p className=" font-bold">{imageError}</p>
         <p
           onClick={(e) => {
             error.current.classList.add("hidden");
             setShowError(false);
             setImageError("");
           }}
-          className="font-inter font-black"
+          className=" font-black"
         >
           X
         </p>
@@ -223,14 +223,14 @@ export default function PreviewImage() {
       </div>
 
       <div className="flex justify-center mx-5 md:mx-0">
-        <div className="flex flex-col font-inter font-bold space-y-2 ">
+        <div className="flex flex-col  font-bold space-y-2 ">
           <div className="border-b pb-2 border-dblue w-fit mb-3">
             <h2 className="font-bold text-dblue text-xl">
               {state.social} image specifications
             </h2>
           </div>
           {state.social === "twitter" && (
-            <div className="flex flex-col font-inter font-bold space-y-2">
+            <div className="flex flex-col  font-bold space-y-2">
               <div>
                 <p>
                   <span className="text-ored">*</span>Minimum size: 600 by 335
@@ -259,7 +259,7 @@ export default function PreviewImage() {
             </div>
           )}
           {state.social === "facebook" && (
-            <div className="flex flex-col font-inter font-bold space-y-2">
+            <div className="flex flex-col  font-bold space-y-2">
               <div>
                 <p>
                   <span className="text-ored">*</span>Minimum size: 600 x 315
@@ -275,7 +275,7 @@ export default function PreviewImage() {
             </div>
           )}
           {state.social === "linkedin" && (
-            <div className="flex flex-col font-inter font-bold space-y-2">
+            <div className="flex flex-col  font-bold space-y-2">
               <div>
                 <p>
                   <span className="text-ored">*</span>Recommended size: 1200 x

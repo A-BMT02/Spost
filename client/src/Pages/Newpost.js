@@ -424,14 +424,14 @@ export default function Newpost() {
               : "hidden"
           }
         >
-          <p className="font-inter font-bold">{error}</p>
+          <p className=" ">{error}</p>
           <p
             onClick={(e) => {
               errorRef.current.classList.add("hidden");
               setShowError(false);
               setError("");
             }}
-            className="font-inter font-black self-center"
+            className="  self-center"
           >
             X
           </p>
@@ -450,13 +450,13 @@ export default function Newpost() {
               : "hidden"
           }
         >
-          <p className="font-inter font-bold">Successfully posted</p>
+          <p className=" ">Successfully posted</p>
           <p
             onClick={(e) => {
               successRef.current.classList.add("hidden");
               setSuccess(false);
             }}
-            className="font-inter font-black self-center"
+            className="  self-center"
           >
             X
           </p>
@@ -476,13 +476,13 @@ export default function Newpost() {
               : "flex justify-center w-full space-x-6"
           }
         >
-          <div className="flex flex-col md:w-1/2 space-y-6 space-x-6 font-inter">
+          <div className="flex flex-col md:w-1/2 space-y-6 space-x-6 ">
             <div>
-              <h2 className="text-4xl font-black text-dblue">New Post</h2>
+              <h2 className="text-4xl  text-dblue">New Post</h2>
             </div>
 
-            <div className="flex flex-col space-y-2 font-bold ">
-              <p className="font-bold text-xl">Publish to</p>
+            <div className="flex flex-col space-y-2  ">
+              <p className=" text-xl">Publish to</p>
               {socials.map((item) => (
                 <div>
                   <input
@@ -528,7 +528,7 @@ export default function Newpost() {
                 }
               >
                 <img className="w-5 h-5" src={twitter} />
-                <p className="font-bold">@AhmadBMTahir</p>
+                <p className="">@AhmadBMTahir</p>
               </div>
               <div
                 className={
@@ -538,7 +538,7 @@ export default function Newpost() {
                 }
               >
                 <img className="w-5 h-5" src={facebook} />
-                <p className="font-bold">@AhmadBMTahir</p>
+                <p className="">@AhmadBMTahir</p>
               </div>
               <div
                 className={
@@ -556,20 +556,20 @@ export default function Newpost() {
                         ...value.select.slice(index + 1, value.select.length),
                       ]);
                     }}
-                    className="font-black text-ored "
+                    className=" text-ored "
                   >
                     x
                   </p>
                 </div>
                 <img className="w-5 h-5" src={linkedin} />
-                <p className="font-bold">@AhmadBMTahir</p>
+                <p className="">@AhmadBMTahir</p>
               </div>
             </div>
 
             <div className="flex-flex-col space-y-2">
               <div className=" mb-10 flex space-x-2 md:space-x-4  border border-dblue bg-dblue bg-opacity-10 items-center rounded-lg w-fit">
                 <div className={value.select.length === 0 ? "hidden" : ""}>
-                  <p className="font-black text-xl ml-2">Content</p>
+                  <p className=" text-xl ml-2">Content</p>
                 </div>
                 <div
                   className={value.select.includes("facebook") ? "" : "hidden"}
@@ -687,7 +687,7 @@ export default function Newpost() {
                               }
                               changeContent(e.target.value);
                             }}
-                            className="textarea w-full font-bold  p-2 rounded-lg border border-dblue min-h-[200px]"
+                            className="textarea w-full   p-2 rounded-lg border border-dblue min-h-[200px]"
                             placeholder="Enter your text here"
                           />
                           <div className="flex justify-between">
@@ -747,7 +747,7 @@ export default function Newpost() {
               }
             >
               <div className={maxMedia() ? "hidden" : ""}>
-                <h2 className="font-black text-xl">Media</h2>
+                <h2 className=" text-xl">Media</h2>
               </div>
               {value.target !== "instagram" ? (
                 <div className={maxMedia() ? "hidden" : ""}>
@@ -755,7 +755,7 @@ export default function Newpost() {
                 </div>
               ) : (
                 <div className="flex flex-col space-y-2">
-                  <p className="font-black">Enter image Url below</p>
+                  <p className="">Enter image Url below</p>
                   <input
                     value={value.target === "instagram" ? imageUrl : imageUrl2}
                     onChange={(e) =>
@@ -763,7 +763,7 @@ export default function Newpost() {
                         ? setImageUrl(e.target.value)
                         : setImageUrl2(e.target.value)
                     }
-                    className="rounded-md border border-dblue font-black p-2"
+                    className="rounded-md border border-dblue  p-2"
                   />
                 </div>
               )}
@@ -781,7 +781,7 @@ export default function Newpost() {
                 className={
                   value.preview
                     ? "hidden"
-                    : "bg-dblue text-sm py-4 px-9 md:text-lg  text-owhite rounded-lg font-bold hover:bg-lblue hover:text-dblue hover:border-2"
+                    : "bg-dblue text-sm py-4 px-9 md:text-lg  text-owhite rounded-lg  hover:bg-lblue hover:text-dblue hover:border-2"
                 }
               >
                 Preview
@@ -792,14 +792,14 @@ export default function Newpost() {
           <div
             className={
               value.preview
-                ? "flex xl:flex mt-10 w-full justify-center items-center flex-col space-y-6 font-inter"
-                : "hidden xl:flex w-1/2 flex-col space-y-6 font-inter"
+                ? "flex xl:flex mt-10 w-full justify-center items-center flex-col space-y-6 "
+                : "hidden xl:flex w-1/2 flex-col space-y-6 "
             }
           >
             <div className="flex-flex-col space-y-2">
               <div className="mb-10 flex space-x-2 md:space-x-4 border border-dblue w-fit bg-dblue bg-opacity-10 items-center rounded-lg">
                 <div className={value.select.length === 0 ? "hidden" : ""}>
-                  <p className="ml-2 font-black text-xl">Preview</p>
+                  <p className="ml-2  text-xl">Preview</p>
                 </div>
                 <div
                   className={value.select.includes("facebook") ? "" : "hidden"}
@@ -866,27 +866,21 @@ export default function Newpost() {
                         src={item.image}
                       />
                       <div className="flex flex-col space-y-1 justify-center">
-                        <p
-                          className={
-                            item.type == "twitter" ? "font-black" : "hidden"
-                          }
-                        >
+                        <p className={item.type == "twitter" ? "" : "hidden"}>
                           {item.displayName}
                         </p>
-                        <p className="font-bold text-ogray">@{item.username}</p>
+                        <p className=" text-ogray">@{item.username}</p>
                       </div>
                     </div>
                   ))}
 
                   <div className="p-4">
-                    <p className="font-bold ">
-                      {previewedContent(value.previewTarget)}
-                    </p>
+                    <p className=" ">{previewedContent(value.previewTarget)}</p>
                   </div>
                   {/* <textarea
                     readOnly={true}
                     value={previewedContent(value.previewTarget)}
-                    className="p-4 bg-lblue font-bold"
+                    className="p-4 bg-lblue "
                   /> */}
                   <div className="px-4 mb-4">
                     <div className="flex flex-wrap w-full max-w-full">
@@ -931,7 +925,7 @@ export default function Newpost() {
                     <CircularProgress />
                   ) : (
                     <button
-                      className="bg-dblue text-sm py-4 px-9 md:text-lg  text-owhite rounded-lg font-bold hover:bg-lblue hover:text-dblue hover:border-2"
+                      className="bg-dblue text-sm py-4 px-9 md:text-lg  text-owhite rounded-lg  hover:bg-lblue hover:text-dblue hover:border-2"
                       onClick={(e) => publish()}
                     >
                       Publish

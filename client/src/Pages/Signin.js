@@ -85,14 +85,14 @@ export default function Signin() {
                   : "hidden"
               }
             >
-              <p className="font-inter font-bold">{error}</p>
+              <p className="">{error}</p>
               <p
                 onClick={(e) => {
                   errorRef.current.classList.add("hidden");
                   setShowError(false);
                   setError("");
                 }}
-                className="font-inter font-black"
+                className=""
               >
                 X
               </p>
@@ -105,14 +105,14 @@ export default function Signin() {
             >
               <h2 className="text-5xl md:text-6xl font-a text-dblue">Spost</h2>
             </nav>
-            <div className="flex font-inter items-start mx-auto">
+            <div className="flex  items-start mx-auto">
               <div className="hidden block w-1/2 max-w-[538px] ">
                 <img src={home} />
               </div>
 
               <div className=" flex flex-col justify-center items-center space-y-4  max-w-[320px]">
                 <div className="flex justify-center">
-                  <h2 className="text-3xl font-black font-bold">Sign in</h2>
+                  <h2 className="text-3xl ">Sign in</h2>
                 </div>
                 <div className="relative mx-auto block ">
                   <label className="absolute top-2 left-5 ">
@@ -121,7 +121,7 @@ export default function Signin() {
                   <input
                     value={emailValue}
                     onChange={(e) => setEmailValue(e.target.value)}
-                    className="bg-owhite w-lg border border-dblue rounded-lg p-2 md:w-80 pt-7 pl-5 font-bold"
+                    className="bg-owhite w-lg border border-dblue rounded-lg p-2 md:w-80 pt-7 pl-5"
                     alt="email"
                   />
                 </div>
@@ -131,7 +131,7 @@ export default function Signin() {
                     value={passwordValue}
                     onChange={(e) => setPasswordValue(e.target.value)}
                     type="password"
-                    className="bg-owhite w-lg border border-dblue rounded-lg p-2 md:w-80 pt-7 pl-5 font-bold"
+                    className="bg-owhite w-lg border border-dblue rounded-lg p-2 md:w-80 pt-7 pl-5 "
                     alt="password"
                   />
                 </div>
@@ -142,7 +142,7 @@ export default function Signin() {
                   ) : (
                     <button
                       onClick={(e) => signinNow(emailValue, passwordValue)}
-                      className="bg-dblue text-sm py-4 px-9 md:text-lg  text-owhite rounded-lg font-bold hover:bg-lblue hover:text-dblue hover:border-2"
+                      className="bg-dblue text-sm py-4 px-9 md:text-lg  text-owhite rounded-lg hover:bg-lblue hover:text-dblue hover:border-2"
                     >
                       Sign in
                     </button>
@@ -153,7 +153,7 @@ export default function Signin() {
                   <p>or</p>
                   <hr className="w-2/5 m-auto text-ogray"></hr>
                 </div>
-                <div className="cursor-pointer relative bg-lblue w-lg border border-dblue rounded-lg p-2 md:w-80 font-bold hover:bg-dblue hover:text-owhite">
+                <div className="cursor-pointer relative bg-lblue w-lg border border-dblue rounded-lg p-2 md:w-80 hover:bg-dblue hover:text-owhite">
                   {login ? (
                     <CircularProgress />
                   ) : (
@@ -161,7 +161,7 @@ export default function Signin() {
                       <img src={google} />
                       <p
                         onClick={(e) => signinWithGoogle()}
-                        className="text-xl font-inter"
+                        className="text-xl "
                       >
                         Sign in with Google
                       </p>
@@ -172,7 +172,7 @@ export default function Signin() {
                   Need an account?{" "}
                   <span
                     onClick={(e) => navigate("/signup")}
-                    className="cursor-pointer font-bold text-dblue hover:border-b hover:border-b-dblue "
+                    className="cursor-pointer text-dblue hover:border-b hover:border-b-dblue "
                   >
                     Sign up
                   </span>
@@ -184,10 +184,10 @@ export default function Signin() {
                 ) : (
                   <div
                     onClick={(e) => testLogin()}
-                    className="cursor-pointer relative bg-ored text-owhite hover:text-ored hover:bg-owhite w-lg hover:border hover:border-ored rounded-lg p-2 md:w-80 font-bold"
+                    className="cursor-pointer relative bg-ored text-owhite hover:text-ored hover:bg-owhite w-lg hover:border hover:border-ored rounded-lg p-2 md:w-80 "
                   >
                     <div className=" flex space-x-6 pointer-events-auto justify-center items-center ">
-                      <p className="text-xl font-inter  ">Test User login</p>
+                      <p className="text-xl   ">Test User login</p>
                     </div>
                   </div>
                 )}

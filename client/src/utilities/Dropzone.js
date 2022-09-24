@@ -39,8 +39,8 @@ export default function Dropzone({ selectImage }) {
 
         <div className="flex flex-col space-y-3 items-center justify-center">
           <img src={upload} />
-          <p className="font-black">Drag files here</p>
-          <p className="text-dblue font-black">Or select file to Upload</p>
+          <p className="">Drag files here</p>
+          <p className="text-dblue ">Or select file to Upload</p>
         </div>
       </div>
 
@@ -61,7 +61,7 @@ export default function Dropzone({ selectImage }) {
         />
         <div className="flex flex-col space-y-3 items-center justify-center">
           <img src={upload} />
-          <p className="text-dblue font-black">Select file to Upload</p>
+          <p className="text-dblue ">Select file to Upload</p>
         </div>
       </div>
     </div>

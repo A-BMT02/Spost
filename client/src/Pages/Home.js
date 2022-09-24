@@ -19,7 +19,7 @@ export default function Home() {
           <div className="flex space-x-6">
             <div>
               <button
-                className="bg-dblue text-sm md:text-lg p-2 md:p-3 text-owhite border border-dblue rounded-lg font-bold font-inter hover:bg-lblue hover:text-dblue"
+                className="bg-dblue text-sm md:text-lg p-2 md:p-3 text-owhite border border-dblue rounded-lg font-bold  hover:bg-lblue hover:text-dblue"
                 onClick={(e) => navigate("/signup")}
               >
                 Sign up
@@ -27,7 +27,7 @@ export default function Home() {
             </div>
             <div>
               <button
-                className="bg-lblue border border-dblue text-sm md:text-lg p-2 md:p-3 text-dblue rounded-lg font-bold font-inter hover:bg-dblue hover:text-owhite"
+                className="bg-lblue border border-dblue text-sm md:text-lg p-2 md:p-3 text-dblue rounded-lg font-bold  hover:bg-dblue hover:text-owhite"
                 onClick={(e) => navigate("/signin")}
               >
                 Login
@@ -36,17 +36,17 @@ export default function Home() {
           </div>
         </nav>
 
-        <div className="flex space-x-12 font-inter mt-5 md:m-10 justify-between items-start">
+        <div className="flex space-x-12  mt-5 md:m-10 justify-between items-start">
           <div className="flex flex-col items-center mx-auto ">
             <div className="mb-5 md:mb-10 max-w-sm md:max-w-none">
-              <h3 className="text-3xl text-center md:text-6xl font-inter font-bold">
+              <h3 className="text-3xl text-center md:text-6xl  font-bold">
                 Write <span className="text-dblue font-bold">once</span> post{" "}
                 <span className="text-dblue font-bold">everywhere</span>
               </h3>
             </div>
 
             <div className="mb-5 md:mb-6 max-w-sm md:max-w-none">
-              <p className="text-md md:text-2xl text-center font-inter font-bold">
+              <p className="text-md md:text-2xl text-center">
                 Write your content once and post to all your favorite social
                 media platforms
               </p>
@@ -63,7 +63,7 @@ export default function Home() {
           </div>
         </div>
 
-        <div className="flex flex-col font-inter justify-center items-center">
+        <div className="flex flex-col  justify-center items-center">
           <div className="flex pt-5 pb-5 flex-col my-10 p-10  w-full rounded-md bg-dblue justify-center space-y-6 md:flex-row md:justify-around  max-w-[500px] md:max-w-[900px] md:pt-20 md:pb-20">
             <div className="flex flex-col space-y-4 justify-center md:w-7/12 ">
               <p className="text-owhite text-center font-bold md:text-left md:text-2xl">

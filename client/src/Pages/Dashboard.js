@@ -303,13 +303,13 @@ export default function Dashboard() {
               </h2>
 
               <div className="flex space-x-4">
-                <div className="p-2 font-inter font-bold flex items-center">
+                <div className="p-2   flex items-center">
                   {!loggingOut ? (
                     <button
                       onClick={(e) => {
                         logoutNow();
                       }}
-                      className="bg-lblue border border-dblue text-sm md:text-lg p-2 md:p-3 text-dblue rounded-lg font-bold font-inter hover:bg-dblue hover:text-owhite"
+                      className="bg-lblue border border-dblue text-sm md:text-lg p-2 md:p-3 text-dblue rounded-lg   hover:bg-dblue hover:text-owhite"
                     >
                       Log out
                     </button>
@@ -323,11 +323,11 @@ export default function Dashboard() {
               </div>
             </div>
 
-            <div class="font-inter font-bold">
+            <div class=" ">
               <div
                 ref={ref2}
                 id="menu"
-                class=" rounded-sm absolute hidden flex-col items-center self-end mt-14 space-y-6 font-bold bg-owhite w-full sm:self-center  drop-shadow-md"
+                class=" rounded-sm absolute hidden flex-col items-center self-end mt-14 space-y-6  bg-owhite w-full sm:self-center  drop-shadow-md"
               >
                 <a
                   className="cursor-pointer p-5 hover:text-xl hover:text-dblue"
@@ -339,7 +339,7 @@ export default function Dashboard() {
             </div>
           </nav>
 
-          <div className="flex justify-between mt-3.5 pb-3.5 border-b border-dblue items-center font-inter">
+          <div className="flex justify-between mt-3.5 pb-3.5 border-b border-dblue items-center ">
             {/* <div>
                     <img className='w-10' src={bars}/>
                 </div> */}
@@ -357,7 +357,7 @@ export default function Dashboard() {
             </button>
 
             <div>
-              <h2 className="text-[25px] font-black font-bold">Dashboard</h2>
+              <h2 className="text-[25px]  ">Dashboard</h2>
             </div>
 
             <div></div>
@@ -370,16 +370,16 @@ export default function Dashboard() {
           >
             <CircularProgress />
           </div>
-          <div className={loading ? "hidden" : "flex font-inter "}>
+          <div className={loading ? "hidden" : "flex  "}>
             <div
               className={
                 socials.length === 0 || connect
                   ? "hidden"
-                  : "flex flex-col font-inter space-y-6 m-auto items-center"
+                  : "flex flex-col  space-y-6 m-auto items-center"
               }
             >
               <div className="flex flex-col m-auto items-center space-y-12 ">
-                <h2 className="text-[20px] md:text-3xl font-black font-bold mt-10 text-center">
+                <h2 className="text-[20px] md:text-3xl   mt-10 text-center">
                   Your social media profiles
                 </h2>
               </div>
@@ -388,7 +388,7 @@ export default function Dashboard() {
                   <div className="flex space-x-6 items-center">
                     <div className="flex space-x-2 items-center text-lg md:text-xl">
                       <img className="w-5 h-5" src={socialImage(social.type)} />
-                      <p className="font-bold">@{social.username}</p>
+                      <p className="">@{social.username}</p>
                     </div>
                     <div className="text-xl">
                       <MdOutlineCancel
@@ -411,7 +411,7 @@ export default function Dashboard() {
                       (social.type === "twitter" && deleteTwitter) ||
                       (social.type === "facebook" && deleteFacebook) ||
                       (social.type === "instagram" && deleteInstagram)
-                        ? "flex flex-col font-bold space-y-4 bg-owhite rounded-lg p-2 "
+                        ? "flex flex-col  space-y-4 bg-owhite rounded-lg p-2 "
                         : "hidden"
                     }
                   >
@@ -468,7 +468,7 @@ export default function Dashboard() {
                 className="hover:bg-dblue hover:text-owhite  cursor-pointer self-center border w-full max-w-[300px] border-dashed border-dblue p-2 rounded-lg flex space-x-3 items-center justify-center"
               >
                 <BsPlusCircle />
-                <p className="font-black ">Add new social media profile</p>
+                <p className=" ">Add new social media profile</p>
               </div>
             </div>
 
@@ -479,7 +479,7 @@ export default function Dashboard() {
                   : "hidden"
               }
             >
-              <h2 className="text-[25px] md:text-3xl font-black font-bold mt-10 text-center">
+              <h2 className="text-[25px] md:text-3xl   mt-10 text-center">
                 Connect your social media profiles
               </h2>
               <div className="flex justify-center space-x-4 max-w-{500px} w-full md:space-x-10  w-full md:w-auto items-center">
@@ -523,7 +523,7 @@ export default function Dashboard() {
               </div>
 
               <div className="cursor-pointer self-center border w-full max-w-[300px] hover:bg-dblue hover:text-owhite border-dblue p-2 rounded-lg flex space-x-3 items-center justify-center">
-                <p className="font-black" onClick={(e) => setConnect(false)}>
+                <p className="" onClick={(e) => setConnect(false)}>
                   View Connected Accounts
                 </p>
               </div>
