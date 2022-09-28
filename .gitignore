@@ -6,13 +6,13 @@ node_modules
 .pnp.js
 .env
 /client/node_modules
-
+/client/build
 
 # testing
 /coverage
 
 # production
-
+/build
 
 
 # misc
