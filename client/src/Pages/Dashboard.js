@@ -66,7 +66,7 @@ export default function Dashboard() {
     });
 
     axios
-      .get("/api/user/get/twitter", {
+      .get("https://web-production-191a.up.railway.app/api/user/get/twitter", {
         params: {
           id: con?.id,
         },
@@ -91,11 +91,14 @@ export default function Dashboard() {
 
         // get facebook
         axios
-          .get("/api/user/facebook/details", {
-            params: {
-              id: facebookDetails?.id,
-            },
-          })
+          .get(
+            "https://web-production-191a.up.railway.app/api/user/facebook/details",
+            {
+              params: {
+                id: facebookDetails?.id,
+              },
+            }
+          )
           .then((res) => {
             if (res.status === 200) {
               setSocials((prev) => [
@@ -112,11 +115,14 @@ export default function Dashboard() {
               return target.social === "instagram";
             });
             axios
-              .get("/api/user/instagram/details", {
-                params: {
-                  id: instagramDetails.id,
-                },
-              })
+              .get(
+                "https://web-production-191a.up.railway.app/api/user/instagram/details",
+                {
+                  params: {
+                    id: instagramDetails.id,
+                  },
+                }
+              )
               .then((res) => {
                 if (res.status === 200) {
                   setSocials((prev) => [
@@ -140,22 +146,28 @@ export default function Dashboard() {
 
   const connectTwitter = async () => {
     setConnecting(true);
-    const result = await axios.get("/api/user/twitter", {
-      headers: {
-        id: user._id,
-      },
-    });
+    const result = await axios.get(
+      "https://web-production-191a.up.railway.app/api/user/twitter",
+      {
+        headers: {
+          id: user._id,
+        },
+      }
+    );
     window.location.href = result.data.URL;
     setConnecting(false);
   };
 
   const connectInstagram = async () => {
     setLoadingInstagram(true);
-    const res = await axios.get("/api/user/instagram", {
-      params: {
-        id: user._id,
-      },
-    });
+    const res = await axios.get(
+      "https://web-production-191a.up.railway.app/api/user/instagram",
+      {
+        params: {
+          id: user._id,
+        },
+      }
+    );
     window.location.reload(false);
     setLoadingInstagram(false);
   };
@@ -176,7 +188,7 @@ export default function Dashboard() {
   useEffect(() => {
     if (fbUserAccessToken) {
       axios
-        .get("/api/user/facebook", {
+        .get("https://web-production-191a.up.railway.app/api/user/facebook", {
           withCredentials: true,
           params: {
             accessToken: fbUserAccessToken,
@@ -213,13 +225,16 @@ export default function Dashboard() {
       return target.social === "twitter";
     });
     axios
-      .get("/api/user/twitter/logout", {
-        withCredentials: true,
-        params: {
-          id: con.id,
-          user,
-        },
-      })
+      .get(
+        "https://web-production-191a.up.railway.app/api/user/twitter/logout",
+        {
+          withCredentials: true,
+          params: {
+            id: con.id,
+            user,
+          },
+        }
+      )
       .then((res) => {
         if (res.data.status === "ok") {
           window.location.reload(false);
@@ -237,12 +252,15 @@ export default function Dashboard() {
       return target.social === "instagram";
     });
     axios
-      .get("/api/user/instagram/logout", {
-        withCredentials: true,
-        params: {
-          id: instagramDetails.id,
-        },
-      })
+      .get(
+        "https://web-production-191a.up.railway.app/api/user/instagram/logout",
+        {
+          withCredentials: true,
+          params: {
+            id: instagramDetails.id,
+          },
+        }
+      )
       .then((res) => {
         if (res.status === 200) {
           window.location.reload(false);
@@ -264,12 +282,15 @@ export default function Dashboard() {
       return target.social === "facebook";
     });
     axios
-      .get("/api/user/facebook/logout", {
-        withCredentials: true,
-        params: {
-          id: facebookDetails.id,
-        },
-      })
+      .get(
+        "https://web-production-191a.up.railway.app/api/user/facebook/logout",
+        {
+          withCredentials: true,
+          params: {
+            id: facebookDetails.id,
+          },
+        }
+      )
       .then((res) => {
         if (res.status === 200) {
           window.location.reload(false);

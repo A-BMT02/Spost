@@ -302,11 +302,14 @@ export default function Newpost() {
     });
     if (value.facebookContent !== "" || value.facebookPicture.length >= 1) {
       try {
-        const res = await axios.post("/api/user/post/facebook", {
-          data: value.facebookContent,
-          id: facebook.id,
-          picture: value.facebookPicture,
-        });
+        const res = await axios.post(
+          "https://web-production-191a.up.railway.app/api/user/post/facebook",
+          {
+            data: value.facebookContent,
+            id: facebook.id,
+            picture: value.facebookPicture,
+          }
+        );
         if (res.status == 200) {
           setSuccessProfile((prev) => [...prev, "facebook"]);
         }
@@ -317,10 +320,13 @@ export default function Newpost() {
     }
     if (allData[0].text !== "" || allData[0].media.length >= 1) {
       try {
-        const res2 = await axios.post("/api/user/post/twitter", {
-          data: allData,
-          id: user._id,
-        });
+        const res2 = await axios.post(
+          "https://web-production-191a.up.railway.app/api/user/post/twitter",
+          {
+            data: allData,
+            id: user._id,
+          }
+        );
         if (res2.data.status === "ok") {
           setSuccessProfile((prev) => [...prev, "twitter"]);
           setSuccess(true);
@@ -336,11 +342,14 @@ export default function Newpost() {
     });
     if (imageUrl !== "") {
       try {
-        const instaPost = await axios.post("/api/user/post/instagram", {
-          picture: imageUrl,
-          text: value.instagramContent,
-          id: instagram.id,
-        });
+        const instaPost = await axios.post(
+          "https://web-production-191a.up.railway.app/api/user/post/instagram",
+          {
+            picture: imageUrl,
+            text: value.instagramContent,
+            id: instagram.id,
+          }
+        );
         if (instaPost.status == 200) {
           setSuccessProfile((prev) => [...prev, "instagram"]);
           setSuccess(true);

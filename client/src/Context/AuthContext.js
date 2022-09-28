@@ -15,10 +15,13 @@ export const UserProvider = (props) => {
   const [connected, setConnected] = useState(false);
 
   const signup = async (email, password) => {
-    const result = await axios.post("/api/user/register", {
-      email,
-      password,
-    });
+    const result = await axios.post(
+      "https://web-production-191a.up.railway.app/api/user/register",
+      {
+        email,
+        password,
+      }
+    );
     if (result.data.status === "ok") {
       return await signin(email, password);
     } else {
@@ -27,10 +30,13 @@ export const UserProvider = (props) => {
   };
 
   const signin = async (email, password) => {
-    const result = await axios.post("/api/user/login", {
-      email,
-      password,
-    });
+    const result = await axios.post(
+      "https://web-production-191a.up.railway.app/api/user/login",
+      {
+        email,
+        password,
+      }
+    );
     if (result.data.status === "ok") {
       setUser({ token: result.data.token, email: result.data.email });
       localStorage.setItem("token", result.data.token);
@@ -43,9 +49,12 @@ export const UserProvider = (props) => {
   };
 
   const logout = async () => {
-    const res = await axios.get("/api/user/logout", {
-      withCredentials: true,
-    });
+    const res = await axios.get(
+      "https://web-production-191a.up.railway.app/api/user/logout",
+      {
+        withCredentials: true,
+      }
+    );
     localStorage.removeItem("token");
     setIsAuth(false);
     return res.data;
@@ -61,23 +70,28 @@ export const UserProvider = (props) => {
   };
 
   useEffect(() => {
-    axios.get("/api/user/test").then((res) => {
-      if (res.status === 200) {
-        setConnected(true);
-      }
-    });
+    axios
+      .get("https://web-production-191a.up.railway.app/api/user/test")
+      .then((res) => {
+        if (res.status === 200) {
+          setConnected(true);
+        }
+      });
   }, []);
 
   useEffect(() => {
     setLoading(true);
     const token = localStorage.getItem("token");
     axios
-      .get("/api/user/login/success", {
-        withCredentials: true,
-        headers: {
-          token: token,
-        },
-      })
+      .get(
+        "https://web-production-191a.up.railway.app/api/user/login/success",
+        {
+          withCredentials: true,
+          headers: {
+            token: token,
+          },
+        }
+      )
       .then((res) => {
         if (typeof res.data.data == "undefined") {
           setUser({});
@@ -101,7 +115,7 @@ export const UserProvider = (props) => {
   const reconnect = () => {
     setTimeout(() => {
       axios
-        .get("/api/user/test")
+        .get("https://web-production-191a.up.railway.app/api/user/test")
         .then((res) => {
           if (res.status === 200) {
             setConnected(true);

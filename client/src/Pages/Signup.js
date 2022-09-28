@@ -60,7 +60,10 @@ export default function Signup() {
 
   const signinWithGoogle = () => {
     setLogin(true);
-    window.open("/api/user/google", "_self");
+    window.open(
+      "https://web-production-191a.up.railway.app/api/user/google",
+      "_self"
+    );
     setLogin(false);
   };
 
