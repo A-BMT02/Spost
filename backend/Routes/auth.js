@@ -124,7 +124,7 @@ router.get(
     failureRedirect: "https://spost.onrender.com/signin",
   }),
   (req, res) => {
-    res.redirect("https://spost.onrender.com/dashboard");
+    res.redirect("https://spostapp.vercel.app//dashboard");
   }
 );
 
@@ -186,7 +186,7 @@ router.get("/twitter/callback", async (req, res) => {
     const oauth_token_secret = target.tokens.tempTokenSecret;
 
     if (!oauth_token || !oauth_verifier || !oauth_token_secret) {
-      return res.redirect("/dashboard");
+      return res.redirect("https://spostapp.vercel.app/dashboard");
     }
 
     let client = new TwitterApi({
@@ -220,7 +220,7 @@ router.get("/twitter/callback", async (req, res) => {
       }
     );
 
-    return res.redirect("/dashboard");
+    return res.redirect("https://spostapp.vercel.app/dashboard");
   } catch (err) {}
 });
 
