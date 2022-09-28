@@ -12,7 +12,6 @@ export const UserProvider = (props) => {
   const [user, setUser] = useState({});
   const [loading, setLoading] = useState(true);
   const [isAuth, setIsAuth] = useState(false);
-  const [connected, setConnected] = useState(false);
 
   const signup = async (email, password) => {
     const result = await axios.post(
@@ -70,16 +69,6 @@ export const UserProvider = (props) => {
   };
 
   useEffect(() => {
-    axios
-      .get("https://web-production-191a.up.railway.app/api/user/test")
-      .then((res) => {
-        if (res.status === 200) {
-          setConnected(true);
-        }
-      });
-  }, []);
-
-  useEffect(() => {
     setLoading(true);
     const token = localStorage.getItem("token");
     axios
@@ -102,47 +91,16 @@ export const UserProvider = (props) => {
         }
         setLoading(false);
       });
-  }, [isAuth, connected]);
-
-  useEffect(() => {
-    if (Object.keys(user).length !== 0) {
-      setIsAuth(true);
-    } else {
-      setIsAuth(false);
-    }
-  }, [connected]);
-
-  const reconnect = () => {
-    setTimeout(() => {
-      axios
-        .get("https://web-production-191a.up.railway.app/api/user/test")
-        .then((res) => {
-          if (res.status === 200) {
-            setConnected(true);
-          } else {
-            return window.location.reload(false);
-          }
-        })
-        .catch((err) => window.location.reload(false));
-    }, 15000);
-  };
+  }, [isAuth]);
 
   return (
     <UserContext.Provider value={value}>
-      {connected ? (
-        loading ? (
-          <div className="w-screen h-screen flex justify-center items-center">
-            <CircularProgress />
-          </div>
-        ) : (
-          props.children
-        )
-      ) : (
-        <div className="w-screen h-screen flex flex-col space-y-4 justify-center items-center">
+      {loading ? (
+        <div className="w-screen h-screen flex justify-center items-center">
           <CircularProgress />
-          <p>Please be patient while the server loads up</p>
-          {reconnect()}
         </div>
+      ) : (
+        props.children
       )}
     </UserContext.Provider>
   );
