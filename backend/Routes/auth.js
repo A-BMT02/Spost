@@ -153,7 +153,7 @@ router.get("/twitter", async (req, res) => {
     });
 
     const authLink = await Client.generateAuthLink(
-      "http://spostapp.herokuapp.com/api/user/twitter/callback"
+      "https://web-production-191a.up.railway.app/api/user/twitter/callback"
     );
     const URL = authLink.url;
     const oauthToken = authLink.oauth_token;
