@@ -80,7 +80,7 @@ router.post("/facebook", async (req, res) => {
     const targetFacebook = await facebookInfo.findOne({ facebookId: id });
     if (targetFacebook) {
       const pageToken = targetFacebook.pageToken;
-      if (picture !== "") {
+      if (picture.length !== 0) {
         let postData = {
           message: data,
         };
@@ -115,7 +115,7 @@ router.post("/facebook", async (req, res) => {
         const b = await FB.api("me/feed", "post", postData);
 
         return res.send("success");
-      } else if (picture === "" && data !== "") {
+      } else if (picture.length === 0 && data !== "") {
         const postResult = await axios.post(
           `https://graph.facebook.com/${targetFacebook.pageId}/feed?message=${data}&access_token=${pageToken}`
         );

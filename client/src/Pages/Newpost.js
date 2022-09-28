@@ -301,6 +301,12 @@ export default function Newpost() {
       return item.social === "facebook";
     });
     if (value.facebookContent !== "" || value.facebookPicture.length >= 1) {
+      console.log(
+        "here",
+        value.facebookContent,
+        " and ",
+        value.facebookPicture.length
+      );
       try {
         const res = await axios.post(
           "https://web-production-191a.up.railway.app/api/user/post/facebook",
@@ -315,6 +321,7 @@ export default function Newpost() {
         }
       } catch (err) {
         setLoad(false);
+        console.log("err is ", err);
         return setMessage(err.response.data.error);
       }
     }

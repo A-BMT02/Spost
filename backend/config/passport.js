@@ -10,7 +10,8 @@ export default function (passport) {
       {
         clientID: process.env.GOOGLE_CLIENT_ID,
         clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-        callbackURL: "https://spost.onrender.com/api/user/google/callback",
+        callbackURL:
+          "https://web-production-191a.up.railway.app/api/user/google/callback",
       },
       async (accessToken, refreshToken, profile, done) => {
         const newUser = {
