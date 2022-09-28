@@ -26,7 +26,7 @@ app.use(
   cors({
     credentials: true,
     origin: [
-      "https://spostapp.vercel.app/",
+      "https://spostapp.vercel.app",
       "https://spost.netlify.app/",
       "https://spost-two.vercel.app",
       "http://localhost:3000",
