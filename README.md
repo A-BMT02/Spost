@@ -8,6 +8,14 @@ Make sure you have the following installed before making a contribution
 * Git
 * NodeJS
 
+# ⚒️ Technologies Used
+* React
+* NodeJS
+* ExpressJS
+* MongoDB
+* Tailwind
+
+
 # 🛠️ Installation Steps
 1. Fork the project
 2. Clone the project
