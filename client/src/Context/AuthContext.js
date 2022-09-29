@@ -125,8 +125,8 @@ export const UserProvider = (props) => {
         )
       ) : (
         <div className="w-screen h-screen flex flex-col space-y-4 justify-center items-center">
-          <CircularProgress />
-          <p>Please be patient while the server loads up</p>
+          
+          <p>The url of this site has been changed to <a href="https://spostapp.vercel.app/">https://spostapp.vercel.app/</a> </p>
           {reconnect()}
         </div>
       )}
