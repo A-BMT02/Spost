@@ -123,11 +123,14 @@ export default function Dashboard() {
             });
             //get linkedin
             axios
-              .get("http:///api/user/linkedin/details", {
-                params: {
-                  id: linkedinDetails?.id,
-                },
-              })
+              .get(
+                "https://web-production-191a.up.railway.app/api/user/linkedin/details",
+                {
+                  params: {
+                    id: linkedinDetails?.id,
+                  },
+                }
+              )
               .then((linkedResult) => {
                 if (linkedResult.status === 200) {
                   console.log("res is ", linkedResult);
