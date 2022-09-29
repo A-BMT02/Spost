@@ -72,7 +72,7 @@ export default function Dashboard() {
     });
 
     axios
-      .get("http://localhost:5000/api/user/get/twitter", {
+      .get("https://web-production-191a.up.railway.app/api/user/get/twitter", {
         params: {
           id: con?.id,
         },
@@ -97,11 +97,14 @@ export default function Dashboard() {
 
         // get facebook
         axios
-          .get("http://localhost:5000/api/user/facebook/details", {
-            params: {
-              id: facebookDetails?.id,
-            },
-          })
+          .get(
+            "https://web-production-191a.up.railway.app/api/user/facebook/details",
+            {
+              params: {
+                id: facebookDetails?.id,
+              },
+            }
+          )
           .then((res) => {
             if (res.status === 200) {
               setSocials((prev) => [
@@ -120,7 +123,7 @@ export default function Dashboard() {
             });
             //get linkedin
             axios
-              .get("http://localhost:5000/api/user/linkedin/details", {
+              .get("http:///api/user/linkedin/details", {
                 params: {
                   id: linkedinDetails?.id,
                 },
@@ -143,11 +146,14 @@ export default function Dashboard() {
                 });
                 //get instagram
                 axios
-                  .get("http://localhost:5000/api/user/instagram/details", {
-                    params: {
-                      id: instagramDetails?.id,
-                    },
-                  })
+                  .get(
+                    "https://web-production-191a.up.railway.app/api/user/instagram/details",
+                    {
+                      params: {
+                        id: instagramDetails?.id,
+                      },
+                    }
+                  )
                   .then((res) => {
                     if (res.status === 200) {
                       setSocials((prev) => [
@@ -223,7 +229,7 @@ export default function Dashboard() {
   useEffect(() => {
     if (linkedinCode !== "") {
       axios
-        .get("http://localhost:5000/api/user/linkedin", {
+        .get("https://web-production-191a.up.railway.app/api/user/linkedin", {
           params: {
             code: linkedinCode,
             id: user._id,
