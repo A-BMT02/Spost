@@ -13,6 +13,7 @@ import CircularProgress from "@mui/material/CircularProgress";
 import { useData } from "../Context/DataContext";
 import { useInitFbSDK } from "../utilities/facebookSDK";
 import Modal from "../components/modal";
+import { useLocation } from "react-router-dom";
 
 export default function Dashboard() {
   const ref = useRef();
@@ -31,11 +32,16 @@ export default function Dashboard() {
   const [fbUserAccessToken, setFbUserAccessToken] = useState("");
   const [fbPageAccessToken, setFbPageAccessToken] = useState("");
   const [loadingFacebook, setLoadingFacebook] = useState(false);
+  const [loadingLinkedin, setLoadingLinkedin] = useState(false);
   const [loadingInstagram, setLoadingInstagram] = useState(false);
   const [deleteFacebook, setDeleteFacebook] = useState(false);
   const [deleteInstagram, setDeleteInstagram] = useState(false);
   const [deletingInstagram, setDeletingInstagram] = useState(false);
   const [deletingFacebook, setDeletingFacebook] = useState(false);
+  const [linkedinCode, setLinkedinCode] = useState("");
+
+  const useQuery = () => new URLSearchParams(useLocation().search);
+  const query = useQuery();
 
   const toggleSidebar = () => {
     ref.current.classList.toggle("open");
@@ -66,7 +72,7 @@ export default function Dashboard() {
     });
 
     axios
-      .get("https://web-production-191a.up.railway.app/api/user/get/twitter", {
+      .get("http://localhost:5000/api/user/get/twitter", {
         params: {
           id: con?.id,
         },
@@ -91,14 +97,11 @@ export default function Dashboard() {
 
         // get facebook
         axios
-          .get(
-            "https://web-production-191a.up.railway.app/api/user/facebook/details",
-            {
-              params: {
-                id: facebookDetails?.id,
-              },
-            }
-          )
+          .get("http://localhost:5000/api/user/facebook/details", {
+            params: {
+              id: facebookDetails?.id,
+            },
+          })
           .then((res) => {
             if (res.status === 200) {
               setSocials((prev) => [
@@ -111,34 +114,60 @@ export default function Dashboard() {
                 },
               ]);
             }
-            const instagramDetails = user?.connect?.find((target) => {
-              return target.social === "instagram";
+
+            const linkedinDetails = user?.connect?.find((target) => {
+              return target.social === "linkedin";
             });
+            //get linkedin
             axios
-              .get(
-                "https://web-production-191a.up.railway.app/api/user/instagram/details",
-                {
-                  params: {
-                    id: instagramDetails.id,
-                  },
-                }
-              )
-              .then((res) => {
-                if (res.status === 200) {
+              .get("http://localhost:5000/api/user/linkedin/details", {
+                params: {
+                  id: linkedinDetails?.id,
+                },
+              })
+              .then((linkedResult) => {
+                if (linkedResult.status === 200) {
+                  console.log("res is ", linkedResult);
                   setSocials((prev) => [
                     ...prev,
                     {
-                      type: "instagram",
-                      username: res.data.displayName,
-                      image: res.data.image,
+                      type: "linkedin",
+                      username: linkedResult.data.displayName,
+                      image: linkedResult.data.image,
                     },
                   ]);
                 }
+
+                const instagramDetails = user?.connect?.find((target) => {
+                  return target.social === "instagram";
+                });
+                //get instagram
+                axios
+                  .get("http://localhost:5000/api/user/instagram/details", {
+                    params: {
+                      id: instagramDetails?.id,
+                    },
+                  })
+                  .then((res) => {
+                    if (res.status === 200) {
+                      setSocials((prev) => [
+                        ...prev,
+                        {
+                          type: "instagram",
+                          username: res.data.displayName,
+                          image: res.data.image,
+                        },
+                      ]);
+                    }
+                    console.log("2", instagramDetails);
+
+                    setLoading(false);
+                  });
                 setLoading(false);
               });
-            setLoading(false);
           })
           .catch((err) => {
+            console.log("err is ", err);
             setLoading(false);
           });
       });
@@ -171,6 +200,45 @@ export default function Dashboard() {
     window.location.reload(false);
     setLoadingInstagram(false);
   };
+
+  const connectLinkedin = async () => {
+    console.log("connecting linkedin");
+    let clientId = "77azlgzvzxd9s0";
+
+    window.open(
+      `https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=${clientId}&redirect_uri=http://localhost:3000/dashboard&state=foobar&scope=r_liteprofile%20r_emailaddress%20w_member_social`,
+      "_self"
+    );
+  };
+
+  useEffect(() => {
+    const code = query.get("code");
+
+    if (code !== "") {
+      console.log("code is ", code);
+      setLinkedinCode(code);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (linkedinCode !== "") {
+      axios
+        .get("http://localhost:5000/api/user/linkedin", {
+          params: {
+            code: linkedinCode,
+            id: user._id,
+          },
+        })
+        .then((res) => {
+          console.log("res is ", res);
+          if (res.data === "success") {
+          }
+        })
+        .catch((err) => {
+          console.log("err is ", err);
+        });
+    }
+  }, [linkedinCode]);
 
   const PAGE_ID = "101438839361774";
   const isFbSDKInitialized = useInitFbSDK();
@@ -213,6 +281,8 @@ export default function Dashboard() {
         return facebook;
       case "instagram":
         return instagram;
+      case "linkedin":
+        return linkedin;
     }
   };
 
@@ -538,6 +608,18 @@ export default function Dashboard() {
                       onClick={(e) => connectInstagram()}
                       className="w-12 h-12 md:w-20 md:h-20 cursor-pointer "
                       src={instagram}
+                    />
+                  )
+                )}{" "}
+                {socials.some((e) => e.type === "linkedin") === false &&
+                loadingLinkedin ? (
+                  <CircularProgress />
+                ) : (
+                  socials.some((e) => e.type === "linkedin") === false && (
+                    <img
+                      onClick={(e) => connectLinkedin()}
+                      className="w-12 h-12 md:w-20 md:h-20 cursor-pointer "
+                      src={linkedin}
                     />
                   )
                 )}

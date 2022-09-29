@@ -13,6 +13,7 @@ import { Blob } from "node:buffer";
 import { default as FormData } from "form-data";
 import intoStream from "into-stream";
 import instagramInfo from "../models/instagramConnect.js";
+import linkedinInfo from "../models/linkedinConnect.js";
 
 const router = Express.Router();
 router.post("/register", async (req, res) => {
@@ -222,6 +223,47 @@ router.get("/twitter/callback", async (req, res) => {
 
     return res.redirect("https://spostapp.vercel.app/dashboard");
   } catch (err) {}
+});
+
+router.get("/linkedin", async (req, res) => {
+  try {
+    const code = req.query["code"];
+    const id = req.query["id"];
+
+    const token = await axios.post(
+      `https://www.linkedin.com/oauth/v2/accessToken?grant_type=authorization_code&code=${code}&redirect_uri=http://localhost:3000/dashboard&client_id=${process.env.LINKEDIN_APP_ID}&client_secret=${process.env.LINKEDIN_APP_SECRET}`
+    );
+    const accessToken = token.data.access_token;
+
+    const profile = await axios.get(
+      `https://api.linkedin.com/v2/me?projection=(id,firstName,lastName,emailAddress,profilePicture(displayImage~:playableStreams))&oauth2_access_token=${accessToken}`
+    );
+
+    const linkedinId = profile.data.id;
+    const picture =
+      profile.data.profilePicture["displayImage~"].elements[0].identifiers[0]
+        .identifier;
+    const name = `${profile.data.firstName.localized.en_US}${profile.data.lastName.localized.en_US}`;
+
+    await linkedinInfo.create({
+      accessToken,
+      linkedinId,
+      username: name,
+      profilePic: picture,
+    });
+    const updatedUser = await user.findOneAndUpdate(
+      { _id: id },
+      {
+        $push: { connect: { social: "linkedin", id: linkedinId } },
+      }
+    );
+    return res.send("success");
+  } catch (err) {
+    return res.status(400).json({
+      status: "error",
+      error: "An error Occured",
+    });
+  }
 });
 
 router.get("/instagram", async (req, res) => {
@@ -454,10 +496,31 @@ router.get("/facebook/details", async (req, res) => {
         pageId: foundFacebook.pageId,
       });
     } else {
-      return res.status(400).json({ error: "An error Occured.Try Again!" });
+      return res.status(201).json({ error: "An error Occured.Try Again!" });
     }
   } catch (err) {
-    return res.status(400).json({ error: "An error Occured.Try Again!" });
+    return res.status(201).json({ error: "An error Occured.Try Again!" });
+  }
+});
+
+router.get("/linkedin/details", async (req, res) => {
+  try {
+    const linkedinId = req.query["id"];
+    console.log("id is ", linkedinId);
+
+    const foundLinkedin = await linkedinInfo.findOne({ linkedinId });
+    if (foundLinkedin) {
+      return res.status(200).json({
+        displayName: foundLinkedin.username,
+        image: foundLinkedin.profilePic,
+      });
+    } else {
+      console.log("not found");
+      return res.status(201).json({ error: "An error Occured.Try Again!" });
+    }
+  } catch (err) {
+    console.log("err is ", err);
+    return res.status(201).json({ error: "An error Occured.Try Again!" });
   }
 });
 
@@ -472,7 +535,7 @@ router.get("/instagram/details", async (req, res) => {
       });
     }
   } catch (err) {
-    return res.status(400).json({ error: "An error Occured.Try Again!" });
+    return res.status(201).json({ error: "An error Occured.Try Again!" });
   }
 });
 
