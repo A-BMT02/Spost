@@ -231,7 +231,7 @@ router.get("/linkedin", async (req, res) => {
     const id = req.query["id"];
 
     const token = await axios.post(
-      `https://www.linkedin.com/oauth/v2/accessToken?grant_type=authorization_code&code=${code}&redirect_uri=http://https://spostapp.vercel.app/dashboard&client_id=${process.env.LINKEDIN_APP_ID}&client_secret=${process.env.LINKEDIN_APP_SECRET}`
+      `https://www.linkedin.com/oauth/v2/accessToken?grant_type=authorization_code&code=${code}&redirect_uri=https://spostapp.vercel.app/dashboard&client_id=${process.env.LINKEDIN_APP_ID}&client_secret=${process.env.LINKEDIN_APP_SECRET}`
     );
     const accessToken = token.data.access_token;
 
