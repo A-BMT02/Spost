@@ -215,7 +215,7 @@ export default function Dashboard() {
     let clientId = "77azlgzvzxd9s0";
 
     window.open(
-      `https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=${clientId}&redirect_uri=http://localhost:3000/dashboard&state=foobar&scope=r_liteprofile%20r_emailaddress%20w_member_social`,
+      `https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=${clientId}&redirect_uri=http://https://spostapp.vercel.app/dashboard&state=foobar&scope=r_liteprofile%20r_emailaddress%20w_member_social`,
       "_self"
     );
   };
