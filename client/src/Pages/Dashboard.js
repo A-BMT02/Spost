@@ -67,118 +67,18 @@ export default function Dashboard() {
   useEffect(() => {
     setSocials([]);
     setLoading(true);
-    const con = user?.connect?.find((target) => {
-      return target.social === "twitter";
-    });
 
     axios
-      .get("https://web-production-191a.up.railway.app/api/user/get/twitter", {
-        params: {
-          id: con?.id,
-        },
+      .post("http://localhost:5000/api/user/get/socials", {
+        data: user?.connect,
       })
       .then((res) => {
-        if (res.data.status === "ok") {
-          if (res.data.data !== null) {
-            setSocials((prev) => [
-              ...prev,
-              {
-                type: "twitter",
-                username: res.data.data?.username,
-                displayName: res.data.data?.displayName,
-                image: res.data.data?.image,
-              },
-            ]);
-          }
-        }
-        const facebookDetails = user?.connect?.find((target) => {
-          return target.social === "facebook";
-        });
-
-        // get facebook
-        axios
-          .get(
-            "https://web-production-191a.up.railway.app/api/user/facebook/details",
-            {
-              params: {
-                id: facebookDetails?.id,
-              },
-            }
-          )
-          .then((res) => {
-            if (res.status === 200) {
-              setSocials((prev) => [
-                ...prev,
-                {
-                  type: "facebook",
-                  username: res.data.displayName,
-                  image: res.data.image,
-                  pageId: res.data.pageId,
-                },
-              ]);
-            }
-
-            const linkedinDetails = user?.connect?.find((target) => {
-              return target.social === "linkedin";
-            });
-            //get linkedin
-            axios
-              .get(
-                "https://web-production-191a.up.railway.app/api/user/linkedin/details",
-                {
-                  params: {
-                    id: linkedinDetails?.id,
-                  },
-                }
-              )
-              .then((linkedResult) => {
-                if (linkedResult.status === 200) {
-                  console.log("res is ", linkedResult);
-                  setSocials((prev) => [
-                    ...prev,
-                    {
-                      type: "linkedin",
-                      username: linkedResult.data.displayName,
-                      image: linkedResult.data.image,
-                    },
-                  ]);
-                }
-
-                const instagramDetails = user?.connect?.find((target) => {
-                  return target.social === "instagram";
-                });
-                //get instagram
-                axios
-                  .get(
-                    "https://web-production-191a.up.railway.app/api/user/instagram/details",
-                    {
-                      params: {
-                        id: instagramDetails?.id,
-                      },
-                    }
-                  )
-                  .then((res) => {
-                    if (res.status === 200) {
-                      setSocials((prev) => [
-                        ...prev,
-                        {
-                          type: "instagram",
-                          username: res.data.displayName,
-                          image: res.data.image,
-                        },
-                      ]);
-                    }
-                    console.log("2", instagramDetails);
-
-                    setLoading(false);
-                  });
-                setLoading(false);
-              });
-          })
-          .catch((err) => {
-            console.log("err is ", err);
-            setLoading(false);
-          });
+        console.log("res is ", res);
+        setSocials(res.data);
+        setLoading(false);
+      })
+      .catch((err) => {
+        setLoading(false);
       });
   }, []);
 
@@ -440,9 +340,6 @@ export default function Dashboard() {
           </nav>
 
           <div className="flex justify-between mt-3.5 pb-3.5 border-b border-dblue items-center ">
-            {/* <div>
-                    <img className='w-10' src={bars}/>
-                </div> */}
             <button
               ref={ref}
               id="menu-btn"
