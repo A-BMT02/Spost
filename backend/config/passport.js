@@ -1,7 +1,5 @@
 import googleStrategy from "passport-google-oauth20";
-import mongoose from "mongoose";
 import User from "../models/googleUser.js";
-import normalUser from "../models/user.js";
 
 const GoogleStrategy = googleStrategy.Strategy;
 export default function (passport) {
