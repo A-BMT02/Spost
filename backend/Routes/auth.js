@@ -169,7 +169,7 @@ router.get("/twitter", async (req, res) => {
       },
     };
 
-    const updatedUser = await user.findByIdAndUpdate(req.get("id"), newUser);
+    await user.findByIdAndUpdate(req.get("id"), newUser);
 
     res.json({ URL });
   } catch (err) {
@@ -251,7 +251,7 @@ router.get("/linkedin", async (req, res) => {
       username: name,
       profilePic: picture,
     });
-    const updatedUser = await user.findOneAndUpdate(
+    await user.findOneAndUpdate(
       { _id: id },
       {
         $push: { connect: { social: "linkedin", id: linkedinId } },
@@ -270,8 +270,8 @@ router.get("/twitter/logout", async (req, res) => {
   try {
     const id = req.query["id"];
 
-    const target = await twitter.findOne({ twitterId: id }).lean();
-    const deleteTwitter = await twitter.findOneAndDelete({ twitterId: id });
+    await twitter.findOne({ twitterId: id }).lean();
+    await twitter.findOneAndDelete({ twitterId: id });
 
     const userTarget = await user.findOneAndUpdate(
       { "connect.id": id },
@@ -351,7 +351,7 @@ router.get("/facebook", async (req, res) => {
   let accessToken = "";
   let pageToken = "";
   let pageId = "";
-  let profileId = "";
+
   try {
     const result = await axios.get(
       `https://graph.facebook.com/v14.0/oauth/access_token?grant_type=fb_exchange_token&client_id=${process.env.FACEBOOK_APP_ID}&client_secret=${process.env.FACEBOOK_APP_SECRET}&fb_exchange_token=${tempToken}`

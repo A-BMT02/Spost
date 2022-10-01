@@ -5,7 +5,7 @@ import facebook from "../images/facebook.png";
 import linkedin from "../images/linkedin.png";
 import { useAuth } from "../Context/AuthContext";
 import { useNavigate } from "react-router-dom";
-import { MdOutlineCancel, MdRemoveShoppingCart } from "react-icons/md";
+import { MdOutlineCancel } from "react-icons/md";
 import { BsPlusCircle } from "react-icons/bs";
 import axios from "axios";
 import CircularProgress from "@mui/material/CircularProgress";
@@ -147,8 +147,6 @@ export default function Dashboard() {
     }
   }, [linkedinCode]);
 
-  const PAGE_ID = "101438839361774";
-  const isFbSDKInitialized = useInitFbSDK();
   const connectFacebook = async () => {
     setLoadingFacebook(true);
     logInToFB();
@@ -315,9 +313,6 @@ export default function Dashboard() {
                     <CircularProgress />
                   )}
                 </div>
-                {/* <div className="flex flex-col space-y-2 justify-center items-center">
-                  <img className="w-[50px]" src={account} />
-                </div> */}
               </div>
             </div>
 
@@ -357,7 +352,6 @@ export default function Dashboard() {
 
             <div></div>
           </div>
-          {/* remove flex-col below and space-y*/}
           <div
             className={
               loading ? "mt-20 flex justify-center align-center" : "hidden"

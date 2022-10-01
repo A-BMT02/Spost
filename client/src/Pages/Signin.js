@@ -4,8 +4,6 @@ import google from "../images/google.png";
 import { useAuth } from "../Context/AuthContext";
 import CircularProgress from "@mui/material/CircularProgress";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
-import ReactGA from "react-ga";
 
 export default function Signin() {
   const [emailValue, setEmailValue] = useState("");

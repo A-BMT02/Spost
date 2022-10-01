@@ -1,11 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import ReactCrop, {
-  centerCrop,
-  makeAspectCrop,
-  Crop,
-  PixelCrop,
-} from "react-image-crop";
+import ReactCrop, { centerCrop, makeAspectCrop } from "react-image-crop";
 import { canvasPreview } from "../utilities/canvasPreview";
 import { useDebounceEffect } from "../utilities/useDebounceEffect";
 import { useData } from "../Context/DataContext";

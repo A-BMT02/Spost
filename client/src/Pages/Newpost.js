@@ -1,17 +1,8 @@
-import React, {
-  useState,
-  useRef,
-  useEffect,
-  createRef,
-  useCallback,
-} from "react";
+import React, { useState, useRef, useEffect } from "react";
 import twitter from "../images/twitter.png";
 import facebook from "../images/facebook.png";
 import linkedin from "../images/linkedin.png";
 import instagram from "../images/instagram.png";
-import upload from "../images/upload.png";
-import picture from "../images/picture.png";
-import mbj from "../images/mbj.png";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useData } from "../Context/DataContext";
 import axios from "axios";
@@ -21,18 +12,15 @@ import CircularProgress from "@mui/material/CircularProgress";
 import Dropzone from "../utilities/Dropzone";
 import { GrFormNext } from "react-icons/gr";
 import { GrFormPrevious } from "react-icons/gr";
-import Slider from "../components/slider";
 import { AiOutlinePlusCircle } from "react-icons/ai";
-import { NextPlan } from "@mui/icons-material";
 import Modal from "../components/modal";
 
 export default function Newpost() {
   const value = useData();
-  const { socials, setSocials } = useData();
+  const { socials } = useData();
 
   const { dispatch } = useData();
 
-  const ref = useRef(null);
   const sliderRef = useRef(null);
   const imageRef = useRef([]);
 
@@ -54,7 +42,6 @@ export default function Newpost() {
   const [message, setMessage] = useState("");
 
   const errorRef = useRef(null);
-  const successRef = useRef(null);
 
   const contentIcon = (target) => {
     switch (target) {
@@ -220,16 +207,6 @@ export default function Newpost() {
       }
     };
   };
-
-  function dataUrltoBlob(dataURI) {
-    var byteString = window.atob(dataURI.split(",")[1]);
-    var ab = new ArrayBuffer(byteString.length);
-    var ia = new Uint8Array(ab);
-    for (var i = 0; i < byteString.length; i++) {
-      ia[i] = byteString.charCodeAt(i);
-    }
-    return new Blob([ab], { type: "image/jpg" });
-  }
 
   useEffect(() => {
     if (error !== "") {
@@ -458,25 +435,7 @@ export default function Newpost() {
           setShowModal={setShowModal}
           successProfile={successProfile}
         />
-        {/* <div
-          ref={successRef}
-          className={
-            success
-              ? "flex space-x-6 justify-center mx-auto border border-ogreen px-4 py-3 text-xl rounded-lg bg-ogreen text-owhite max-w-[300px]"
-              : "hidden"
-          }
-        >
-          <p className=" ">Successfully posted</p>
-          <p
-            onClick={(e) => {
-              successRef.current.classList.add("hidden");
-              setSuccess(false);
-            }}
-            className="  self-center"
-          >
-            X
-          </p>
-        </div> */}
+
         <nav className="my-3.5 flex justify-start ">
           <h2
             onClick={(e) => navigate("/")}
@@ -678,9 +637,7 @@ export default function Newpost() {
                   </div>
                 </div>
                 <div className="relative w-full">
-                  {/* <Slider /> */}
                   <div className="w-full overflow-hidden">
-                    {/* <div className={`width-[${100 * value.state.value.length}%] flex`}> */}
                     <div
                       ref={sliderRef}
                       className="flex transition-all duration-300"
@@ -893,11 +850,7 @@ export default function Newpost() {
                   <div className="p-4">
                     <p className=" ">{previewedContent(value.previewTarget)}</p>
                   </div>
-                  {/* <textarea
-                    readOnly={true}
-                    value={previewedContent(value.previewTarget)}
-                    className="p-4 bg-lblue "
-                  /> */}
+
                   <div className="px-4 mb-4">
                     <div className="flex flex-wrap w-full max-w-full">
                       {previewPicture(value.previewTarget) &&

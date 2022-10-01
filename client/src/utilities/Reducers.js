@@ -1,5 +1,3 @@
-import { useData } from "../Context/DataContext";
-
 export const reducer = (state, action) => {
   switch (action.type) {
     case "addContent":

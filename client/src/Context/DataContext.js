@@ -1,11 +1,4 @@
-import React, {
-  useContext,
-  useState,
-  createContext,
-  useEffect,
-  useReducer,
-} from "react";
-import axios from "axios";
+import React, { useContext, useState, createContext, useReducer } from "react";
 import { reducer } from "../utilities/Reducers";
 
 export const dataContext = createContext();
@@ -24,7 +17,6 @@ export const DataContextProvider = (props) => {
   const [twitterPicture, setTwitterPicture] = useState([]);
   const [facebookPicture, setFacebookPicture] = useState([]);
   const [linkedinPicture, setLinkedinPicture] = useState([]);
-  const [instagramPicture, setInstagramPicture] = useState([]);
   const [target, setTarget] = useState("twitter");
   const [previewTarget, setPreviewTarget] = useState("twitter");
   const [image, setImage] = useState("");

@@ -2,10 +2,8 @@ import React from "react";
 import twitter from "../images/twitter.png";
 import facebook from "../images/facebook.png";
 import instagram from "../images/instagram.png";
-import CircularProgress from "@mui/material/CircularProgress";
 import { MdOutlineCancel } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
-import { SettingsRemoteOutlined } from "@mui/icons-material";
 import { useAuth } from "../Context/AuthContext";
 import { useData } from "../Context/DataContext";
 
@@ -15,8 +13,6 @@ export default function Modal({
   setShowModal,
   successProfile,
 }) {
-  const { user } = useAuth();
-
   const navigate = useNavigate();
   const { socials } = useData();
 
@@ -60,13 +56,13 @@ export default function Modal({
       >
         <div className=" w-full h-full  flex justify-center items-center">
           <div className=" bg-lgray opacity-50 w-full h-full fixed top-0"></div>
-          <div className="fixed w-[80%] opacity-100  drop-shadow-md space-y-4 rounded-md p-5 bg-owhite justify-center items-center flex flex-col">
+          <div className="fixed rounded-md w-[80%] max-w-[400px] opacity-100  drop-shadow-md rounded-md p-5 bg-owhite justify-center items-center flex flex-col">
             <MdOutlineCancel
               onClick={(e) => {
                 setShowModal(false);
                 successProfile.length > 0 && navigate("/dashboard");
               }}
-              className="cursor-pointer absolute text-ored -top-2 -right-2 text-xl"
+              className="cursor-pointer absolute text-ored -top-2 -right-2 text-xl md:text-2xl"
             />
             <p className="text-xl ">{message}</p>
             {successProfile.length !== 0 &&

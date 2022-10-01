@@ -12,6 +12,7 @@ import ProtectedRoute from "./utilities/ProtectedRoute";
 import ReactGA from "react-ga4";
 import Modal from "./components/modal";
 function App() {
+  //initialize google analytics
   useEffect(() => {
     const TRACKING_ID = "G-68HCGL7WDH";
     ReactGA.initialize(TRACKING_ID);

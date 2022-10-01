@@ -86,9 +86,7 @@ router.post("/facebook", async (req, res) => {
         };
         let postIds = await Promise.all(
           picture.map(async (pic, index) => {
-            const remove = new RegExp(`^data:image\/${pic.extension};base64,`);
             const base64Data = pic.file.split(",")[1];
-            const readFileAsync = promisify(fs.readFile);
             const writeFileAsync = promisify(fs.writeFile);
             const unlinkAsync = promisify(fs.unlink);
             await writeFileAsync(
@@ -143,7 +141,7 @@ router.post("/instagram", async (req, res) => {
         `https://graph.facebook.com/v14.0/${id}/media?image_url=${picture}&caption=${text}&access_token=${token}`
       );
       if (initialPost.data.id) {
-        const post = await axios.post(
+        await axios.post(
           `https://graph.facebook.com/v14.0/${id}/media_publish?creation_id=${initialPost.data.id}&access_token=${token}`
         );
         return res.send("success");

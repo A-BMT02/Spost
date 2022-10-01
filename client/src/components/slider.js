@@ -1,7 +1,4 @@
-import React, { useState, useRef } from "react";
-import { GrFormNext } from "react-icons/gr";
-import { GrFormPrevious } from "react-icons/gr";
-import { useData } from "../Context/DataContext";
+import React from "react";
 
 export default function Slider() {
   const Carousel = new Carousel();
