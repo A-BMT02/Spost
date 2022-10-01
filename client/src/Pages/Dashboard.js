@@ -1,5 +1,4 @@
 import React, { useRef, useEffect, useState, useCallback } from "react";
-import account from "../images/account.png";
 import instagram from "../images/instagram.png";
 import twitter from "../images/twitter.png";
 import facebook from "../images/facebook.png";
@@ -30,7 +29,6 @@ export default function Dashboard() {
   const [deleting, setDeleting] = useState(false);
   const [loggingOut, setLoggingOut] = useState(false);
   const [fbUserAccessToken, setFbUserAccessToken] = useState("");
-  const [fbPageAccessToken, setFbPageAccessToken] = useState("");
   const [loadingFacebook, setLoadingFacebook] = useState(false);
   const [loadingLinkedin, setLoadingLinkedin] = useState(false);
   const [loadingInstagram, setLoadingInstagram] = useState(false);
@@ -69,7 +67,7 @@ export default function Dashboard() {
     setLoading(true);
 
     axios
-      .post("http://localhost:5000/api/user/get/socials", {
+      .post("https://web-production-191a.up.railway.app/api/user/get/socials", {
         data: user?.connect,
       })
       .then((res) => {
