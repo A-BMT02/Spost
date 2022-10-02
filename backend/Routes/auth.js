@@ -125,7 +125,7 @@ router.get(
     failureRedirect: "https://spost.onrender.com/signin",
   }),
   (req, res) => {
-    res.redirect("https://spostapp.vercel.app//dashboard");
+    res.redirect("https://spostapp.vercel.app/dashboard");
   }
 );
 
