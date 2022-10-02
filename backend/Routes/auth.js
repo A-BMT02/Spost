@@ -122,7 +122,7 @@ router.get(
 router.get(
   "/google/callback",
   passport.authenticate("google", {
-    failureRedirect: "https://spost.onrender.com/signin",
+    failureRedirect: "https://spostapp.vercel.app/signin",
   }),
   (req, res) => {
     res.redirect("https://spostapp.vercel.app/dashboard");
