@@ -446,13 +446,7 @@ export default function Dashboard() {
               ))}
               <div
                 onClick={(e) => {
-                  if (
-                    user.email.toLowerCase() === "futuristicaistore@gmail.com"
-                  ) {
-                    setShowModal(true);
-                  } else {
-                    setConnect(true);
-                  }
+                  setConnect(true);
                 }}
                 className="hover:bg-dblue hover:text-owhite  cursor-pointer self-center border w-full max-w-[300px] border-dashed border-dblue p-2 rounded-lg flex space-x-3 items-center justify-center"
               >
@@ -478,7 +472,10 @@ export default function Dashboard() {
                   socials[0]?.type !== "twitter" && (
                     <img
                       onClick={(e) => {
-                        connectTwitter();
+                        user.email.toLowerCase() ===
+                        "futuristicaistore@gmail.com"
+                          ? setShowModal(true)
+                          : connectTwitter();
                       }}
                       className="w-12 h-12 md:w-20 md:h-20 cursor-pointer "
                       src={twitter}
@@ -491,7 +488,12 @@ export default function Dashboard() {
                 ) : (
                   socials.some((e) => e.type === "facebook") === false && (
                     <img
-                      onClick={(e) => connectFacebook()}
+                      onClick={(e) =>
+                        user.email.toLowerCase() ===
+                        "futuristicaistore@gmail.com"
+                          ? setShowModal(true)
+                          : connectFacebook()
+                      }
                       className="w-12 h-12 md:w-20 md:h-20 cursor-pointer "
                       src={facebook}
                     />
@@ -503,7 +505,12 @@ export default function Dashboard() {
                 ) : (
                   socials.some((e) => e.type === "instagram") === false && (
                     <img
-                      onClick={(e) => connectInstagram()}
+                      onClick={(e) =>
+                        user.email.toLowerCase() ===
+                        "futuristicaistore@gmail.com"
+                          ? setShowModal(true)
+                          : connectInstagram()
+                      }
                       className="w-12 h-12 md:w-20 md:h-20 cursor-pointer "
                       src={instagram}
                     />
@@ -515,7 +522,12 @@ export default function Dashboard() {
                 ) : (
                   socials.some((e) => e.type === "linkedin") === false && (
                     <img
-                      onClick={(e) => connectLinkedin()}
+                      onClick={(e) =>
+                        user.email.toLowerCase() ===
+                        "futuristicaistore@gmail.com"
+                          ? setShowModal(true)
+                          : connectLinkedin()
+                      }
                       className="w-12 h-12 md:w-20 md:h-20 cursor-pointer "
                       src={linkedin}
                     />
