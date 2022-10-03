@@ -91,7 +91,9 @@ router.get("/login/success", async (req, res) => {
     }
     try {
       const token = req.get("token");
+
       const decoded = jwt.verify(token, process.env.TOKEN_SECRET);
+
       const userFound = await user.findById(decoded.id).select("-password");
       if (userFound) {
         return res.json({ status: "ok", data: userFound });

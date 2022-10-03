@@ -10,7 +10,6 @@ import { BsPlusCircle } from "react-icons/bs";
 import axios from "axios";
 import CircularProgress from "@mui/material/CircularProgress";
 import { useData } from "../Context/DataContext";
-import { useInitFbSDK } from "../utilities/facebookSDK";
 import Modal from "../components/modal";
 import { useLocation } from "react-router-dom";
 
@@ -71,7 +70,6 @@ export default function Dashboard() {
         data: user?.connect,
       })
       .then((res) => {
-        console.log("res is ", res);
         setSocials(res.data);
         setLoading(false);
       })
@@ -109,7 +107,6 @@ export default function Dashboard() {
   };
 
   const connectLinkedin = async () => {
-    console.log("connecting linkedin");
     let clientId = "77azlgzvzxd9s0";
 
     window.open(
@@ -122,13 +119,12 @@ export default function Dashboard() {
     const code = query.get("code");
 
     if (code !== "") {
-      console.log("code is ", code);
       setLinkedinCode(code);
     }
   }, []);
 
   useEffect(() => {
-    if (linkedinCode !== "") {
+    if (linkedinCode !== "" && linkedinCode !== null) {
       axios
         .get("https://web-production-191a.up.railway.app/api/user/linkedin", {
           params: {
@@ -137,13 +133,10 @@ export default function Dashboard() {
           },
         })
         .then((res) => {
-          console.log("res is ", res);
           if (res.data === "success") {
           }
         })
-        .catch((err) => {
-          console.log("err is ", err);
-        });
+        .catch((err) => {});
     }
   }, [linkedinCode]);
 
