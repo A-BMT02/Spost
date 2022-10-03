@@ -93,9 +93,7 @@ export const UserProvider = (props) => {
       });
   }, [isAuth]);
 
-  useEffect(() => {
-    console.log("user is ", user);
-  }, [user]);
+  useEffect(() => {}, [user]);
 
   return (
     <UserContext.Provider value={value}>

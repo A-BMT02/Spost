@@ -41,9 +41,10 @@ router.post("/socials", async (req, res) => {
         }
       })
     );
-    res.status(200).json(allConnect);
+
+    return res.status(200).json(allConnect);
   } catch (err) {
-    res.status(400);
+    return res.status(400);
   }
 });
 
