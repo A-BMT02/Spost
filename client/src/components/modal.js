@@ -64,7 +64,7 @@ export default function Modal({
               }}
               className="cursor-pointer absolute text-ored -top-2 -right-2 text-xl md:text-2xl"
             />
-            <p className="text-xl ">{message}</p>
+            <p className="text-xl text-center">{message}</p>
             {successProfile.length !== 0 &&
               successProfile.map((item) => (
                 <div className="flex justify-center items-center space-x-2">
