@@ -86,7 +86,7 @@ router.post("/login", async (req, res) => {
 
 router.get("/login/success", async (req, res) => {
   try {
-    if (req.user && typeof req.user.googleId === "string") {
+    if (req.session.passport.user) {
       return res.json({ status: "ok", data: req.user });
     }
     try {
@@ -125,6 +125,7 @@ router.get(
     failureRedirect: "https://spostapp.vercel.app/signin",
   }),
   (req, res) => {
+    console.log("req user is", req.user);
     res.redirect("https://spostapp.vercel.app/dashboard");
   }
 );
