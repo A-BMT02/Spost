@@ -93,8 +93,6 @@ export const UserProvider = (props) => {
       });
   }, [isAuth]);
 
-  useEffect(() => {}, [user]);
-
   return (
     <UserContext.Provider value={value}>
       {loading ? (
