@@ -154,6 +154,7 @@ export default function Newpost() {
     }%)`;
   };
 
+  console.log("user is ", socials);
   const selectImage = (uploadedFile, index) => {
     setLoading(true);
     let type;
@@ -496,7 +497,9 @@ export default function Newpost() {
                 }
               >
                 <img className="w-5 h-5" src={twitter} />
-                <p className="">@AhmadBMTahir</p>
+                <p className="">
+                  @{socials.find((item) => item.type === "twitter")?.username}
+                </p>
               </div>
               <div
                 className={
@@ -506,7 +509,21 @@ export default function Newpost() {
                 }
               >
                 <img className="w-5 h-5" src={facebook} />
-                <p className="">@AhmadBMTahir</p>
+                <p className="">
+                  @{socials.find((item) => item.type === "facebook")?.username}
+                </p>
+              </div>
+              <div
+                className={
+                  value.select.includes("instagram")
+                    ? "relative flex space-x-2 items-center bg-owhite rounded-lg w-fit p-2 border border-dblue"
+                    : "hidden"
+                }
+              >
+                <img className="w-5 h-5" src={instagram} />
+                <p className="">
+                  @{socials.find((item) => item.type === "instagram")?.username}
+                </p>
               </div>
               <div
                 className={
@@ -530,7 +547,9 @@ export default function Newpost() {
                   </p>
                 </div>
                 <img className="w-5 h-5" src={linkedin} />
-                <p className="">@AhmadBMTahir</p>
+                <p className="">
+                  @{socials.find((item) => item.type === "linkedin")?.username}
+                </p>
               </div>
             </div>
 
