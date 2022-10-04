@@ -31,10 +31,14 @@ export default function Dashboard() {
   const [loadingFacebook, setLoadingFacebook] = useState(false);
   const [loadingLinkedin, setLoadingLinkedin] = useState(false);
   const [loadingInstagram, setLoadingInstagram] = useState(false);
+  const [deleteLinkedin, setDeleteLinkedin] = useState(false);
   const [deleteFacebook, setDeleteFacebook] = useState(false);
+
   const [deleteInstagram, setDeleteInstagram] = useState(false);
   const [deletingInstagram, setDeletingInstagram] = useState(false);
   const [deletingFacebook, setDeletingFacebook] = useState(false);
+  const [deletingLinkedin, setDeletingLinkedin] = useState(false);
+
   const [linkedinCode, setLinkedinCode] = useState("");
 
   const useQuery = () => new URLSearchParams(useLocation().search);
@@ -271,6 +275,35 @@ export default function Dashboard() {
       });
   };
 
+  const logoutLinkedin = () => {
+    if (user.email.toLowerCase() === "futuristicaistore@gmail.com") {
+      return setShowModal(true);
+    }
+    setDeletingLinkedin(true);
+    const linkedinDetails = user?.connect?.find((target) => {
+      return target.social === "linkedin";
+    });
+    axios
+      .get(
+        "https://web-production-191a.up.railway.app/api/user/linkedin/logout",
+        {
+          withCredentials: true,
+          params: {
+            id: linkedinDetails.id,
+          },
+        }
+      )
+      .then((res) => {
+        if (res.status === 200) {
+          window.location.reload(false);
+          setDeletingLinkedin(true);
+        }
+      })
+      .catch((err) => {
+        window.location.reload(false);
+        setDeletingLinkedin(true);
+      });
+  };
   return (
     Object.keys(user).length !== 0 && (
       <div className="block mx-5 md:mx-auto max-w-[800px] ">
@@ -382,6 +415,8 @@ export default function Dashboard() {
                             setDeleteFacebook(true);
                           } else if (social.type === "instagram") {
                             setDeleteInstagram(true);
+                          } else if (social.type === "linkedin") {
+                            setDeleteLinkedin(true);
                           }
                         }}
                       />
@@ -392,7 +427,8 @@ export default function Dashboard() {
                     className={
                       (social.type === "twitter" && deleteTwitter) ||
                       (social.type === "facebook" && deleteFacebook) ||
-                      (social.type === "instagram" && deleteInstagram)
+                      (social.type === "instagram" && deleteInstagram) ||
+                      (social.type === "linkedin" && deleteLinkedin)
                         ? "flex flex-col  space-y-4 bg-owhite rounded-lg p-2 "
                         : "hidden"
                     }
@@ -407,6 +443,8 @@ export default function Dashboard() {
                             setDeleteFacebook(false);
                           } else if (social.type === "instagram") {
                             setDeleteInstagram(false);
+                          } else if (social.type === "linkedin") {
+                            setDeleteLinkedin(false);
                           }
                         }}
                         className="rounded-lg p-2 border border-ogray"
@@ -415,7 +453,8 @@ export default function Dashboard() {
                       </button>
                       {(social.type === "twitter" && !deleting) ||
                       (social.type === "facebook" && !deletingFacebook) ||
-                      (social.type === "instagram" && !deletingInstagram) ? (
+                      (social.type === "instagram" && !deletingInstagram) ||
+                      (social.type === "linkedin" && !deletingLinkedin) ? (
                         <button
                           onClick={(e) => {
                             if (social.type === "twitter") {
@@ -424,6 +463,8 @@ export default function Dashboard() {
                               logoutFacebook();
                             } else if (social.type === "instagram") {
                               logoutInstagram();
+                            } else if (social.type === "linkedin") {
+                              logoutLinkedin();
                             }
                           }}
                           className="rounded-lg p-2 bg-ored text-owhite border"

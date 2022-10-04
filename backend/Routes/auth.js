@@ -293,6 +293,31 @@ router.get("/twitter/logout", async (req, res) => {
   }
 });
 
+router.get("/linkedin/logout", async (req, res) => {
+  try {
+    const id = req.query["id"];
+
+    await linkedinInfo.findOne({ linkedinId: id }).lean();
+    await linkedinInfo.findOneAndDelete({ twitterId: id });
+
+    const userTarget = await user.findOneAndUpdate(
+      { "connect.id": id },
+      {
+        $pull: {
+          connect: { id: id },
+        },
+      }
+    );
+
+    res.json({ status: "ok" });
+  } catch (err) {
+    return res.json({
+      status: "error",
+      error: "An error occured. Try again later",
+    });
+  }
+});
+
 router.get("/facebook/logout", async (req, res) => {
   try {
     const id = req.query["id"];
