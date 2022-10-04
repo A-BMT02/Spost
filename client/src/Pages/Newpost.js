@@ -828,6 +828,21 @@ export default function Newpost() {
                     <img className="w-12 h-12" src={instagram} />
                   </div>
                 </div>
+
+                <div
+                  className={value.select.includes("linkedin") ? "" : "hidden"}
+                >
+                  <div
+                    onClick={(e) => value.setPreviewTarget("linkedin")}
+                    className={
+                      value.previewTarget === "linkedin"
+                        ? "cursor-pointer p-3 bg-gradient-to-b from-dblue to-owhite "
+                        : "cursor-pointer p-3"
+                    }
+                  >
+                    <img className="w-12 h-12" src={linkedin} />
+                  </div>
+                </div>
               </div>
 
               <div
