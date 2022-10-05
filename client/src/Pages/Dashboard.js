@@ -12,6 +12,8 @@ import CircularProgress from "@mui/material/CircularProgress";
 import { useData } from "../Context/DataContext";
 import Modal from "../components/modal";
 import { useLocation } from "react-router-dom";
+import { useInitFbSDK } from "../utilities/facebookSDK";
+
 
 export default function Dashboard() {
   const ref = useRef();
@@ -143,6 +145,8 @@ export default function Dashboard() {
         .catch((err) => {});
     }
   }, [linkedinCode]);
+
+    const isFbSDKInitialized = useInitFbSDK();
 
   const connectFacebook = async () => {
     setLoadingFacebook(true);
