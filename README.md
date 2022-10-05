@@ -47,7 +47,7 @@ cd spost
 4. Navigate to the frontend directory
 
 ```
-cd spost
+cd client
 ```
 
 5. Install the dependencies:
