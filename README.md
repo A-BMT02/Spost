@@ -3,6 +3,10 @@ Organize your content in one place and post to all your social media profiles in
 
 # 👨‍💻 Demo
 https://spostapp.vercel.app/
+
+# ✏️ Design File
+https://www.figma.com/file/2JsajIjbelWdCUCkkvTyJm/Untitled?node-id=0%3A1
+
 # 👇 Prerequisites
 Make sure you have the following installed before making a contribution
 * Git
