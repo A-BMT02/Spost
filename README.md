@@ -1,48 +1,103 @@
 # Spost
+
 Organize your content in one place and post to all your social media profiles in one click
 
-# 👨‍💻 Demo
-https://spostapp.vercel.app/
+## 👨‍💻 Demo
 
-# ✏️ Design File
-https://www.figma.com/file/2JsajIjbelWdCUCkkvTyJm/Untitled?node-id=0%3A1
+Explore the app functionality [here](https://spostapp.vercel.app/).
 
-# 👇 Prerequisites
-Make sure you have the following installed before making a contribution
-* Git
-* NodeJS
+### ✏️ Design File
 
-# ⚒️ Technologies Used
-* React
-* NodeJS
-* ExpressJS
-* MongoDB
-* Tailwind
+Interested in the design of this app? Check out the [Figma file](https://www.figma.com/file/2JsajIjbelWdCUCkkvTyJm/Untitled?node-id=0%3A1).
 
+### ⚒️ Technologies Used
 
-# 🛠️ Installation Steps
-1. Fork the project
-2. Clone the project
-* Server
-3. Navigate to the project directory ````cd spost````
+This project was built using the following technologies:
 
-4. Install dependencies```` npm install````
-5. Start the Server```` node server````
+- React
+- NodeJS
+- ExpressJS
+- MongoDB
+- Tailwind
 
-* Frontend
-6. Navigate to the project directory```` cd spost/client````
-7. Install dependencies```` npm install````
-8. Start the Frontend```` npm start````
+### 👇 Prerequisites
 
-# After Contributing
-1. Create a new branch using:
-````git checkout -b <BranchName>````
-2. Add to Stage using:
-````git add .````
-3. Commit changes using:
-````git commit -m 'enter-commit-message-here'````
-4. Push your changes using:
-````git push````
+To get this project up and running locally, you must already have installed the following packages on your computer.
+
+- [Node.js](https://nodejs.org/en/)
+- [Git](https://git-scm.com/)
+
+### 🛠️ Contribution Guidelines
+
+Want to contribute to this project? Follow the steps below to set up the project locally.
+
+1. Fork this repository.
+2. Clone your forked repository to your local machine.
+
+```
+git clone https://github.com/<your-github-username>/spost.git
+```
+
+3. Navigate to the project directory:
+
+```
+cd spost
+```
+
+4. Navigate to the frontend directory
+
+```
+cd spost
+```
+
+5. Install the dependencies:
+
+```
+npm install
+```
+
+6. Navigate to the backend directory
+
+```
+cd backend
+```
+
+7. Install the dependencies:
+
+```
+npm install
+```
+
+5. Create a new branch:
+
+```
+git checkout -b <your-branch-name>
+```
+
+At this point, you can now modify existing files or add new files to the project on your own branch.
+
+6. Stage your changes and commit
+
+Once you have modified existing files or added new files to the project, you can add them to your local repository, which you can do with the `git add` command.
+
+_Add changes_
+
+```
+git add .
+```
+
+_Commit changes_
+
+```
+git commit -m "commit message"
+```
+
+7. Push your changes to GitHub:
+
+```
+git push -u origin <your-branch-name>
+```
 
 # ❗ Reminder
+
 Dont forget to drop a star ✨ while you're here
