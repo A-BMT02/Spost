@@ -13,10 +13,6 @@ import { useData } from "../Context/DataContext";
 import Modal from "../components/modal";
 import { useLocation } from "react-router-dom";
 import { useInitFbSDK } from "../utilities/facebookSDK";
-<<<<<<< HEAD
-=======
-
->>>>>>> 8e3c13fb6e3870b34c3b43debb47a8d4626f629f
 
 export default function Dashboard() {
   const ref = useRef();
@@ -149,12 +145,7 @@ export default function Dashboard() {
     }
   }, [linkedinCode]);
 
-<<<<<<< HEAD
   const isFbSDKInitialized = useInitFbSDK();
-=======
-    const isFbSDKInitialized = useInitFbSDK();
-
->>>>>>> 8e3c13fb6e3870b34c3b43debb47a8d4626f629f
   const connectFacebook = async () => {
     setLoadingFacebook(true);
     logInToFB();
