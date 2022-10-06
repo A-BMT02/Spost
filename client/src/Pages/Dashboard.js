@@ -12,6 +12,7 @@ import CircularProgress from "@mui/material/CircularProgress";
 import { useData } from "../Context/DataContext";
 import Modal from "../components/modal";
 import { useLocation } from "react-router-dom";
+import { useInitFbSDK } from "../utilities/facebookSDK";
 
 export default function Dashboard() {
   const ref = useRef();
@@ -144,6 +145,7 @@ export default function Dashboard() {
     }
   }, [linkedinCode]);
 
+  const isFbSDKInitialized = useInitFbSDK();
   const connectFacebook = async () => {
     setLoadingFacebook(true);
     logInToFB();
@@ -500,10 +502,11 @@ export default function Dashboard() {
                 Connect your social media profiles
               </h2>
               <div className="flex justify-center space-x-4 max-w-{500px} w-full md:space-x-10  w-full md:w-auto items-center">
-                {socials[0]?.type !== "twitter" && connecting ? (
+                {socials.some((e) => e.type === "twitter") === false &&
+                connecting ? (
                   <CircularProgress />
                 ) : (
-                  socials[0]?.type !== "twitter" && (
+                  socials.some((e) => e.type === "twitter") === false && (
                     <img
                       onClick={(e) => {
                         user.email.toLowerCase() ===

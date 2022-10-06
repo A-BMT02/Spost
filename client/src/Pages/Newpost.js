@@ -154,7 +154,6 @@ export default function Newpost() {
     }%)`;
   };
 
-  console.log("user is ", socials);
   const selectImage = (uploadedFile, index) => {
     setLoading(true);
     let type;
@@ -252,8 +251,40 @@ export default function Newpost() {
 
   const publish = async () => {
     setMessage("");
-    setLoad(true);
-    const allData = await Promise.all(
+    const allData = await organizeData();
+
+    const facebookConnect = user.connect.find((item) => {
+      return item.social === "facebook";
+    });
+
+    const post = axios
+      .post("https://web-production-191a.up.railway.app/api/user/post/all", {
+        id: user._id,
+        twitter: allData,
+        facebook: {
+          data: value.facebookContent,
+          id: facebookConnect.id,
+          picture: value.facebookPicture,
+        },
+        linkedin: {
+          text: value.linkedinContent,
+        },
+        instagram: {
+          picture: imageUrl,
+          text: value.instagramContent,
+          id: instagram.id,
+        },
+      })
+      .then((res) => {
+        setSuccessProfile(res.data);
+        setSuccess(true);
+        setLoad(false);
+        setMessage("Successfully Published!");
+      });
+  };
+
+  const organizeData = async () => {
+    return await Promise.all(
       value.state.value.map(async (obj) => {
         const media = await Promise.all(
           obj.media.map(async (mediaObj) => {
@@ -273,74 +304,6 @@ export default function Newpost() {
         return { ...obj, media };
       })
     );
-
-    //post to facebook
-    const facebook = user.connect.find((item) => {
-      return item.social === "facebook";
-    });
-    if (value.facebookContent !== "" || value.facebookPicture.length >= 1) {
-      try {
-        const res = await axios.post(
-          "https://web-production-191a.up.railway.app/api/user/post/facebook",
-          {
-            data: value.facebookContent,
-            id: facebook.id,
-            picture: value.facebookPicture,
-          }
-        );
-        if (res.status == 200) {
-          setSuccessProfile((prev) => [...prev, "facebook"]);
-        }
-      } catch (err) {
-        setLoad(false);
-        return setMessage(err.response.data.error);
-      }
-    }
-    if (allData[0].text !== "" || allData[0].media.length >= 1) {
-      try {
-        const res2 = await axios.post(
-          "https://web-production-191a.up.railway.app/api/user/post/twitter",
-          {
-            data: allData,
-            id: user._id,
-          }
-        );
-        if (res2.data.status === "ok") {
-          setSuccessProfile((prev) => [...prev, "twitter"]);
-          setSuccess(true);
-        }
-      } catch (err) {
-        setLoad(false);
-        return setMessage(err.response.data.error);
-      }
-    }
-    //post to instagram
-    const instagram = user.connect.find((item) => {
-      return item.social === "instagram";
-    });
-    if (imageUrl !== "") {
-      try {
-        const instaPost = await axios.post(
-          "https://web-production-191a.up.railway.app/api/user/post/instagram",
-          {
-            picture: imageUrl,
-            text: value.instagramContent,
-            id: instagram.id,
-          }
-        );
-        if (instaPost.status == 200) {
-          setSuccessProfile((prev) => [...prev, "instagram"]);
-          setSuccess(true);
-        }
-      } catch (err) {
-        setLoad(false);
-        return setMessage(err.response.data.error);
-      }
-    }
-
-    setSuccess(true);
-    setLoad(false);
-    setMessage("Successfully Published!");
   };
 
   const removeImage = (e, pic) => {
