@@ -41,6 +41,7 @@ export default function Dashboard() {
   const [deletingLinkedin, setDeletingLinkedin] = useState(false);
 
   const [linkedinCode, setLinkedinCode] = useState("");
+  const [message, setMessage] = useState("");
 
   const useQuery = () => new URLSearchParams(useLocation().search);
   const query = useQuery();
@@ -98,6 +99,17 @@ export default function Dashboard() {
   };
 
   const connectInstagram = async () => {
+    const facebookExist = user.connect.find(
+      (target) => target.social === "facebook"
+    );
+    if (!facebookExist) {
+      setShowModal(true);
+      setMessage(
+        "You have to connect your FACEBOOK business account associated with the instagram account!"
+      );
+      return;
+    }
+
     setLoadingInstagram(true);
     const res = await axios.get(
       "https://web-production-191a.up.railway.app/api/user/instagram",
@@ -144,6 +156,12 @@ export default function Dashboard() {
         .catch((err) => {});
     }
   }, [linkedinCode]);
+
+  const showPopup = () => {
+    setMessage("You do not have permission to perform this on a test account");
+    setShowModal(true);
+    return;
+  };
 
   const isFbSDKInitialized = useInitFbSDK();
   const connectFacebook = async () => {
@@ -192,6 +210,9 @@ export default function Dashboard() {
 
   const logoutTwitter = async (e) => {
     if (user.email.toLowerCase() === "futuristicaistore@gmail.com") {
+      setMessage(
+        "You do not have permission to perform this on a test account"
+      );
       return setShowModal(true);
     }
     setDeleting(true);
@@ -219,6 +240,9 @@ export default function Dashboard() {
 
   const logoutInstagram = () => {
     if (user.email.toLowerCase() === "futuristicaistore@gmail.com") {
+      setMessage(
+        "You do not have permission to perform this on a test account"
+      );
       return setShowModal(true);
     }
     setDeletingInstagram(true);
@@ -249,6 +273,9 @@ export default function Dashboard() {
 
   const logoutFacebook = () => {
     if (user.email.toLowerCase() === "futuristicaistore@gmail.com") {
+      setMessage(
+        "You do not have permission to perform this on a test account"
+      );
       return setShowModal(true);
     }
     setDeletingFacebook(true);
@@ -279,6 +306,9 @@ export default function Dashboard() {
 
   const logoutLinkedin = () => {
     if (user.email.toLowerCase() === "futuristicaistore@gmail.com") {
+      setMessage(
+        "You do not have permission to perform this on a test account"
+      );
       return setShowModal(true);
     }
     setDeletingLinkedin(true);
@@ -313,7 +343,7 @@ export default function Dashboard() {
           successProfile={[]}
           showModal={showModal}
           setShowModal={setShowModal}
-          message="You do not have permission to perform this on a test account"
+          message={message}
         />
 
         <div className="flex flex-col my-5  mx-5 md:w-10/12 mx-auto max-w-lg md:max-w-6xl">
@@ -511,7 +541,7 @@ export default function Dashboard() {
                       onClick={(e) => {
                         user.email.toLowerCase() ===
                         "futuristicaistore@gmail.com"
-                          ? setShowModal(true)
+                          ? showPopup()
                           : connectTwitter();
                       }}
                       className="w-12 h-12 md:w-20 md:h-20 cursor-pointer "
@@ -528,7 +558,7 @@ export default function Dashboard() {
                       onClick={(e) =>
                         user.email.toLowerCase() ===
                         "futuristicaistore@gmail.com"
-                          ? setShowModal(true)
+                          ? showPopup()
                           : connectFacebook()
                       }
                       className="w-12 h-12 md:w-20 md:h-20 cursor-pointer "
@@ -545,7 +575,7 @@ export default function Dashboard() {
                       onClick={(e) =>
                         user.email.toLowerCase() ===
                         "futuristicaistore@gmail.com"
-                          ? setShowModal(true)
+                          ? showPopup()
                           : connectInstagram()
                       }
                       className="w-12 h-12 md:w-20 md:h-20 cursor-pointer "
@@ -562,7 +592,7 @@ export default function Dashboard() {
                       onClick={(e) =>
                         user.email.toLowerCase() ===
                         "futuristicaistore@gmail.com"
-                          ? setShowModal(true)
+                          ? showPopup()
                           : connectLinkedin()
                       }
                       className="w-12 h-12 md:w-20 md:h-20 cursor-pointer "
