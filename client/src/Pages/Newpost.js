@@ -251,6 +251,7 @@ export default function Newpost() {
 
   const publish = async () => {
     setMessage("");
+    setLoad(true);
     const allData = await organizeData();
 
     const facebookConnect = user.connect.find((item) => {
@@ -285,6 +286,9 @@ export default function Newpost() {
         setSuccess(true);
         setLoad(false);
         setMessage("Successfully Published!");
+      })
+      .catch((err) => {
+        setLoad(false);
       });
   };
 
