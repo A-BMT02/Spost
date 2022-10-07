@@ -152,8 +152,7 @@ export default function Dashboard() {
         .then((res) => {
           if (res.data === "success") {
           }
-        })
-        .catch((err) => {});
+        });
     }
   }, [linkedinCode]);
 

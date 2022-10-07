@@ -2,16 +2,12 @@ import Express from "express";
 import user from "../models/googleUser.js";
 import twitterModel from "../models/twitterConnect.js";
 import { TwitterApi } from "twitter-api-v2";
-import { fileTypeFromFile } from "file-type";
 import facebookInfo from "../models/facebookConnect.js";
 import axios from "axios";
-import instagramInfo from "../models/instagramConnect.js";
 import fs from "fs";
-import { default as FormData } from "form-data";
-import fetch from "node-fetch";
-import { Blob } from "buffer";
 import FB from "fb";
 import { promisify } from "util";
+import linkedinInfo from "../models/linkedinConnect.js";
 
 const router = Express.Router();
 
@@ -47,13 +43,55 @@ router.post("/all", async (req, res) => {
           success.push("facebook");
         }
       }
+
+      //post to linkedin
+      if (data.linkedin.text !== "") {
+        const toLinkedin = await postToLinkedin(
+          data.linkedin.id,
+          data.linkedin.text
+        );
+        if (toLinkedin === "done") {
+          success.push("linkedin");
+        }
+      }
     }
 
-    res.send(success);
+    return res.send(success);
   } catch (err) {
-    res.send(err);
+    return res.send(err);
   }
 });
+
+const postToLinkedin = async (id, text) => {
+  const targetLinkedin = await linkedinInfo.findOne({ linkedinId: id });
+
+  const linkedinData = {
+    author: `urn:li:person:${targetLinkedin.linkedinId}`,
+    lifecycleState: "PUBLISHED",
+    specificContent: {
+      "com.linkedin.ugc.ShareContent": {
+        shareCommentary: {
+          text,
+        },
+        shareMediaCategory: "NONE",
+      },
+    },
+    visibility: {
+      "com.linkedin.ugc.MemberNetworkVisibility": "PUBLIC",
+    },
+  };
+
+  const result = await axios.post(
+    `https://api.linkedin.com/v2/ugcPosts?oauth2_access_token=${targetLinkedin.accessToken}`,
+    linkedinData,
+    {
+      headers: {
+        "X-Restli-Protocol-Version": "2.0.0",
+      },
+    }
+  );
+  return "done";
+};
 
 const postToFacebook = async (data, id, picture) => {
   const targetFacebook = await facebookInfo.findOne({ facebookId: id });
