@@ -257,6 +257,10 @@ export default function Newpost() {
       return item.social === "facebook";
     });
 
+    const linkedinConnect = user.connect.find((item) => {
+      return item.social === "linkedin";
+    });
+
     const post = axios
       .post("https://web-production-191a.up.railway.app/api/user/post/all", {
         id: user._id,
@@ -268,6 +272,7 @@ export default function Newpost() {
         },
         linkedin: {
           text: value.linkedinContent,
+          id: linkedinConnect.id,
         },
         instagram: {
           picture: imageUrl,

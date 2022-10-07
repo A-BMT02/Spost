@@ -2,6 +2,7 @@ import React from "react";
 import twitter from "../images/twitter.png";
 import facebook from "../images/facebook.png";
 import instagram from "../images/instagram.png";
+import linkedin from "../images/linkedin.png";
 import { MdOutlineCancel } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../Context/AuthContext";
@@ -33,9 +34,10 @@ export default function Modal({
         return `https://twitter.com/${twitterData.username}`;
       case "instagram":
         return `https://www.instagram.com/${instaData.username}/`;
+      case "linkedin":
+        return `https://linkedin.com`;
     }
   };
-
   const findLogo = (target) => {
     switch (target) {
       case "facebook":
@@ -44,6 +46,8 @@ export default function Modal({
         return twitter;
       case "instagram":
         return instagram;
+      case "linkedin":
+        return linkedin;
     }
   };
 
@@ -56,7 +60,7 @@ export default function Modal({
       >
         <div className=" w-full h-full  flex justify-center items-center">
           <div className=" bg-lgray opacity-50 w-full h-full fixed top-0"></div>
-          <div className="fixed rounded-md w-[80%] max-w-[400px] opacity-100  drop-shadow-md rounded-md p-5 bg-owhite justify-center items-center flex flex-col">
+          <div className="fixed rounded-md space-y-3 w-[80%] max-w-[400px] opacity-100  drop-shadow-md rounded-md p-5 bg-owhite justify-center items-center flex flex-col">
             <MdOutlineCancel
               onClick={(e) => {
                 setShowModal(false);
@@ -65,19 +69,21 @@ export default function Modal({
               className="cursor-pointer absolute text-ored -top-2 -right-2 text-xl md:text-2xl"
             />
             <p className="text-xl text-center">{message}</p>
-            {successProfile.length !== 0 &&
-              successProfile.map((item) => (
-                <div className="flex justify-center items-center space-x-2">
-                  <img className="w-8 h-8" src={findLogo(item)} />
-                  <a
-                    href={setUrl(item)}
-                    target="_blank"
-                    className="cursor-pointer text-dblue"
-                  >
-                    {setUrl(item)}
-                  </a>
-                </div>
-              ))}
+            <div className="flex flex-col space-y-3">
+              {successProfile.length !== 0 &&
+                successProfile.map((item) => (
+                  <div className="flex items-center justify-center items-center space-x-2">
+                    <img className="w-8 h-8" src={findLogo(item)} />
+                    <a
+                      href={setUrl(item)}
+                      target="_blank"
+                      className="cursor-pointer text-dblue"
+                    >
+                      {item.toUpperCase()}
+                    </a>
+                  </div>
+                ))}
+            </div>
           </div>
         </div>
       </div>
