@@ -25,6 +25,42 @@ This project was built using the following technologies:
 - MongoDB
 - Tailwind
 
+### Folder structure
+
+```
+├── client                   // client folder as a create-react-app
+|   |
+|   ├── cypress              // end-to-end tests using cypress
+|   ├── build                // output from build for website
+|   ├── node_modules         // npm dependencies for website code
+|   ├── public               // static assets that will be used to build website
+|   ├── src                  // view layer code of the website
+|   |   ├── context          // context for storing global data
+|   |   ├── pages            // website pages frontend implemetation
+|   |   ├── components       // small components used in pages directory
+|   |   ├── images           // all images used in frontend implemetation
+|   |   ├── utilities        // utility functions including reducer
+|   |   ├── App.js           // entry point of the website
+|   |   ├── index.js         // rendering whole website
+|   |   └── index.css        // styles for index.js and taiwind utilities imported
+|   ├── cypress.config.js    // config for end-to-end tests
+|   ├── package.json         // npm dependencies and build scripts for website
+|   ├── postcss.config.js    // transform styles
+|   ├── tailwind.config.js   // tailwind config file
+|   ├── vercel.json          // vercel config file
+|   └── package.lock.json    // config settings for compiling website
+├── backend                  // all of the source code for server
+|   ├── middleware           // auth middleware
+|   ├── routes               // server routing configurations
+|   ├── models               // mongoDb schema
+|   ├── config               // passportJs config
+|   ├── utils                // server utility functions
+|   ├── procfile             // commands run on start
+|   ├── package.json         // npm dependencies and build scripts for ser er
+|   ├── package.lock.json    // config settings for compiling server 
+|   └── server.js            // entry point of server
+```
+
 ### 👇 Prerequisites
 
 To get this project up and running locally, you must already have installed the following packages on your computer.
