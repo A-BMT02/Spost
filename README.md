@@ -6,7 +6,7 @@
   - [Technologies used](#technologies-used)
 - [Folder structure](#folder-structure)
 - [File structure](#file-structure)
-- [Starting the project](starting-the-project)
+- [Starting the project](#starting-the-project)
   - [Prerequisites](#prerequisites)
   - [Fork repository](#fork-repository)
   - [Clone repository](#clone-repository)
