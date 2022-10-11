@@ -12,6 +12,7 @@ import linkedinInfo from "../models/linkedinConnect.js";
 const router = Express.Router();
 
 router.post("/all", async (req, res) => {
+  //post content to all social media
   let success = [];
   try {
     const data = req.body;
@@ -81,7 +82,7 @@ const postToLinkedin = async (id, text) => {
     },
   };
 
-  const result = await axios.post(
+  await axios.post(
     `https://api.linkedin.com/v2/ugcPosts?oauth2_access_token=${targetLinkedin.accessToken}`,
     linkedinData,
     {
@@ -101,7 +102,7 @@ const postToFacebook = async (data, id, picture) => {
       let postData = {
         message: data,
       };
-      let postIds = await Promise.all(
+      await Promise.all(
         picture.map(async (pic, index) => {
           const base64Data = pic.file.split(",")[1];
           const writeFileAsync = promisify(fs.writeFile);
@@ -127,9 +128,9 @@ const postToFacebook = async (data, id, picture) => {
         })
       );
 
-      const b = await FB.api("me/feed", "post", postData);
+      await FB.api("me/feed", "post", postData);
     } else if (picture.length === 0 && data !== "") {
-      const postResult = await axios.post(
+      await axios.post(
         `https://graph.facebook.com/${targetFacebook.pageId}/feed?message=${data}&access_token=${pageToken}`
       );
     }

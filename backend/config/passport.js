@@ -3,6 +3,7 @@ import User from "../models/googleUser.js";
 
 const GoogleStrategy = googleStrategy.Strategy;
 export default function (passport) {
+  //initializing goolge stragegy for google auth
   passport.use(
     new GoogleStrategy(
       {
@@ -18,7 +19,7 @@ export default function (passport) {
           displayName: profile.displayName,
           image: profile.photos[0].value,
         };
-
+        //check database if user already exists , if not create one
         try {
           const duplicate = await User.findOne({
             email: profile.emails[0].value,
@@ -50,6 +51,7 @@ export default function (passport) {
       }
     )
   );
+
   passport.serializeUser((user, done) => {
     done(null, user._id);
   });
