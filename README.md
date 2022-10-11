@@ -6,6 +6,11 @@ Organize your content in one place and post to all your social media profiles in
 
 Explore the app functionality [here](https://spostapp.vercel.app/).
 
+
+https://user-images.githubusercontent.com/30394037/195150562-05f7a1a8-25f9-4a60-bbc8-21a3cd4b3415.mp4
+
+
+
 ### ✏️ Design File
 
 Interested in the design of this app? Check out the [Figma file](https://www.figma.com/file/2JsajIjbelWdCUCkkvTyJm/Untitled?node-id=0%3A1).
