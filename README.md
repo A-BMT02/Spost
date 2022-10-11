@@ -26,6 +26,14 @@ This project was built using the following technologies:
 - Tailwind
 
 ### Folder structure
+The frontend is built using React and broken down into components. CRUD operations are done based on the users interaction with the UI. CRUD operations are done in the NodeJS/ExpressJs server which is broken down into routes and controllers. The data is stored in a MongoDB and mongoose is used to interact between the server and the Database(MongoDB)
+
+The basic working flow of the app could be illustrated in the following diagram.
+
+![image](https://user-images.githubusercontent.com/30394037/195169065-06fbd8e0-d4cd-4b4a-81ab-5598398a669a.png)
+
+
+### File structure
 
 ```
 ├── client                   // client folder as a create-react-app
