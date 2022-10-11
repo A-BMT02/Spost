@@ -1,8 +1,26 @@
-# Spost
+# Table of Content
 
-Organize your content in one place and post to all your social media profiles in one click
+- [Introduction](#introduction)
+  - [Demo](#demo)
+  - [Design file](#design-file)
+  - [Technologies used](#technologies-used)
+- [Folder structure](#folder-structure)
+- [File structure](#file-structure)
+- [Starting the project](starting-the-project)
+  - [Prerequisites](#prerequisites)
+  - [Fork repository](#fork-repository)
+  - [Clone repository](#clone-repository)
+  - [Start client](#start-client)
+  - [Start server](#start-server)
+- [How to debug](#how-to-debug)
+- [Tests](#tests)
+- [Contributing](#contributing)
 
-## 👨‍💻 Demo
+## Introduction
+
+Spost is a web application that allows you to organize your content in one place and post to all your social media profiles in one click
+
+### Demo
 
 Explore the app functionality [here](https://spostapp.vercel.app/).
 
@@ -11,11 +29,11 @@ https://user-images.githubusercontent.com/30394037/195150562-05f7a1a8-25f9-4a60-
 
 
 
-### ✏️ Design File
+###  Design File
 
 Interested in the design of this app? Check out the [Figma file](https://www.figma.com/file/2JsajIjbelWdCUCkkvTyJm/Untitled?node-id=0%3A1).
 
-### ⚒️ Technologies Used
+### Technologies Used
 
 This project was built using the following technologies:
 
@@ -25,7 +43,7 @@ This project was built using the following technologies:
 - MongoDB
 - Tailwind
 
-### Folder structure
+## Folder structure
 The frontend is built using React and broken down into components. CRUD operations are done based on the users interaction with the UI. CRUD operations are done in the NodeJS/ExpressJs server which is broken down into routes and controllers. The data is stored in a MongoDB and mongoose is used to interact between the server and the Database(MongoDB)
 
 The basic working flow of the app could be illustrated in the following diagram.
@@ -33,7 +51,7 @@ The basic working flow of the app could be illustrated in the following diagram.
 ![image](https://user-images.githubusercontent.com/30394037/195169065-06fbd8e0-d4cd-4b4a-81ab-5598398a669a.png)
 
 
-### File structure
+## File structure
 
 ```
 ├── client                   // client folder as a create-react-app
@@ -69,84 +87,67 @@ The basic working flow of the app could be illustrated in the following diagram.
 |   └── server.js            // entry point of server
 ```
 
-### 👇 Prerequisites
+## Starting the project
+
+Follow the instructions below to set up the project in your local environment
+
+
+###  Prerequisites
 
 To get this project up and running locally, you must already have installed the following packages on your computer.
 
 - [Node.js](https://nodejs.org/en/)
 - [Git](https://git-scm.com/)
 
-### 🛠️ Contribution Guidelines
+### Fork repository
+ - Click [here](https://github.com/A-BMT02/spost/fork) to fork the repository or click on the fork icon at the top right 
 
-Want to contribute to this project? Follow the steps below to set up the project locally.
+### Clone repository
+- Clone your forked repository to your local machine: ```git clone https://github.com/<your-github-username>/spost.git```
 
-1. Fork this repository.
-2. Clone your forked repository to your local machine.
+### Start client 
+- Navigate to the project directory: ```cd spost```
 
-```
-git clone https://github.com/<your-github-username>/spost.git
-```
+- Navigate to the frontend directory: ```cd client```
 
-3. Navigate to the project directory:
+- Install the dependencies: ```npm install```
 
-```
-cd spost
-```
+- Run client: ```npm start```
 
-4. Navigate to the frontend directory
+### Start server
 
-```
-cd client
-```
+- Navigate to the backend directory: ```cd backend```
 
-5. Install the dependencies:
+- Install the dependencies: ```npm install```
 
-```
-npm install
-```
+- Run server: ```node server```
 
-6. Navigate to the backend directory
+## How to debug
+If you are only changing the client folder, you can go ahead and start making changes directly. If you are changing the backend folder, change all instance of 'https://web-production-191a.up.railway.app' to the address of the local server. i.e if the server is running on port 5000, use 'http://localhost:5000'
 
-```
-cd backend
-```
+## Tests
+Follow the steps below to set up the tests environment
+- Make sure you run ``` npm install ``` to install all dependencies before running tests.
+- Change directory to the client folder ``` cd client ```
+- Run ```npx cypress open``` . If cypress is not installed in your local environment, you will be prompted to install it. Follow the instructions provided to install cypress. After installation, Cypress will automatically open
+- Click on E2E testing and follow the prompts presented. 
+- Select the tests to run
 
-7. Install the dependencies:
 
-```
-npm install
-```
+https://user-images.githubusercontent.com/30394037/195203053-bb314401-3543-4fb6-9552-a01c77ad94d3.mp4
 
-5. Create a new branch:
+## Contributing
 
-```
-git checkout -b <your-branch-name>
-```
+After making changes, follow the steps below to create a pull request
 
-At this point, you can now modify existing files or add new files to the project on your own branch.
+- Create a new branch: ```git checkout -b <your-branch-name>```
 
-6. Stage your changes and commit
+- Stage your changes and commit: ```git add .``` 
 
-Once you have modified existing files or added new files to the project, you can add them to your local repository, which you can do with the `git add` command.
+- Commit changes: ```git commit -m "commit message"```
 
-_Add changes_
+- Push your changes to GitHub: ```git push -u origin <your-branch-name>```
 
-```
-git add .
-```
-
-_Commit changes_
-
-```
-git commit -m "commit message"
-```
-
-7. Push your changes to GitHub:
-
-```
-git push -u origin <your-branch-name>
-```
-
-# ❗ Reminder
+# Support
 
 Dont forget to drop a star ✨ while you're here
