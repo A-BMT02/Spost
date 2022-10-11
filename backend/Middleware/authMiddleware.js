@@ -3,7 +3,7 @@ const user = require("../models/googleUser");
 
 module.exports = async (req, res, next) => {
   let token;
-
+  //make sure the jwt token sent from the client is valid
   if (
     req.headers.authorization &&
     req.headers.authorization.startsWith("Bearer")

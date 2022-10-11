@@ -6,17 +6,13 @@ import { registerValidation } from "../utils/validation.js";
 import passport from "passport";
 import twitter from "../models/twitterConnect.js";
 import { TwitterApi } from "twitter-api-v2";
-import tokens from "../models/tempTokens.js";
 import axios from "axios";
 import facebookInfo from "../models/facebookConnect.js";
-import { Blob } from "node:buffer";
-import { default as FormData } from "form-data";
-import intoStream from "into-stream";
-import instagramInfo from "../models/instagramConnect.js";
 import linkedinInfo from "../models/linkedinConnect.js";
 
 const router = Express.Router();
 router.post("/register", async (req, res) => {
+  //check if user exists , if not create a new user record
   try {
     const { email, password } = req.body;
 
@@ -59,12 +55,12 @@ router.post("/register", async (req, res) => {
 });
 
 router.post("/login", async (req, res) => {
+  //check if user credentials exists for loggin in
   try {
     const { email, password } = req.body;
 
     const User = await user.findOne({ email }).lean();
     if (!User) {
-      const token = jwt;
       return res.json({ status: "error", error: "Invalid email/password" });
     }
 
@@ -85,6 +81,7 @@ router.post("/login", async (req, res) => {
 });
 
 router.get("/login/success", async (req, res) => {
+  //check if user is logged in or not
   try {
     if (req.user && typeof req.user.googleId === "string") {
       return res.json({ status: "ok", data: req.user });
@@ -112,6 +109,7 @@ router.get("/login/success", async (req, res) => {
 });
 
 router.get(
+  //initialize google auth using passportJs
   "/google",
   passport.authenticate("google", {
     scope: [
@@ -132,6 +130,7 @@ router.get(
 );
 
 router.get("/logout", async (req, res) => {
+  //logout user and remove cookie
   try {
     req.logout((err) => {
       if (!err) {
@@ -149,6 +148,7 @@ router.get("/logout", async (req, res) => {
 });
 
 router.get("/twitter", async (req, res) => {
+  //grab users temporary token which will be used to genereate permanent tokens in /twitter/callback
   try {
     const Client = new TwitterApi({
       appKey: process.env.TWITTER_CONSUMER_KEY,
@@ -183,6 +183,7 @@ router.get("/twitter", async (req, res) => {
 });
 
 router.get("/twitter/callback", async (req, res) => {
+  //use twitter temp token to generate permanent token
   try {
     const { oauth_token, oauth_verifier } = req.query;
     const target = await user.findOne({ "tokens.tempToken": oauth_token });
@@ -198,6 +199,7 @@ router.get("/twitter/callback", async (req, res) => {
       accessToken: oauth_token,
       accessSecret: oauth_token_secret,
     });
+    //use permanent token to create a twiiter object and also link the user model to the twitter model
 
     const loggedObj = await client.login(oauth_verifier);
     client = new TwitterApi({
@@ -227,8 +229,35 @@ router.get("/twitter/callback", async (req, res) => {
   } catch (err) {}
 });
 
+router.get("/twitter/logout", async (req, res) => {
+  try {
+    //delete user twitter data from database
+    const id = req.query["id"];
+
+    await twitter.findOne({ twitterId: id }).lean();
+    await twitter.findOneAndDelete({ twitterId: id });
+
+    await user.findOneAndUpdate(
+      { "connect.id": id },
+      {
+        $pull: {
+          connect: { id: id },
+        },
+      }
+    );
+
+    res.json({ status: "ok" });
+  } catch (err) {
+    return res.json({
+      status: "error",
+      error: "An error occured. Try again later",
+    });
+  }
+});
+
 router.get("/linkedin", async (req, res) => {
   try {
+    //authorize using linkedin and get neccessary user data
     const code = req.query["code"];
     const id = req.query["id"];
 
@@ -247,6 +276,7 @@ router.get("/linkedin", async (req, res) => {
         .identifier;
     const name = `${profile.data.firstName.localized.en_US}${profile.data.lastName.localized.en_US}`;
 
+    //store the linkedin data in the Linkedin Model and connect the user model to the linkedin Model
     await linkedinInfo.create({
       accessToken,
       linkedinId,
@@ -268,39 +298,16 @@ router.get("/linkedin", async (req, res) => {
   }
 });
 
-router.get("/twitter/logout", async (req, res) => {
-  try {
-    const id = req.query["id"];
-
-    await twitter.findOne({ twitterId: id }).lean();
-    await twitter.findOneAndDelete({ twitterId: id });
-
-    const userTarget = await user.findOneAndUpdate(
-      { "connect.id": id },
-      {
-        $pull: {
-          connect: { id: id },
-        },
-      }
-    );
-
-    res.json({ status: "ok" });
-  } catch (err) {
-    return res.json({
-      status: "error",
-      error: "An error occured. Try again later",
-    });
-  }
-});
-
 router.get("/linkedin/logout", async (req, res) => {
   try {
+    //delete user linkedin data from database
+
     const id = req.query["id"];
 
     await linkedinInfo.findOne({ linkedinId: id }).lean();
     await linkedinInfo.findOneAndDelete({ twitterId: id });
 
-    const userTarget = await user.findOneAndUpdate(
+    await user.findOneAndUpdate(
       { "connect.id": id },
       {
         $pull: {
@@ -318,8 +325,78 @@ router.get("/linkedin/logout", async (req, res) => {
   }
 });
 
+router.get("/facebook", async (req, res) => {
+  const tempToken = req.query["accessToken"];
+  const userId = req.query["user"];
+
+  let facebookId = "";
+  let name = "";
+  let picture = "";
+  let accessToken = "";
+  let pageToken = "";
+  let pageId = "";
+
+  //get all the neccessary facebook data needed and store in database
+  try {
+    //exchange facebook temp token for permanent access token
+    const result = await axios.get(
+      `https://graph.facebook.com/v14.0/oauth/access_token?grant_type=fb_exchange_token&client_id=${process.env.FACEBOOK_APP_ID}&client_secret=${process.env.FACEBOOK_APP_SECRET}&fb_exchange_token=${tempToken}`
+    );
+    accessToken = result.data.access_token;
+    //use access token to get user-id, email and name
+    const idResult = await axios.get(
+      `https://graph.facebook.com/me?fields=id,email,name&access_token=${accessToken}`
+    );
+
+    facebookId = idResult.data.id;
+    name = idResult.data.name;
+    //get user profile picture
+    const getPicture = await axios.get(
+      `https://graph.facebook.com/v14.0/${facebookId}/picture?redirect=false&access_token=${accessToken}`
+    );
+    picture = getPicture.data.data.url;
+    //get faceook page-id and page-token
+    const pageResult = await axios.get(
+      `https://graph.facebook.com/v14.0/${facebookId}/accounts?access_token=${accessToken}`
+    );
+    pageToken = pageResult.data.data[0].access_token;
+    pageId = pageIdObject.data.data[0].id;
+
+    if (
+      facebookId !== "" &&
+      name !== "" &&
+      picture !== "" &&
+      accessToken !== "" &&
+      pageToken !== "" &&
+      pageId !== ""
+    ) {
+      //create a facebook object for user and link user model to facebook model
+      const newFacebook = await facebookInfo.create({
+        facebookId,
+        displayName: name,
+        image: picture,
+        accessToken,
+        pageToken,
+        pageId,
+      });
+      const updatedUser = await user.findOneAndUpdate(
+        { _id: userId },
+        {
+          $push: { connect: { social: "facebook", id: facebookId } },
+        }
+      );
+      return res.json({ status: "ok", data: { name, picture } });
+    } else {
+      return res.status(400).json({ error: "An error Occured.Try Again!" });
+    }
+  } catch (err) {
+    return res.status(400).json({ error: "An error Occured.Try Again!" });
+  }
+});
+
 router.get("/facebook/logout", async (req, res) => {
   try {
+    //delete user facebook data from database
     const id = req.query["id"];
 
     const deleteTwitter = await facebookInfo.findOneAndDelete({
@@ -340,113 +417,6 @@ router.get("/facebook/logout", async (req, res) => {
     }
   } catch (err) {
     res.status(400);
-  }
-});
-
-router.get("/instagram/logout", async (req, res) => {
-  try {
-    const id = req.query["id"];
-
-    const deleteInstagram = await instagramInfo.findOneAndDelete({
-      instagtamId: id,
-    });
-    if (deleteInstagram) {
-      const userTarget = await user.findOneAndUpdate(
-        { "connect.id": id },
-        {
-          $pull: {
-            connect: { id: id },
-          },
-        }
-      );
-      if (userTarget) {
-        res.send("success");
-      }
-    }
-  } catch (err) {
-    res.status(400);
-  }
-});
-
-router.get("/facebook", async (req, res) => {
-  const tempToken = req.query["accessToken"];
-  const userId = req.query["user"];
-
-  let facebookId = "";
-  let name = "";
-  let picture = "";
-  let accessToken = "";
-  let pageToken = "";
-  let pageId = "";
-
-  try {
-    const result = await axios.get(
-      `https://graph.facebook.com/v14.0/oauth/access_token?grant_type=fb_exchange_token&client_id=${process.env.FACEBOOK_APP_ID}&client_secret=${process.env.FACEBOOK_APP_SECRET}&fb_exchange_token=${tempToken}`
-    );
-    if (result.status === 200) {
-      accessToken = result.data.access_token;
-      const idResult = await axios.get(
-        `https://graph.facebook.com/me?fields=id,email,name&access_token=${accessToken}`
-      );
-
-      if (idResult.status === 200) {
-        facebookId = idResult.data.id;
-        name = idResult.data.name;
-        const getPicture = await axios.get(
-          `https://graph.facebook.com/v14.0/${facebookId}/picture?redirect=false&access_token=${accessToken}`
-        );
-        if (getPicture.status === 200) {
-          picture = getPicture.data.data.url;
-        }
-        const pageResult = await axios.get(
-          `https://graph.facebook.com/v14.0/${facebookId}/accounts?access_token=${accessToken}`
-        );
-        if (pageResult.status === 200) {
-          pageToken = pageResult.data.data[0].access_token;
-
-          const pageIdObject = await axios.get(
-            `https://graph.facebook.com/${facebookId}/accounts?access_token=${accessToken}`
-          );
-          ("here4");
-          pageId = pageIdObject.data.data[0].id;
-        }
-      }
-    } else {
-      return res.status(400).json({ error: "An error Occured.Try Again!" });
-    }
-
-    if (
-      facebookId !== "" &&
-      name !== "" &&
-      picture !== "" &&
-      accessToken !== "" &&
-      pageToken !== "" &&
-      pageId !== ""
-    ) {
-      const newFacebook = await facebookInfo.create({
-        facebookId,
-        displayName: name,
-        image: picture,
-        accessToken,
-        pageToken,
-        pageId,
-      });
-      if (newFacebook) {
-        const updatedUser = await user.findOneAndUpdate(
-          { _id: userId },
-          {
-            $push: { connect: { social: "facebook", id: facebookId } },
-          }
-        );
-        if (updatedUser) {
-          res.json({ status: "ok", data: { name, picture } });
-        }
-      }
-    } else {
-      return res.status(400).json({ error: "An error Occured.Try Again!" });
-    }
-  } catch (err) {
-    return res.status(400).json({ error: "An error Occured.Try Again!" });
   }
 });
 

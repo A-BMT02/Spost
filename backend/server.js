@@ -11,9 +11,6 @@ import cookieParser from "cookie-parser";
 import getsRoute from "./Routes/gets.js";
 import postRoute from "./Routes/posts.js";
 import passportConfig from "./config/passport.js";
-import path from "path";
-
-const __dirname1 = path.resolve();
 
 dotenv.config();
 
