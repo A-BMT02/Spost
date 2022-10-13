@@ -14,6 +14,7 @@
   - [Start server](#start-server)
 - [How to debug](#how-to-debug)
 - [Tests](#tests)
+- [Typescript](#typescript)
 - [Contributing](#contributing)
 
 ## Introduction
@@ -135,6 +136,9 @@ Follow the steps below to set up the tests environment
 
 
 https://user-images.githubusercontent.com/30394037/195203053-bb314401-3543-4fb6-9552-a01c77ad94d3.mp4
+
+## Typescript
+This project is being converted to Typescript in the [Typescript branch](https://github.com/A-BMT02/spost/tree/typescript)
 
 ## Contributing
 
